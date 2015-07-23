@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Disability" table="disability">
+    <indexes>
+      <index name="fk_disability_disability_category1_idx" columns="iddisability_category"/>
+    </indexes>
+    <id name="iddisability" type="integer" column="iddisability">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="teacherSpecialityRequired" type="simplearray" column="teacher_speciality_required" nullable="false"/>
+    <field name="disabilityName" type="string" column="disability_name" length="50" nullable="false"/>
+    <field name="disabilityDescription" type="string" column="disability_description" length="500" nullable="false"/>
+    <field name="generalCategory" type="string" column="general_category" nullable="true"/>
+    <many-to-one field="iddisabilityCategory" target-entity="DisabilityCategory">
+      <join-columns>
+        <join-column name="iddisability_category" referenced-column-name="iddisability_category"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="idneed" target-entity="Need" mapped-by="iddisability"/>
+    <many-to-many field="idlevel" target-entity="Level" inversed-by="iddisability">
+      <join-table name="disability_has_level">
+        <join-columns>
+          <join-column name="iddisability" referenced-column-name="iddisability"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idlevel" referenced-column-name="idlevel"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

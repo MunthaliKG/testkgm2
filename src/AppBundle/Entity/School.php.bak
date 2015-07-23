@@ -1,0 +1,154 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * School
+ *
+ * @ORM\Table()
+ * @ORM\Entity
+ */
+class School
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="emiscode", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="idzone", type="integer")
+     */
+    private $idzone;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="school_name", type="string", length=50)
+     */
+    private $schoolName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="address", type="string", length=250)
+     */
+    private $address;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="iddistrict", type="integer")
+     */
+    private $iddistrict;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set idzone
+     *
+     * @param integer $idzone
+     * @return School
+     */
+    public function setIdzone($idzone)
+    {
+        $this->idzone = $idzone;
+
+        return $this;
+    }
+
+    /**
+     * Get idzone
+     *
+     * @return integer 
+     */
+    public function getIdzone()
+    {
+        return $this->idzone;
+    }
+
+    /**
+     * Set schoolName
+     *
+     * @param string $schoolName
+     * @return School
+     */
+    public function setSchoolName($schoolName)
+    {
+        $this->schoolName = $schoolName;
+
+        return $this;
+    }
+
+    /**
+     * Get schoolName
+     *
+     * @return string 
+     */
+    public function getSchoolName()
+    {
+        return $this->schoolName;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     * @return School
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string 
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Set iddistrict
+     *
+     * @param integer $iddistrict
+     * @return School
+     */
+    public function setIddistrict($iddistrict)
+    {
+        $this->iddistrict = $iddistrict;
+
+        return $this;
+    }
+
+    /**
+     * Get iddistrict
+     *
+     * @return integer 
+     */
+    public function getIddistrict()
+    {
+        return $this->iddistrict;
+    }
+}

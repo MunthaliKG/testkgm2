@@ -1,0 +1,8 @@
+{% extends 'school/learners/learners_main.html.twig' %}
+
+{% set learner = app.request.attributes.get('_route_params')['learnerId'] %} {# get the learner id from the Route #}
+{% block learner_form_nav %}
+	{% embed 'school/learners/learner_form_nav.html.twig' %}
+		{% block disability_info %}active{% endblock %}
+	{% endembed %}
+{% endblock %}

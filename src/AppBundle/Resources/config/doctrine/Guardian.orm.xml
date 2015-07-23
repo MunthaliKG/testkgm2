@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Guardian" table="guardian">
+    <id name="idguardian" type="integer" column="idguardian">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="gfirstName" type="string" column="gfirst_name" length="25" nullable="false"/>
+    <field name="glastName" type="string" column="glast_name" length="25" nullable="false"/>
+    <field name="gdob" type="date" column="gdob" nullable="false"/>
+    <field name="gsex" type="string" column="gsex" nullable="false"/>
+    <field name="gaddress" type="string" column="gaddress" length="100" nullable="false"/>
+    <field name="occupation" type="string" column="occupation" length="20" nullable="true"/>
+    <field name="incomeLevel" type="string" column="income_level" nullable="true"/>
+    <field name="district" type="string" column="district" length="11" nullable="false"/>
+  </entity>
+</doctrine-mapping>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\RoomState" table="room_state">
+    <indexes>
+      <index name="fk_facility_state_school1_idx" columns="emiscode"/>
+    </indexes>
+    <id name="roomId" type="string" column="room_id" length="2"/>
+    <id name="year" type="date" column="year"/>
+    <id name="emiscode" association-key="true"/>
+    <field name="enoughLight" type="string" column="enough_light" nullable="false"/>
+    <field name="enoughSpace" type="string" column="enough_space" nullable="false"/>
+    <field name="adaptiveChairs" type="integer" column="adaptive_chairs" nullable="false"/>
+    <field name="accessible" type="string" column="accessible" nullable="false"/>
+    <field name="enoughVentilation" type="string" column="enough_ventilation" nullable="false"/>
+    <field name="otherObservations" type="string" column="other_observations" length="100" nullable="true"/>
+    <one-to-one field="emiscode" target-entity="School">
+      <join-columns>
+        <join-column name="emiscode" referenced-column-name="emiscode"/>
+      </join-columns>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

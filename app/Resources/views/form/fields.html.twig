@@ -1,0 +1,32 @@
+{# override the rendering of a button #}
+{% block button_widget %}
+    {%- if label is empty -%}
+        {%- if label_format is not empty -%}
+            {% set label = label_format|replace({
+                '%name%': name,
+                '%id%': id,
+            }) %}
+        {%- else -%}
+            {% set label = name|humanize %}
+        {%- endif -%}
+    {%- endif -%}
+    <button type="{{ type|default('button') }}" {{ block('button_attributes') }}>{{ before_label|raw }}{{ label|trans({}, translation_domain) }}{{ after_label|raw }}</button>
+{% endblock button_widget %}
+
+{# {%- block radio_widget -%}
+    <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+{%- endblock radio_widget -%} #}
+
+
+{# {%- block choice_widget_expanded -%}
+    
+    {%- for child in form %}
+        <div {{ block('widget_attributes') }}>
+            <label>
+                {{- form_widget(child) -}}
+                {{- form_label(child) -}}
+            </label>
+        </div>
+    {% endfor -%}
+    
+{%- endblock choice_widget_expanded -%} #} 
