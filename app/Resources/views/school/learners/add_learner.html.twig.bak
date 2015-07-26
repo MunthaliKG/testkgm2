@@ -1,0 +1,43 @@
+{% form_theme form1 'bootstrap_3_horizontal_layout.html.twig' %}
+{% extends 'school/learners/learners_main.html.twig' %}
+
+{% block form_container %}
+	{{ form_start(form1) }}
+		{{ form_errors(form1) }}
+		
+				{{ form_row(form1.learnerid, {'attr':{'class':'col-sm-5'}}) }}
+			
+
+		<div class="form-group">
+			{{ form_label(form1.first_name, null, {'label_attr':{'class':'col-sm-2 control-label'}}) }}
+			<div class="col-sm-8">
+				{{ form_widget(form1.first_name, {'attr':{'class':'form-control'}}) }}
+			</div>
+			
+		</div>
+
+		<div class="form-group">
+			{{ form_label(form1.last_name, null, {'label_attr':{'class':'col-sm-2 control-label'}}) }}
+			<div class="col-sm-8">{{ form_widget(form1.last_name, {'attr':{'class':'form-control'}}) }}</div>
+		</div>
+		<div class="form-group">
+			{{ form_label(form1.initials, null, {'label_attr':{'class':'col-sm-2 control-label'}}) }}
+			<div class="col-sm-8">{{ form_widget(form1.initials, {'attr':{'class':'form-control'}}) }}</div>
+		</div>
+		<div class="form-group">
+			{{ form_label(form1.homeaddress, null, {'label_attr':{'class':'col-sm-2 control-label'}}) }}
+			<div class="col-sm-8">{{ form_widget(form1.homeaddress, {'attr':{'class':'form-control'}}) }}</div>
+		</div>
+		<div class="form-group">
+			{{ form_label(form1.sex, null, {'label_attr':{'class':'col-sm-2 control-label'}}) }}
+			<div class="col-sm-8">{{ form_widget(form1.sex) }}</div>
+		</div>
+		<div class="form-group">
+			{{ form_label(form1.dob, null, {'label_attr':{'class':'col-sm-2 control-label'}}) }}
+			<div class="col-sm-8">{{ form_widget(form1.dob, {'attr':{'class':'form-control'}}) }}</div>
+		</div>
+		<p class="text-right">
+			{{ form_widget(form1.next, {'attr':{'class':'btn btn-default'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
+		</p>
+	{{ form_end(form1) }}
+{% endblock %}

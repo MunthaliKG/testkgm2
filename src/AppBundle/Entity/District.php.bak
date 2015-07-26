@@ -1,0 +1,64 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * District
+ *
+ * @ORM\Table()
+ * @ORM\Entity
+ */
+class District
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="iddistrict", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="district_name", type="string", length=20)
+     */
+    private $districtName;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set districtName
+     *
+     * @param string $districtName
+     * @return District
+     */
+    public function setDistrictName($districtName)
+    {
+        $this->districtName = $districtName;
+
+        return $this;
+    }
+
+    /**
+     * Get districtName
+     *
+     * @return string 
+     */
+    public function getDistrictName()
+    {
+        return $this->districtName;
+    }
+}

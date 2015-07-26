@@ -1,0 +1,27 @@
+{# if the request for this page was not made through ajax, inherit the template that displays the whole page #}
+{% extends 'school/school2.html.twig' %}
+
+{% block learners_menuitem %} active {% endblock %} {# Cause the menu item for this page to be active#}
+
+{% set emisCode = app.request.attributes.get('_route_params')['emisCode'] %} {# get the emisCode from the Route#}
+
+{% block content %}
+	<div class="row">
+		<div class="col-sm-3">
+			{# embed the controller that returns the form for selecting existing students #}
+			{{ render(controller('AppBundle:School:findLearnerForm',{"emisCode":emisCode})) }}
+		</div>
+		<div class="col-sm-6">
+			{% block learner_form_nav %}{% endblock %}			
+		</div>
+		<div class="col-sm-3">
+			<p class="text-right"><a href="{{ path('edit_learner_personal',{"emisCode":emisCode, "learnerId": "new"}) }}" class="btn btn-sm" id="add_learner"><i class="fa fa-plus fa-lg"></i> &nbsp; Add New Learner</a></p>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-sm-12">
+			{% block form_container %}{% endblock %}
+		</div>
+	</div>
+{% endblock %}

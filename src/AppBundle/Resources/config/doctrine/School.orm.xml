@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\School" table="school">
+    <indexes>
+      <index name="fk_school_zone1_idx" columns="idzone"/>
+      <index name="fk_school_district1_idx" columns="iddistrict"/>
+    </indexes>
+    <id name="emiscode" type="integer" column="emiscode">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="schoolName" type="string" column="school_name" length="50" nullable="false"/>
+    <field name="address" type="string" column="address" length="250" nullable="false"/>
+    <many-to-one field="iddistrict" target-entity="District">
+      <join-columns>
+        <join-column name="iddistrict" referenced-column-name="iddistrict"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="idzone" target-entity="Zone">
+      <join-columns>
+        <join-column name="idzone" referenced-column-name="idzone"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-many field="idneed" target-entity="Need" inversed-by="emiscode">
+      <join-table name="school_has_need">
+        <join-columns>
+          <join-column name="emiscode" referenced-column-name="emiscode"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="idneed" referenced-column-name="idneed"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+  </entity>
+</doctrine-mapping>

@@ -1,0 +1,57 @@
+{% extends 'school/school.html.twig' %}
+
+{% set emisCode = app.request.attributes.get('_route_params')['emisCode'] %} {# get the emisCode from the Route#}
+
+{% block vertnav %}
+	<li class="{% block learners_menuitem %}{% endblock %}"><a id="pupils" emis="{{ emisCode }}" href="{{ path('school_learners',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add/update learner records</a></li>
+
+	<li class="{% block facilities_menuitem %}{% endblock %}"><a href="#" class="text-center menu.itm"> Add/update materials and facilities</a></li>
+
+	<li class="{% block teachers_menuitem %}{% endblock %}"><a href="{{ path('school_teachers',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add specialist teacher records</a></li>
+
+	<li class="{% block reports_menuitem %}{% endblock %}"><a href="#" class="text-center menu-itm"> Reports</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-sm-6">
+		<h4><b>{{school.school_name}} | {{ emisCode }}</b></h4>
+	</div>	
+</div>
+<hr>
+<div class="row">
+	<div class="col-sm-2 text-center school-details">
+		<i>School Details</i> <br>
+		<hr>
+		{% set address = school.address |split(',') %}
+		{% for addressbit in address %}
+			{{addressbit}}<br>
+		{% endfor %} <br>
+		<hr>
+
+		{{ school.zone_name }} zone, <br>
+		{{ school.district_name}}			
+	</div>
+	<div class="col-sm-10">
+		<i class="text-center">Summary of learners with special needs</i>
+		<table class="table">
+			<tr><th>Impairment</th><th>Number of learners</th></tr>
+			{% for disability in disabilities %}
+				<tr>
+					<td>{{disability.disability_name}}</td>
+					<td>{{disability.num_learners}}</td>
+				</tr>
+			{% endfor %}
+			<tr>
+				{% if disabilities is not empty %}
+				<th>Total</th>
+				<th>					
+					{{ disabilities.0.total }}					
+				</th>
+				{% endif %}
+			</tr>
+		</table>
+	</div>	
+</div>
+
+{% endblock %}

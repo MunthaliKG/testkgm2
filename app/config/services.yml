@@ -1,0 +1,20 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+#    parameter_name: value
+    schoolfinderform.class: AppBundle\Helpers\FindSchoolForm
+
+services:
+#    service_name:
+#        class: AppBundle\Directory\ClassName
+#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    school_finder:
+        class: %schoolfinderform.class%
+        arguments: 
+                - "@doctrine.orm.entity_manager"
+                - "@form.factory"
+                - "@request_stack"
+    app_bundle.button_type_extension:
+        class: AppBundle\Form\Extension\ButtonTypeExtension
+        tags:
+            - { name: form.type_extension, alias: button }

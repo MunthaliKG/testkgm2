@@ -1,0 +1,33 @@
+{% extends "base.html.twig" %}
+
+{% block navschool%}
+active
+{% endblock %}
+
+{% block stylesheets %}
+	{{parent()}}
+	<link href="{{asset('assets/css/school.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block rightcolumn %}
+	{# include the form used for selecting a school #}
+	{{ render(controller('AppBundle:Default:schoolSelectForm')) }}
+
+	<div class="row content">
+		{% block content %}
+			{# {% if message is not null %}
+				<br><br><h2 class="text-center"><small>{{ message }}</small></h2>
+
+			{% else %} #}
+				<br><br><h2 class="text-center"><small>School not chosen</small></h2>
+			{# {% endif %} #}
+		{% endblock %}
+	</div>
+	{% endblock %}
+	{% block javascripts %}
+	    {{parent()}}
+	    <script type="text/javascript" src="{{asset('assets/js/school.js')}}"></script>
+	    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+		<script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+
+{% endblock %}

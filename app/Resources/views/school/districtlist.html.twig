@@ -1,0 +1,10 @@
+{% for district in districts %}
+    <option value="{{district.id}}">{{district.districtName}}</option>
+{% endfor %}
+<div class="input-group input-group-sm">
+	<input type="text" class="form-control" name="schoolEmisCode" id="schoolEmisCode" placeholder="School Emis Code">
+	<div class="input-group-btn">
+		<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-arrow-right"></span></button>
+	</div>
+
+</div>
