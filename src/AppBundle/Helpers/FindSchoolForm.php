@@ -83,7 +83,11 @@ class FindSchoolForm{
             $school = $this->em->getRepository('AppBundle:School')->find($this->formData['emiscode']);
             if($school){
 	         	$this->isValid = true;
+
                 $this->schoolId = $school->getEmiscode();
+
+                $this->schoolId = $school->getId();
+
             }else{
                 $this->error = "That school does not exist";
             }  

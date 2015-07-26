@@ -77,6 +77,7 @@ class SchoolController extends Controller{
 		return $this->render('school/learners/findlearnerform.html.twig', array(
 											'form' => $form->createView()));
 	}
+
         
          /**
     *@Route("/findTeacherForm/{emisCode}", name="find_teacher_form")
@@ -113,7 +114,7 @@ class SchoolController extends Controller{
 	return $this->render('school/specialist_teacher/findteacherform.html.twig', array(
 										'form' => $form->createView()));
     }
-	/**
+/**
      * @Route("/school/{emisCode}/learners/{learnerId}/1", name="edit_learner_personal", requirements ={"learnerId":"new|\d+"})
      */
     public function editLearnerPersonalAction(Request $request, $learnerId, $emisCode){
@@ -277,6 +278,41 @@ class SchoolController extends Controller{
         	'form1'=>$form1->createView(),
         	'readonly' => $readOnly));
         
+
+    /**
+    *@Route("/findTeacherForm/{emisCode}", name="find_teacher_form")
+     */
+    public function findTeacherFormAction($emisCode){//this controller will return the form used for selecting a specialist teacher
+    	$connection = $this->get('database_connection');
+    	$teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name FROM snt NATURAL JOIN school_has_snt
+    			WHERE emiscode = ?', array($emisCode));
+
+    $choices = array();
+		foreach ($teachers as $key => $row) {
+			$choices[$row['idsnt']] = $row['sfirst_name'].' '.$row['slast_name'];
+		}
+
+    	//create the form for choosing an existing student to edit
+	$defaultData = array();
+	$form = $this->createFormBuilder($defaultData)
+					->add('teacher','choice', array(
+						'label' => 'Choose Teacher',
+						'placeholder'=>'Choose Teacher',
+						'choices'=> $choices,
+						))
+					->getForm();
+	return $this->render('school/specialist_teacher/findteacherform.html.twig', array(
+										'form' => $form->createView()));
+    }
+     
+    /**
+     * @Route("/school/{emisCode}/teachers/edit", name="add_teacher",options={"expose"=true})
+     */
+    public function addTeacherAction(Request $request){//this method will only be called through ajax
+      	
+      	$defaultData = array();
+      	$form2 = $this->createForm(new TeacherType(), $defaultData);
+
         return $this->render('school/specialist_teacher/add_teacher.html.twig', array('form2'=>$form2->createView()));
     }
     /**
