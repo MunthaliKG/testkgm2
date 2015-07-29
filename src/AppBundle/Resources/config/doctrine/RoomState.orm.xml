@@ -4,7 +4,7 @@
     <indexes>
       <index name="fk_facility_state_school1_idx" columns="emiscode"/>
     </indexes>
-    <id name="roomId" type="string" column="room_id" length="2"/>
+    <id name="idRoom" type="string" column="room_id" length="2"/>
     <id name="year" type="date" column="year"/>
     <id name="emiscode" association-key="true"/>
     <field name="enoughLight" type="string" column="enough_light" nullable="false"/>

@@ -9,9 +9,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Form\Type\LearnerPersonalType;
+use AppBundle\Form\Type\RoomStateType;
 use AppBundle\Form\Type\TeacherType;
 use AppBundle\Entity\Guardian;
 use AppBundle\Entity\Lwd;
+use AppBundle\Entity\RoomState;
+use AppBundle\Entity\Snt;
+use AppBundle\Entity\SchoolHasSnt;
 
 class SchoolController extends Controller{
 	/**
@@ -35,6 +39,122 @@ class SchoolController extends Controller{
                                     'disabilities' => $disabilities)
                              );
 	}
+        
+        /**
+	 *@Route("/school/{emisCode}/materials", name="school_materials", requirements={"emisCode":"\d+"}, options={"expose"= true})
+	 */
+        public function materialsAction($emisCode, Request $request){
+
+		return $this->render('school/materials/materials_main.html.twig');
+	}
+        /**
+	 *@Route("/findMaterialForm/{emisCode}", name="find_school_materials")
+	 */
+        public function findMaterialFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
+		$connection = $this->get('database_connection');
+		$materials = $connection->fetchAll('SELECT room_id, year FROM room_state WHERE emiscode = ?', array($emisCode));
+                   //room_id, year, enough_light, enough_space, adaptive_chairs, accessible, enough_ventilation, other_observations
+		//create the associative array to be used for the select list
+		$choices = array();
+		foreach ($materials as $key => $row) {
+			$choices[$row['room_id']] = $row['room_id'].': '.$row['year'];
+		}
+
+		//create the form for choosing an existing student to edit
+		$defaultData = array();
+		$form = $this->createFormBuilder($defaultData, array(
+					'action' => $this->generateUrl('find_school_materials', ['emisCode'=>$emisCode])))
+						->add('material','choice', array(
+							'label' => 'Choose Material',
+							'placeholder'=>'Choose Material',
+							'choices'=> $choices,
+							))
+						->getForm();
+
+		$form->handleRequest($request);
+
+		if($form->isValid()){
+			$formData = $form->getData();
+			$materialId = $formData['material'];
+			return $this->redirectToRoute('edit_school_material',array('emisCode'=>$emisCode,'materialId'=>$materialId));
+		}
+		return $this->render('school/materials/findmaterialform.html.twig', array(
+											'form' => $form->createView()));
+	}
+        
+        /**
+        * @Route("/school/{emisCode}/materials/{materialId}", name="edit_school_material", requirements={"materialId":"new|\S"})
+        */
+        public function editMaterialAction(Request $request, $materialId, $emisCode){
+            $connection = $this->get('database_connection');
+            $defaultData = array();
+            if($materialId != 'new'){/*if we are not adding a new material, fill the form fields with
+      		the data of the selected learner.*/
+      		$materials = $connection->fetchAll('SELECT * FROM room_state
+      			WHERE room_id = ? AND emiscode = ?', array($materialId, $emisCode));
+      		$defaultData = $materials[0];
+      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
+      		$defaultData['year'] = new \DateTime($defaultData['year']);
+      		//$defaultData['gdob'] = new \DateTime($defaultData['gdob']);
+            }
+            
+            $form1 = $this->createForm(new RoomStateType(), $defaultData);
+                 
+            $form1->handleRequest($request);
+            
+            
+            if($form1->isValid()){
+      		//echo 'good';
+                $formData = $form1->getData();
+      		//echo $formData['year'];
+                //exit;
+                $id_room = $formData['idRoom'];
+                $material;
+                
+                
+      		//check if this record is being edited or created anew
+      		if($materialId == 'new'){
+      			$material = new RoomState();
+      			$material->setIdRoom($formData['idRoom']);
+      		}else{//if it is being edited, then update the records that already exist 
+      			$material = $this->getDoctrine()->getRepository('AppBundle:RoomState')->findOneByIdRoom($id_room);
+      			
+      		}
+			//set the fields for material
+      		$material->setAccessible($formData['accessible']);
+      		$material->setAdaptiveChairs($formData['adaptiveChairs']);
+                $material->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
+                $material->setEnoughLight($formData['enoughLight']);
+                $material->setEnoughVentilation($formData['enoughVentilation']);
+                $material->setOtherObservations($formData['otherObservations']);
+                $material->setIdRoom($formData['idRoom']);
+                $material->setYear($formData['year']);
+
+               
+                //reset entity manager
+                //$container->set('doctrine.orm.entity_manager', null);
+                //$container->set('doctrine.orm.default_entity_manager', null);
+      		//write the objects to the database
+      		$em = $this->getDoctrine()->getManager();
+                //echo $material->getEmiscode();
+                //exit;
+      		$em->persist($material);
+      		$em->flush();
+
+      		
+                
+            }
+            //if this is a new learner being added, we want to make the id field uneditable
+            if($materialId != 'new'){
+                $readOnly = true;
+            }else{
+                $readOnly = false;
+            }
+      	
+            return $this->render('school/materials/edit_school_material.html.twig', array(
+                    'form1'=>$form1->createView(),
+                    'readonly' => $readOnly));
+        }
 	/**
 	 *@Route("/school/{emisCode}/learners", name="school_learners", requirements={"emisCode":"\d+"}, options={"expose"= true})
 	 */
@@ -77,7 +197,121 @@ class SchoolController extends Controller{
 		return $this->render('school/learners/findlearnerform.html.twig', array(
 											'form' => $form->createView()));
 	}
-	/**
+
+    /**
+    *@Route("/findTeacherForm/{emisCode}/", name="find_teacher_form", requirements={"teacherId":"new|\d+"})
+     */
+    public function findTeacherFormAction(Request $request, $emisCode){//this controller will return the form used for selecting a specialist teacher
+    	$connection = $this->get('database_connection');
+    	$teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name FROM snt NATURAL JOIN school_has_snt
+    			WHERE emiscode = ?', array($emisCode));
+
+        $choices = array();
+        foreach ($teachers as $key => $row) {
+            $choices[$row['idsnt']] = $row['sfirst_name'].' '.$row['slast_name'];
+        }
+
+    	//create the form for choosing an existing teacher to edit      
+        $defaultData = array();
+        $form = $this->createFormBuilder($defaultData, array(
+                                'action' => $this->generateUrl('find_teacher_form', ['emisCode'=>$emisCode])))
+                                        ->add('teacher','choice', array(
+                                                'label' => 'Choose Teacher',
+                                                'placeholder'=>'Choose Teacher',
+                                                'choices'=> $choices,
+                                                ))
+                                        ->getForm();
+
+        $form->handleRequest($request);
+                
+        if($form->isValid()){
+            $formData = $form->getData();
+            $teacherId = $formData['teacher'];
+            return $this->redirectToRoute('add_teacher',array('emisCode'=>$emisCode,'teacherId'=>$teacherId));
+        }
+              
+	return $this->render('school/specialist_teacher/findteacherform.html.twig', array(
+										'form' => $form->createView()));
+    }
+     /**
+     * @Route("/school/{emisCode}/teachers/{teacherId}/edit", name="add_teacher", requirements ={"teacherId":"new|\d+"})
+     */
+    public function addTeacherAction(Request $request, $teacherId, $emisCode){//this method will only be called through ajax
+      	
+        $connection = $this->get('database_connection');
+      	$defaultData = array();
+        
+        if($teacherId != 'new'){/*if we are not adding a new learner, fill the form fields with
+      		the data of the selected learner.*/
+                $teacher = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt Where idsnt = ?', array($teacherId));
+                $defaultData = $teacher[0];
+                //SELECT idsnt, sfirst_name, slast_name, sinitials, s_sex, qualification, speciality, year_started, year FROM `snt` WHERE 1
+      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
+      		$defaultData['year_started'] = new \DateTime($defaultData['year_started']);
+                $defaultData['year'] = new \DateTime($defaultData['year']);
+      		//$defaultData['gdob'] = new \DateTime($defaultData['gdob']);
+        }
+        //['idsnt'=>$defaultData['idsnt'], 'sfirst_name'=>$defaultData['sfirst_name'], 'slast_name'=>$defaultData['slast_name'], 'sinitials'=>$defaultData['sinitials'], 's_sex'=>$defaultData['s_sex'], 'qualification'=>$defaultData['qualification'], 'speciality'=>$defaultData['speciality'], 'year_started'=>$defaultData['year_started'], 'year'=>$defaultData['year']]
+        //$form2 = $this->createForm(new TeacherType(), $teacher[0]);
+      	//$form2 = $this->createForm(new TeacherType(), $defaultData);
+        //$form2=  $this->createForm(new TeacherType(), $defaultData);
+        $form2=  $this->createForm(new TeacherType(), $defaultData);
+        $form2->handleRequest($request);
+        
+      	if($form2->isValid()){
+            $formData = $form2->getData();
+            $id_snt = $formData['idsnt'];
+            $teacher;
+
+            //check if this record is being edited or created anew
+            if($teacherId == 'new'){
+                    $teacher = new Snt();
+                    $teacher->setIdsnt($formData['idsnt']);
+            }
+            //else{//if it is being edited, then update the records that already exist 
+            //	$guardian = $this->getDoctrine()->getRepository('AppBundle:Guardian')->findOneByIdguardian($id_guardian);
+            //	$learner = $this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($id_lwd);
+            //}
+
+            //set the fields for teacher
+            $teacher->setSFirstName($formData['sfirst_name']);             
+            $teacher->setSLastName($formData['slast_name']);
+            $teacher->setSSex($formData['s_sex']);
+            $teacher->setSinitials($formData['sinitials']);
+            $teacher->setQualification($formData['qualification']);
+            $teacher->setSpeciality($formData['speciality']);
+            $teacher->setYearStarted($formData['year_started']);
+
+            //write the objects to the database
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($teacher);//tell the entity manager to keep track of this entity
+            $em->flush();//write all entities that are being tracked to the database
+
+            //Start from here
+            //if this is a new teacher, add an entry in the school_has_snt table
+            if($teacherId == 'new'){
+                $values = ['emiscode'=>$emisCode, 'idsnt'=>$id_snt, 'year'=> new \DateTime('y')];
+                $types = [\PDO::PARAM_INT, \PDO::PARAM_INT, 'datetime'];
+                $connection->insert('school_has_snt',$values, $types);
+
+                return $this->redirectToRoute('add_teacher',['emisCode'=>$emisCode, 'teacherId'=>$id_snt], 301);
+            }      		
+      	}
+
+      	//if this is not a new teacher being added, we want to make the id field uneditable
+      	if($teacherId != 'new'){
+      		$readOnly = true;
+      	}else{
+      		$readOnly = false;
+      	}
+      	
+        return $this->render('school/specialist_teacher/add_teacher.html.twig', array(
+        	'form2'=>$form2->createView(),
+        	'readonly'=> $readOnly));        
+    }
+    
+    /**
      * @Route("/school/{emisCode}/learners/{learnerId}/1", name="edit_learner_personal", requirements ={"learnerId":"new|\d+"})
      */
     public function editLearnerPersonalAction(Request $request, $learnerId, $emisCode){
@@ -113,7 +347,7 @@ class SchoolController extends Controller{
       			$guardian = $this->getDoctrine()->getRepository('AppBundle:Guardian')->findOneByIdguardian($id_guardian);
       			$learner = $this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($id_lwd);
       		}
-			//set the fields for guardian
+                //set the fields for guardian
       		$guardian->setGfirstName($formData['gfirst_name']);
       		$guardian->setGlastName($formData['glast_name']);
       		$guardian->setGsex($formData['gsex']);
@@ -169,42 +403,8 @@ class SchoolController extends Controller{
      */
     public function editLearnerDisabilityAction(Request $request, $learnerId){
     	return $this->render('school/learners/edit_learner_disability.html.twig');
-    }
-    /**
-    *@Route("/findTeacherForm/{emisCode}", name="find_teacher_form")
-     */
-    public function findTeacherFormAction($emisCode){//this controller will return the form used for selecting a specialist teacher
-    	$connection = $this->get('database_connection');
-    	$teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name FROM snt NATURAL JOIN school_has_snt
-    			WHERE emiscode = ?', array($emisCode));
-
-    $choices = array();
-		foreach ($teachers as $key => $row) {
-			$choices[$row['idsnt']] = $row['sfirst_name'].' '.$row['slast_name'];
-		}
-
-    	//create the form for choosing an existing student to edit
-	$defaultData = array();
-	$form = $this->createFormBuilder($defaultData)
-					->add('teacher','choice', array(
-						'label' => 'Choose Teacher',
-						'placeholder'=>'Choose Teacher',
-						'choices'=> $choices,
-						))
-					->getForm();
-	return $this->render('school/specialist_teacher/findteacherform.html.twig', array(
-										'form' => $form->createView()));
-    }
+    } 
      
-    /**
-     * @Route("/school/{emisCode}/teachers/edit", name="add_teacher",options={"expose"=true})
-     */
-    public function addTeacherAction(Request $request){//this method will only be called through ajax
-      	
-      	$defaultData = array();
-      	$form2 = $this->createForm(new TeacherType(), $defaultData);
-        return $this->render('school/specialist_teacher/add_teacher.html.twig', array('form2'=>$form2->createView()));
-    }
     /**
 	 *@Route("/school/{emisCode}/teachers", name="school_teachers", requirements={"emisCode":"\d+"}, options={"expose"= true})
 	 */

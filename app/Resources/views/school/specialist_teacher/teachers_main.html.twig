@@ -4,6 +4,7 @@
 {% block teachers_menuitem %} active {% endblock %} {# Cause the menu item for this page to be active#}
 
 {% set emisCode = app.request.attributes.get('_route_params')['emisCode'] %} {# get the emisCode from the Route#}
+{#{% set teacherId = app.request.attributes.get('_route_params')['teacherId'] %} {# get the TeacherId from the Route#}
 {% block content %}
 	<div class="row">
 		<div class="col-sm-6">
@@ -11,7 +12,7 @@
 			{{ render(controller('AppBundle:School:findTeacherForm',{"emisCode":emisCode}))}}
 		</div>
 		<div class="col-sm-6">
-			<p class="text-right"><a href="{{ path('add_teacher',{"emisCode":emisCode}) }}" class="btn btn-sm" id="add_teacher"><i class="fa fa-plus fa-lg"></i> &nbsp; Add New Teacher</a></p>
+			<p class="text-right"><a href="{{ path('add_teacher',{"emisCode":emisCode, "teacherId": "new"}) }}" class="btn btn-sm" id="add_teacher"><i class="fa fa-plus fa-lg"></i> &nbsp; Add New Teacher</a></p>
 		</div>
 	</div>
 	<hr>

@@ -1,0 +1,23 @@
+{# if the request for this page was not made through ajax, inherit the template that displays the whole schools page #}
+{% extends 'school/school2.html.twig' %}
+
+{% block facilities_menuitem %} active {% endblock %} {# Cause the menu item for this page to be active#}
+
+{% set emisCode = app.request.attributes.get('_route_params')['emisCode'] %} {# get the emisCode from the Route#}
+{% block content %}
+	<div class="row">
+		<div class="col-sm-6">
+			{# embed the controller that returns the form for selecting existing materials #}
+			{{ render(controller('AppBundle:School:findMaterialForm',{"emisCode":emisCode}))}}
+		</div>
+		<div class="col-sm-6">
+			<p class="text-right"><a href="{{ path('edit_school_material',{"emisCode":emisCode, "materialId": "new"}) }}" class="btn btn-sm" id="add_teacher"><i class="fa fa-plus fa-lg"></i> &nbsp; Add New Material</a></p>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-sm-8 col-sm-offset-2">
+			{% block form_container %}{% endblock %}
+		</div>
+	</div>
+{% endblock %}

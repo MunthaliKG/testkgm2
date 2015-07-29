@@ -95,7 +95,7 @@ class LearnerPersonalType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			)
 		)
-		->add('income_level', 'choice', array(
+                ->add('income_level', 'choice', array(
 			'label' => 'Income level',
 			'choices' => array('low'=>'low','medium'=>'medium','high'=>'high'),
 			'constraints' => array(new NotBlank()),

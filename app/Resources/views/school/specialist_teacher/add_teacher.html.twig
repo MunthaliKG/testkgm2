@@ -1,37 +1,44 @@
 {% form_theme form2 'bootstrap_3_horizontal_layout.html.twig' %}
 {% extends 'school/specialist_teacher/teachers_main.html.twig' %}
+{% set teacher = app.request.attributes.get('_route_params')['teacherId'] %} {# get the material id from the Route #}
 
 {% block form_container %}
 	{# put the different forms for adding teacher information in a carousel #}
-        <div id="formCarousel" class="carousel slide" data-ride="carousel">
-		<!-- Indicators -->
-		<ol class="carousel-indicators">
-			<li data-target="#formCarousel" data-slide-to="0" class="active"></li>
-			<li data-target="#formCarousel" data-slide-to="1"></li>
-			<li data-target="#formCarousel" data-slide-to="2"></li>
-			<li data-target="#formCarousel" data-slide-to="3"></li>
-		</ol>
-
-		<!-- Wrapper for slides -->
-		<div class="carousel-inner" role="listbox">
-			<div class="item active">
-				{{ form_start(form2) }}
-					{{ form_errors(form2) }}
-					
-						{{ form_row(form2.idsnt) }}			
-						{{ form_row(form2.sfirst_name) }}
-						{{ form_row(form2.slast_name) }}
-						{{ form_row(form2.sinitials) }}
-						{{ form_row(form2.s_sex) }}
-						{{ form_row(form2.qualification) }}
-                                                {{ form_row(form2.speciality) }}
-                                                {{ form_row(form2.year_started) }}
-                                          
-						<p class="text-right">
-							{{ form_widget(form2.next, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
-						</p>
-				{{ form_end(form2) }}
-			</div>
-
-		</div>
+        {{ form_start(form2) }}
+	{{ form_errors(form2) }}
+        <div class='row'>
+            <div class="col-sm-6">
+                <fieldset class="fieldset">
+                    <legend><small>SNT Personal Details</small></legend>
+                    {{ form_row(form2.idsnt) }}			
+                    {{ form_row(form2.sfirst_name) }}
+                    {{ form_row(form2.slast_name) }}
+                    {{ form_row(form2.sinitials) }}
+                    {{ form_row(form2.s_sex) }}
+                    {{ form_row(form2.qualification) }}
+                    {{ form_row(form2.speciality) }}
+                    {{ form_row(form2.year_started) }}
+                </fieldset>
+            </div>
+            <div class="col-sm-6">
+                <fieldset>
+                    <legend><small>School Details about SNT</small></legend>
+                    {{ form_row(form2.year) }}
+                </fieldset>
+            </div>
+        </div>
+        <div class='row'>
+            <p class="text-right">
+                {{ form_widget(form2.next, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
+            </p>
+                {{ form_end(form2) }}
+        </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/datepicker/css/datepicker.css') }}">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/datepicker/js/bootstrap-datepicker.js')}}"></script>
 {% endblock %}

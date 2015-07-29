@@ -40,17 +40,17 @@ class Snt
      */
     private $sSex;
 
-    /**
-     * @var simplearray
+     /**
+     * @var string
      *
-     * @ORM\Column(name="qualification", type="simplearray", nullable=false)
+     * @ORM\Column(name="qualification", type="string", nullable=true)
      */
     private $qualification;
 
     /**
-     * @var simplearray
+     * @var string
      *
-     * @ORM\Column(name="speciality", type="simplearray", nullable=false)
+     * @ORM\Column(name="speciality", type="string", nullable=true)
      */
     private $speciality;
 
@@ -70,7 +70,18 @@ class Snt
      */
     private $idsnt;
 
+ /**
+     * Set idsnt
+     *
+     * @param integer $idsnt
+     * @return SNT
+     */
+    public function setIdsnt($idsnt)
+    {
+        $this->idsnt = $idsnt;
 
+        return $this;
+    }
 
     /**
      * Set sfirstName
@@ -163,14 +174,13 @@ class Snt
     {
         return $this->sSex;
     }
-
     /**
      * Set qualification
      *
-     * @param \simplearray $qualification
+     * @param string $qualification
      * @return Snt
      */
-    public function setQualification(\simplearray $qualification)
+    public function setQualification($qualification)
     {
         $this->qualification = $qualification;
 
@@ -180,7 +190,7 @@ class Snt
     /**
      * Get qualification
      *
-     * @return \simplearray 
+     * @return string 
      */
     public function getQualification()
     {
@@ -190,10 +200,10 @@ class Snt
     /**
      * Set speciality
      *
-     * @param \simplearray $speciality
+     * @param string $speciality
      * @return Snt
      */
-    public function setSpeciality(\simplearray $speciality)
+    public function setSpeciality($speciality)
     {
         $this->speciality = $speciality;
 
@@ -203,7 +213,7 @@ class Snt
     /**
      * Get speciality
      *
-     * @return \simplearray 
+     * @return string 
      */
     public function getSpeciality()
     {

@@ -33,7 +33,7 @@ class TeacherType extends AbstractType
 		)
 		->add('s_sex', 'choice', array(
 			'label' => 'Sex',
-			'choices' => array('M','F'),
+			'choices' => array('M'=>'M','F'=>'F'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => true,
 			'multiple' => false,
@@ -41,18 +41,27 @@ class TeacherType extends AbstractType
 		)
 		->add('qualification', 'choice', array(
 			'label' => 'Qualification',
-			'choices' => array('certificate', 'diploma', 'degree'),
+			'choices' => array('certificate'=>'certificate', 'diploma'=>'diploma', 'degree'=>'degree'),
 			'expanded' => true,
 			'multiple' => false,)
 		)
 		->add('speciality', 'choice', array(
 			'label' => 'Speciality',
-			'choices' => array('HI', 'VI', 'LD'),
+			'choices' => array('HI'=>'HI', 'VI'=>'VI', 'LD'=>'LD'),
 			'expanded' => true,
 			'multiple' => true,)
 		)
 		->add('year_started', 'date', array(
 			'label' => 'Year Started',
+			'widget' => 'single_text',
+			'format' => 'dd-MM-yyyy',
+			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
+			'constraints' => array(new NotBlank()),
+			)
+		)
+                //This is for school_has_snt table
+                ->add('year', 'date', array(
+			'label' => 'Current working year at School',
 			'widget' => 'single_text',
 			'format' => 'dd-MM-yyyy',
 			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
