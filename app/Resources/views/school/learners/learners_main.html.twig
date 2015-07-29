@@ -7,14 +7,14 @@
 
 {% block content %}
 	<div class="row">
-		<div class="col-sm-3">
+		<div class="col-sm-2">
 			{# embed the controller that returns the form for selecting existing students #}
 			{{ render(controller('AppBundle:School:findLearnerForm',{"emisCode":emisCode})) }}
 		</div>
-		<div class="col-sm-6">
+		<div class="col-sm-8">
 			{% block learner_form_nav %}{% endblock %}			
 		</div>
-		<div class="col-sm-3">
+		<div class="col-sm-2">
 			<p class="text-right"><a href="{{ path('edit_learner_personal',{"emisCode":emisCode, "learnerId": "new"}) }}" class="btn btn-sm" id="add_learner"><i class="fa fa-plus fa-lg"></i> &nbsp; Add New Learner</a></p>
 		</div>
 	</div>

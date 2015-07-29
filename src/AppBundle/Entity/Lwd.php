@@ -73,6 +73,7 @@ class Lwd
      *
      * @ORM\Column(name="idlwd", type="integer")
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $idlwd;
 
@@ -91,7 +92,7 @@ class Lwd
     /**
      * Set idlwd
      *
-     * @param integer $idlwd
+     * @param integer $idlwddistanceToSchool
      * @return Lwd
      */
     public function setIdlwd($idlwd)

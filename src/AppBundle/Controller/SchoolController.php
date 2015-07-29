@@ -137,6 +137,9 @@ class SchoolController extends Controller{
       		$em = $this->getDoctrine()->getManager();
       		$em->persist($guardian);
       		$em->persist($learner);
+
+      		$metadata = $em->getClassMetaData(get_class($learner));
+			$metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
       		$em->flush();
 
       		//if this is a new learner, add an entry in the lwd_belongs_to_school table
