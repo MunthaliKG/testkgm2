@@ -8,8 +8,8 @@
     <field name="slastName" type="string" column="slast_name" length="25" nullable="false"/>
     <field name="sinitials" type="string" column="sinitials" length="25" nullable="false"/>
     <field name="sSex" type="string" column="s_sex" nullable="false"/>
-    <field name="qualification" type="simplearray" column="qualification" nullable="false"/>
-    <field name="speciality" type="simplearray" column="speciality" nullable="false"/>
+    <field name="qualification" type="string" column="qualification" nullable="false"/>
+    <field name="speciality" type="string" column="speciality" nullable="false"/>
     <field name="yearStarted" type="date" column="year_started" nullable="false"/>
   </entity>
 </doctrine-mapping>

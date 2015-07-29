@@ -1,0 +1,39 @@
+{% form_theme form1 'bootstrap_3_horizontal_layout.html.twig' %}
+{% extends 'school/materials/materials_main.html.twig' %}
+
+{% set material = app.request.attributes.get('_route_params')['materialId'] %} {# get the material id from the Route #}
+
+{% block form_container %}
+	{# put the different forms for adding teacher information in a carousel #}
+        <div id="formCarousel" class="carousel slide" data-ride="carousel">
+		<!-- Indicators -->
+		<ol class="carousel-indicators">
+			<li data-target="#formCarousel" data-slide-to="0" class="active"></li>
+			<li data-target="#formCarousel" data-slide-to="1"></li>
+			<li data-target="#formCarousel" data-slide-to="2"></li>
+			<li data-target="#formCarousel" data-slide-to="3"></li>
+		</ol>
+
+		<!-- Wrapper for slides -->
+		<div class="carousel-inner" role="listbox">
+			<div class="item active">
+				{{ form_start(form1) }}
+				{{ form_errors(form1) }}
+					
+				{{ form_row(form1.idRoom) }}			
+				{{ form_row(form1.emiscode) }}
+				{{ form_row(form1.year) }}
+				{{ form_row(form1.enoughLight) }}
+				{{ form_row(form1.enoughSpace) }}
+				{{ form_row(form1.adaptiveChairs) }}
+                                {{ form_row(form1.accessible) }}
+                                {{ form_row(form1.enoughVentilation) }}
+                                {{ form_row(form1.otherObservations) }}          
+				<p class="text-right">
+                                    {{ form_widget(form1.save, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
+				</p>
+				{{ form_end(form1) }}
+			</div>
+
+		</div>
+{% endblock %}

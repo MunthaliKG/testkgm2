@@ -86,7 +86,7 @@ class FindSchoolForm{
 
                 $this->schoolId = $school->getEmiscode();
 
-                $this->schoolId = $school->getId();
+                //$this->schoolId = $school->getId();
 
             }else{
                 $this->error = "That school does not exist";

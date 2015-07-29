@@ -61,16 +61,15 @@ class RoomState
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $roomId;
+    private $idRoom;
 
     /**
-     * @var \DateTime
+     * Set year
      *
-     * @ORM\Column(name="year", type="date")
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @param \DateTime $year
+     * @return RoomState
      */
-    private $year;
+     private $year;
 
     /**
      * @var \AppBundle\Entity\School
@@ -225,26 +224,26 @@ class RoomState
     }
 
     /**
-     * Set roomId
+     * Set idRoom
      *
-     * @param string $roomId
+     * @param string $idRoom
      * @return RoomState
      */
-    public function setRoomId($roomId)
+    public function setIdRoom($idRoom)
     {
-        $this->roomId = $roomId;
+        $this->idRoom = $idRoom;
 
         return $this;
     }
 
     /**
-     * Get roomId
+     * Get idRoom
      *
      * @return string 
      */
-    public function getRoomId()
+    public function getIdRoom()
     {
-        return $this->roomId;
+        return $this->idRoom;
     }
 
     /**
@@ -276,7 +275,7 @@ class RoomState
      * @param \AppBundle\Entity\School $emiscode
      * @return RoomState
      */
-    public function setEmiscode(\AppBundle\Entity\School $emiscode)
+    public function setEmiscode($emiscode)
     {
         $this->emiscode = $emiscode;
 

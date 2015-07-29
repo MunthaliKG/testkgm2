@@ -32,6 +32,11 @@ $(document).ready(function(){
 			$('#findTeacherForm').submit();
 		}
 	});
+        $('#form_material').change(function(event){
+		if($(this).val() !== ""){
+			$('#findMaterialForm').submit();
+		}
+	});
 
 	$('.datepicker').datepicker();
 
