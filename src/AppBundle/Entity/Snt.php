@@ -50,14 +50,14 @@ class Snt
     /**
      * @var string
      *
-     * @ORM\Column(name="speciality", type="string", nullable=true)
+     * @ORM\Column(name="speciality", type="simple_array", nullable=true)
      */
     private $speciality;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="year_started", type="date", nullable=false)
+     * @ORM\Column(name="year_started", type="year", nullable=false)
      */
     private $yearStarted;
 
@@ -70,7 +70,7 @@ class Snt
      */
     private $idsnt;
 
- /**
+    /**
      * Set idsnt
      *
      * @param integer $idsnt

@@ -243,13 +243,15 @@ class SchoolController extends Controller{
         
         if($teacherId != 'new'){/*if we are not adding a new learner, fill the form fields with
       		the data of the selected learner.*/
-                $teacher = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt Where idsnt = ?', array($teacherId));
-                $defaultData = $teacher[0];
+            $teacher = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt Where idsnt = ?', array($teacherId));
+            $defaultData = $teacher[0];
                 //SELECT idsnt, sfirst_name, slast_name, sinitials, s_sex, qualification, speciality, year_started, year FROM `snt` WHERE 1
       		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		$defaultData['year_started'] = new \DateTime($defaultData['year_started']);
-                $defaultData['year'] = new \DateTime($defaultData['year']);
-      		//$defaultData['gdob'] = new \DateTime($defaultData['gdob']);
+      		$defaultData['year_started'] = new \DateTime($defaultData['year_started'].'-1-1');/*append -1-1 at the end to make sure the string is correclty converted to 
+      		a DateTime object*/
+            $defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
+      		$defaultData['speciality'] = explode(',',$defaultData['speciality']);/*convert the SET value of MySQL to corresponding array in Php
+      		to enable correct rendering of choices in the form*/
         }
         //['idsnt'=>$defaultData['idsnt'], 'sfirst_name'=>$defaultData['sfirst_name'], 'slast_name'=>$defaultData['slast_name'], 'sinitials'=>$defaultData['sinitials'], 's_sex'=>$defaultData['s_sex'], 'qualification'=>$defaultData['qualification'], 'speciality'=>$defaultData['speciality'], 'year_started'=>$defaultData['year_started'], 'year'=>$defaultData['year']]
         //$form2 = $this->createForm(new TeacherType(), $teacher[0]);
@@ -260,18 +262,16 @@ class SchoolController extends Controller{
         
       	if($form2->isValid()){
             $formData = $form2->getData();
-            $id_snt = $formData['idsnt'];
             $teacher;
 
             //check if this record is being edited or created anew
             if($teacherId == 'new'){
-                    $teacher = new Snt();
-                    $teacher->setIdsnt($formData['idsnt']);
+                $teacher = new Snt();
             }
-            //else{//if it is being edited, then update the records that already exist 
-            //	$guardian = $this->getDoctrine()->getRepository('AppBundle:Guardian')->findOneByIdguardian($id_guardian);
-            //	$learner = $this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($id_lwd);
-            //}
+            else
+            {//if it is being edited, then update the records that already exist 
+            	$teacher = $this->getDoctrine()->getRepository('AppBundle:Snt')->findOneByIdsnt($teacherId);
+            }
 
             //set the fields for teacher
             $teacher->setSFirstName($formData['sfirst_name']);             
@@ -279,8 +279,12 @@ class SchoolController extends Controller{
             $teacher->setSSex($formData['s_sex']);
             $teacher->setSinitials($formData['sinitials']);
             $teacher->setQualification($formData['qualification']);
+            // foreach($formData['speciality'] as $key=>$value){
+            // 	echo $key.': '.$value.'<br>';
+            // };
+            // exit;
             $teacher->setSpeciality($formData['speciality']);
-            $teacher->setYearStarted($formData['year_started']);
+            $teacher->setYearStarted($formData['year_started']->format('Y-m-d'));
 
             //write the objects to the database
             $em = $this->getDoctrine()->getManager();
@@ -291,6 +295,7 @@ class SchoolController extends Controller{
             //Start from here
             //if this is a new teacher, add an entry in the school_has_snt table
             if($teacherId == 'new'){
+            	$id_snt = $teacher->getIdsnt();
                 $values = ['emiscode'=>$emisCode, 'idsnt'=>$id_snt, 'year'=> new \DateTime('y')];
                 $types = [\PDO::PARAM_INT, \PDO::PARAM_INT, 'datetime'];
                 $connection->insert('school_has_snt',$values, $types);
