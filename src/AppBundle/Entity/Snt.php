@@ -32,6 +32,12 @@ class Snt
      * @ORM\Column(name="sinitials", type="string", length=25, nullable=false)
      */
     private $sinitials;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="s_dob", type="date", nullable=false)
+     */
+    private $s_dob;
 
     /**
      * @var string
@@ -62,18 +68,18 @@ class Snt
     private $yearStarted;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="idsnt", type="integer")
+     * @ORM\Column(name="idsnt", type="string")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue(strategy="NONE")
      */
     private $idsnt;
 
     /**
-     * Set idsnt
+     * Set string
      *
-     * @param integer $idsnt
+     * @param string $idsnt
      * @return SNT
      */
     public function setIdsnt($idsnt)
@@ -164,7 +170,28 @@ class Snt
 
         return $this;
     }
+    /**
+     * Set s_dob
+     *
+     * @param \DateTime $s_dob
+     * @return Snt
+     */
+    public function setSdob($s_dob)
+    {
+        $this->s_dob = $s_dob;
 
+        return $this;
+    }
+
+    /**
+     * Get s_dob
+     *
+     * @return \DateTime 
+     */
+    public function getSdob()
+    {
+        return $this->s_dob;
+    }
     /**
      * Get sSex
      *

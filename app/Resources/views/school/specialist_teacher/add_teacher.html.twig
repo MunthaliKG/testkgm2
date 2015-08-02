@@ -10,9 +10,11 @@
             <div class="col-sm-6">
                 <fieldset class="fieldset">
                     <legend><small>SNT Personal Details</small></legend>		
+                    {{ form_row(form2.idsnt, {'attr':{'readonly': readonly}}) }}
                     {{ form_row(form2.sfirst_name) }}
                     {{ form_row(form2.slast_name) }}
                     {{ form_row(form2.sinitials) }}
+                    {{ form_row(form2.s_dob) }}
                     {{ form_row(form2.s_sex) }}
                     {{ form_row(form2.qualification) }}
                     {{ form_row(form2.speciality) }}

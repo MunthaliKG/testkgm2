@@ -15,61 +15,63 @@ class RoomStateType extends AbstractType
 		//add the form fields
 		
 		$builder
-		->add('idRoom','text', array(
+		->add('room_id','text', array(
 			'label' => 'Material Id',
 			'constraints' => array(new NotBlank()),
 			)
 		)
-		->add('emiscode','hidden', array(
+		/*->add('emiscode','hidden', array(
 			'label' => 'EMIS Code',
 			)
-		)
-		->add('year', 'date', array(
-			'label' => 'Year',
+                )
+                 * 
+                 */
+		->add('year_started', 'datetime', array(
+			'label' => 'Year Started',
 			'widget' => 'single_text',
-			'format' => 'dd-MM-yyyy',
+			'format' => 'yyyy',
 			'constraints' => array(new NotBlank()),
-			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-MM-yyyy'),
+			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy'),
 			)
 		)
-                ->add('enoughLight', 'choice', array(
+                ->add('enough_light', 'choice', array(
 			'label' => 'Enough Lighting',
-			'choices' => array('Y'=>'Yes','N'=>'No'),
+			'choices' => array('Yes'=>'Yes','No'=>'No'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => true,
 			'multiple' => false,
 			)
                 )
-		->add('enoughSpace', 'choice', array(
+		->add('enough_space', 'choice', array(
 			'label' => 'Enough Space',
-			'choices' => array('Y'=>'Yes','N'=>'No'),
+			'choices' => array('Yes'=>'Yes','No'=>'No'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => true,
 			'multiple' => false,
 			)
                 )
-                ->add('adaptiveChairs', 'integer', array(
+                ->add('adaptive_chairs', 'integer', array(
 			'label' => 'Adaptive Chairs',
 			'constraints' => array(new NotBlank()),		
 			)
                 )
-                ->add('accessible', 'choice', array(
-			'label' => 'Accesible',
-			'choices' => array('Y'=>'Yes','N'=>'No'),
+                ->add('access', 'choice', array(
+			'label' => 'Accessible',
+			'choices' => array('Yes'=>'Yes','No'=>'No'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => true,
 			'multiple' => false,
 			)
                 )
-                ->add('enoughVentilation', 'choice', array(
+                ->add('enough_ventilation', 'choice', array(
 			'label' => 'Enough Ventilation',
-			'choices' => array('Y'=>'Yes','N'=>'No'),
+			'choices' => array('Yes'=>'Yes','No'=>'No'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => true,
 			'multiple' => false,
 			)
                 )
-                ->add('otherObservations', 'text', array(
+                ->add('other_observations', 'text', array(
 			'label' => 'Other Observations',
                     )
                 )

@@ -52,12 +52,12 @@ class SchoolController extends Controller{
 	 */
         public function findMaterialFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
 		$connection = $this->get('database_connection');
-		$materials = $connection->fetchAll('SELECT room_id, year FROM room_state WHERE emiscode = ?', array($emisCode));
+		$materials = $connection->fetchAll('SELECT room_id, year_started FROM room_state WHERE emiscode = ?', array($emisCode));
                    //room_id, year, enough_light, enough_space, adaptive_chairs, accessible, enough_ventilation, other_observations
 		//create the associative array to be used for the select list
 		$choices = array();
 		foreach ($materials as $key => $row) {
-			$choices[$row['room_id']] = $row['room_id'].': '.$row['year'];
+			$choices[$row['room_id']] = $row['room_id'].': '.$row['year_started'];
 		}
 
 		//create the form for choosing an existing student to edit
@@ -83,7 +83,7 @@ class SchoolController extends Controller{
 	}
         
         /**
-        * @Route("/school/{emisCode}/materials/{materialId}", name="edit_school_material", requirements={"materialId":"new|\S"})
+        * @Route("/school/{emisCode}/materials/{materialId}", name="edit_school_material", requirements={"materialId":"new|\S+"})
         */
         public function editMaterialAction(Request $request, $materialId, $emisCode){
             $connection = $this->get('database_connection');
@@ -94,42 +94,43 @@ class SchoolController extends Controller{
       			WHERE room_id = ? AND emiscode = ?', array($materialId, $emisCode));
       		$defaultData = $materials[0];
       		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		$defaultData['year'] = new \DateTime($defaultData['year']);
-      		//$defaultData['gdob'] = new \DateTime($defaultData['gdob']);
+      		//$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
+      		$defaultData['year_started'] = new \DateTime($defaultData['year_started'].'-1-1');
             }
             
+            
             $form1 = $this->createForm(new RoomStateType(), $defaultData);
-                 
+            
             $form1->handleRequest($request);
-            
-            
+                        
             if($form1->isValid()){
       		//echo 'good';
                 $formData = $form1->getData();
       		//echo $formData['year'];
                 //exit;
-                $id_room = $formData['idRoom'];
+                $id_room = $formData['room_id'];
                 $material;
-                
                 
       		//check if this record is being edited or created anew
       		if($materialId == 'new'){
       			$material = new RoomState();
-      			$material->setIdRoom($formData['idRoom']);
+      			//$material->setIdRoom($formData['idRoom']);
       		}else{//if it is being edited, then update the records that already exist 
       			$material = $this->getDoctrine()->getRepository('AppBundle:RoomState')->findOneByIdRoom($id_room);
       			
       		}
 			//set the fields for material
-      		$material->setAccessible($formData['accessible']);
-      		$material->setAdaptiveChairs($formData['adaptiveChairs']);
+                $material->setIdRoom($formData['room_id']);
                 $material->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
-                $material->setEnoughLight($formData['enoughLight']);
-                $material->setEnoughVentilation($formData['enoughVentilation']);
-                $material->setOtherObservations($formData['otherObservations']);
-                $material->setIdRoom($formData['idRoom']);
-                $material->setYear($formData['year']);
-
+                $material->setYearStarted($formData['year_started']->format('Y-m-d'));
+                $material->setEnoughLight($formData['enough_light']);
+      		$material->setEnoughSpace($formData['enough_space']);  
+      		$material->setAdaptiveChairs($formData['adaptive_chairs']);
+                $material->setAccess($formData['access']);
+                $material->setEnoughVentilation($formData['enough_ventilation']);
+                $material->setOtherObservations($formData['other_observations']);
+                
+                
                
                 //reset entity manager
                 //$container->set('doctrine.orm.entity_manager', null);
@@ -140,9 +141,11 @@ class SchoolController extends Controller{
                 //exit;
       		$em->persist($material);
       		$em->flush();
-
-      		
                 
+                //reproduce new entered details for validation
+                if($materialId == 'new'){
+                    return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>$id_room], 301);
+                }
             }
             //if this is a new learner being added, we want to make the id field uneditable
             if($materialId != 'new'){
@@ -199,7 +202,7 @@ class SchoolController extends Controller{
 	}
 
     /**
-    *@Route("/findTeacherForm/{emisCode}/", name="find_teacher_form", requirements={"teacherId":"new|\d+"})
+    *@Route("/findTeacherForm/{emisCode}/", name="find_teacher_form", requirements={"teacherId":"new|\S+"})
      */
     public function findTeacherFormAction(Request $request, $emisCode){//this controller will return the form used for selecting a specialist teacher
     	$connection = $this->get('database_connection');
@@ -234,7 +237,7 @@ class SchoolController extends Controller{
 										'form' => $form->createView()));
     }
      /**
-     * @Route("/school/{emisCode}/teachers/{teacherId}/edit", name="add_teacher", requirements ={"teacherId":"new|\d+"})
+     * @Route("/school/{emisCode}/teachers/{teacherId}/edit", name="add_teacher", requirements ={"teacherId":"new|\S+"})
      */
     public function addTeacherAction(Request $request, $teacherId, $emisCode){//this method will only be called through ajax
       	
@@ -246,18 +249,19 @@ class SchoolController extends Controller{
             $teacher = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt Where idsnt = ?', array($teacherId));
             $defaultData = $teacher[0];
                 //SELECT idsnt, sfirst_name, slast_name, sinitials, s_sex, qualification, speciality, year_started, year FROM `snt` WHERE 1
-      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		$defaultData['year_started'] = new \DateTime($defaultData['year_started'].'-1-1');/*append -1-1 at the end to make sure the string is correclty converted to 
+            //convert the dates into their corresponding objects so that they will be rendered correctly by the form
+            
+            $defaultData['s_dob'] = new \DateTime($defaultData['s_dob']);
+            
+            $defaultData['year_started'] = new \DateTime($defaultData['year_started'].'-1-1');/*append -1-1 at the end to make sure the string is correclty converted to 
       		a DateTime object*/
             $defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
-      		$defaultData['speciality'] = explode(',',$defaultData['speciality']);/*convert the SET value of MySQL to corresponding array in Php
+            $defaultData['speciality'] = explode(',',$defaultData['speciality']);/*convert the SET the multiple value of MySQL to corresponding array in Php
       		to enable correct rendering of choices in the form*/
         }
-        //['idsnt'=>$defaultData['idsnt'], 'sfirst_name'=>$defaultData['sfirst_name'], 'slast_name'=>$defaultData['slast_name'], 'sinitials'=>$defaultData['sinitials'], 's_sex'=>$defaultData['s_sex'], 'qualification'=>$defaultData['qualification'], 'speciality'=>$defaultData['speciality'], 'year_started'=>$defaultData['year_started'], 'year'=>$defaultData['year']]
-        //$form2 = $this->createForm(new TeacherType(), $teacher[0]);
-      	//$form2 = $this->createForm(new TeacherType(), $defaultData);
-        //$form2=  $this->createForm(new TeacherType(), $defaultData);
+        
         $form2=  $this->createForm(new TeacherType(), $defaultData);
+       
         $form2->handleRequest($request);
         
       	if($form2->isValid()){
@@ -274,15 +278,13 @@ class SchoolController extends Controller{
             }
 
             //set the fields for teacher
+            $teacher->setIdsnt($formData['idsnt']);
             $teacher->setSFirstName($formData['sfirst_name']);             
             $teacher->setSLastName($formData['slast_name']);
+            $teacher->setSdob($formData['s_dob']);
             $teacher->setSSex($formData['s_sex']);
             $teacher->setSinitials($formData['sinitials']);
             $teacher->setQualification($formData['qualification']);
-            // foreach($formData['speciality'] as $key=>$value){
-            // 	echo $key.': '.$value.'<br>';
-            // };
-            // exit;
             $teacher->setSpeciality($formData['speciality']);
             $teacher->setYearStarted($formData['year_started']->format('Y-m-d'));
 
@@ -324,13 +326,13 @@ class SchoolController extends Controller{
       	$connection = $this->get('database_connection');
       	$defaultData = array();
       	if($learnerId != 'new'){/*if we are not adding a new learner, fill the form fields with
-      		the data of the selected learner.*/
-      		$learner = $connection->fetchAll('SELECT * FROM lwd, guardian
-      			WHERE lwd.idguardian = guardian.idguardian AND idlwd = ?', array($learnerId));
-      		$defaultData = $learner[0];
-      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		$defaultData['dob'] = new \DateTime($defaultData['dob']);
-      		$defaultData['gdob'] = new \DateTime($defaultData['gdob']);
+            the data of the selected learner.*/
+            $learner = $connection->fetchAll('SELECT * FROM lwd, guardian
+                    WHERE lwd.idguardian = guardian.idguardian AND idlwd = ?', array($learnerId));
+            $defaultData = $learner[0];
+            //convert the dates into their corresponding objects so that they will be rendered correctly by the form
+            $defaultData['dob'] = new \DateTime($defaultData['dob']);
+            $defaultData['gdob'] = new \DateTime($defaultData['gdob']);
       	}
       	$form1 = $this->createForm(new LearnerPersonalType(), $defaultData);
 

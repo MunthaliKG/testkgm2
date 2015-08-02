@@ -55,7 +55,8 @@ class LearnerPersonalType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
 			)
-		)//The following are fields for guardian
+		)
+                //The following are fields for guardian
 		->add('idguardian','hidden', array(
 			)
 		)

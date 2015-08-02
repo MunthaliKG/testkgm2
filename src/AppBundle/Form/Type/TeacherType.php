@@ -12,7 +12,12 @@ class TeacherType extends AbstractType
 	
 	public function buildForm(FormBuilderInterface $builder, array $options){
 		$builder
-		->add('sfirst_name','text', array(
+		->add('idsnt','text', array(
+			'label' => 'Teacher Id',
+			'constraints' => array(new NotBlank()),
+			)
+		)
+                ->add('sfirst_name','text', array(
 			'label' => 'First name',
 			'constraints' => array(new NotBlank()),
 			)
@@ -25,6 +30,14 @@ class TeacherType extends AbstractType
 		->add('sinitials', 'text', array(
 			'label' => 'Initials',
 			'required' => false,
+			)
+		)
+                ->add('s_dob', 'date', array(
+			'label' => 'Date of birth',
+			'widget' => 'single_text',
+			'format' => 'dd-MM-yyyy',
+			'constraints' => array(new NotBlank()),
+			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
 			)
 		)
 		->add('s_sex', 'choice', array(

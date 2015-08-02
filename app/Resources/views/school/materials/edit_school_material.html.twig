@@ -6,29 +6,21 @@
 {% block form_container %}
 	{# put the different forms for adding teacher information in a carousel #}
         <div id="formCarousel" class="carousel slide" data-ride="carousel">
-		<!-- Indicators -->
-		<ol class="carousel-indicators">
-			<li data-target="#formCarousel" data-slide-to="0" class="active"></li>
-			<li data-target="#formCarousel" data-slide-to="1"></li>
-			<li data-target="#formCarousel" data-slide-to="2"></li>
-			<li data-target="#formCarousel" data-slide-to="3"></li>
-		</ol>
-
 		<!-- Wrapper for slides -->
 		<div class="carousel-inner" role="listbox">
 			<div class="item active">
 				{{ form_start(form1) }}
 				{{ form_errors(form1) }}
 					
-				{{ form_row(form1.idRoom) }}			
-				{{ form_row(form1.emiscode) }}
-				{{ form_row(form1.year) }}
-				{{ form_row(form1.enoughLight) }}
-				{{ form_row(form1.enoughSpace) }}
-				{{ form_row(form1.adaptiveChairs) }}
-                                {{ form_row(form1.accessible) }}
-                                {{ form_row(form1.enoughVentilation) }}
-                                {{ form_row(form1.otherObservations) }}          
+				{{ form_row(form1.room_id, {'attr':{'readonly': readonly}}) }}			
+				{#{{ form_row(form1.emiscode) }}#}                               
+				{{ form_row(form1.year_started) }}
+				{{ form_row(form1.enough_light) }}
+				{{ form_row(form1.enough_space) }}
+				{{ form_row(form1.adaptive_chairs) }}
+                                {{ form_row(form1.access) }}
+                                {{ form_row(form1.enough_ventilation) }}
+                                {{ form_row(form1.other_observations) }}          
 				<p class="text-right">
                                     {{ form_widget(form1.save, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
 				</p>

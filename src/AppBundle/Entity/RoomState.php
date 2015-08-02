@@ -36,9 +36,9 @@ class RoomState
     /**
      * @var string
      *
-     * @ORM\Column(name="accessible", type="string", nullable=false)
+     * @ORM\Column(name="access", type="string", nullable=false)
      */
-    private $accessible;
+    private $access;
 
     /**
      * @var string
@@ -63,13 +63,12 @@ class RoomState
      */
     private $idRoom;
 
-    /**
-     * Set year
+     /**
+     * @var \DateTime
      *
-     * @param \DateTime $year
-     * @return RoomState
+     * @ORM\Column(name="year_started", type="year", nullable=false)
      */
-     private $year;
+    private $year_started;
 
     /**
      * @var \AppBundle\Entity\School
@@ -155,26 +154,26 @@ class RoomState
     }
 
     /**
-     * Set accessible
+     * Set access
      *
-     * @param string $accessible
+     * @param string $access
      * @return RoomState
      */
-    public function setAccessible($accessible)
+    public function setAccess($access)
     {
-        $this->accessible = $accessible;
+        $this->access = $access;
 
         return $this;
     }
 
     /**
-     * Get accessible
+     * Get access
      *
      * @return string 
      */
-    public function getAccessible()
+    public function getAccess()
     {
-        return $this->accessible;
+        return $this->access;
     }
 
     /**
@@ -245,28 +244,28 @@ class RoomState
     {
         return $this->idRoom;
     }
-
+    
     /**
-     * Set year
+     * Set year_started
      *
-     * @param \DateTime $year
+     * @param \DateTime $year_started
      * @return RoomState
      */
-    public function setYear($year)
+    public function setYearStarted($year_started)
     {
-        $this->year = $year;
+        $this->year_started = $year_started;
 
         return $this;
     }
 
     /**
-     * Get year
+     * Get year_started
      *
      * @return \DateTime 
      */
     public function getYear()
     {
-        return $this->year;
+        return $this->year_started;
     }
 
     /**
