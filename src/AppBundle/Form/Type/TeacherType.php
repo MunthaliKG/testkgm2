@@ -64,7 +64,7 @@ class TeacherType extends AbstractType
 			'label' => 'Year Started',
 			'widget' => 'single_text',
 			'format' => 'yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy'),
+			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
 			'constraints' => array(new NotBlank()),
 			)
 		)
@@ -73,7 +73,7 @@ class TeacherType extends AbstractType
 			'label' => 'Current working year at School',
 			'widget' => 'single_text',
 			'format' => 'yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy'),
+			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
 			'constraints' => array(new NotBlank()),
 			)
 		)

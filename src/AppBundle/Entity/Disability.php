@@ -13,9 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Disability
 {
     /**
-     * @var simplearray
+     * @var simple_array
      *
-     * @ORM\Column(name="teacher_speciality_required", type="simplearray", nullable=false)
+     * @ORM\Column(name="teacher_speciality_required", type="simple_array", nullable=false)
      */
     private $teacherSpecialityRequired;
 
@@ -94,10 +94,10 @@ class Disability
     /**
      * Set teacherSpecialityRequired
      *
-     * @param \simplearray $teacherSpecialityRequired
+     * @param $teacherSpecialityRequired
      * @return Disability
      */
-    public function setTeacherSpecialityRequired(\simplearray $teacherSpecialityRequired)
+    public function setTeacherSpecialityRequired($teacherSpecialityRequired)
     {
         $this->teacherSpecialityRequired = $teacherSpecialityRequired;
 

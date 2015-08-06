@@ -1,3 +1,6 @@
+{% for form in forms %}
+		{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% endfor %}
 {% extends 'school/learners/learners_main.html.twig' %}
 
 {% set learner = app.request.attributes.get('_route_params')['learnerId'] %} {# get the learner id from the Route #}
@@ -5,4 +8,14 @@
 	{% embed 'school/learners/learner_form_nav.html.twig' %}
 		{% block disability_info %}active{% endblock %}
 	{% endembed %}
+{% endblock %}
+{% block form_container %}
+	{% for form in forms %}
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
+		{{ form_row(form.disability_name) }}
+		{{ form_row(form.level_name) }}
+		{{ form_row(form.case_description) }}
+		{{ form_end(form) }}
+	{% endfor %}
 {% endblock %}

@@ -1,0 +1,39 @@
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% extends 'school/learners/learners_main.html.twig' %}
+
+{% set learner = app.request.attributes.get('_route_params')['learnerId'] %} {# get the learner id from the Route #}
+{% block learner_form_nav %}
+	{% embed 'school/learners/learner_form_nav.html.twig' %}
+		{% block performance_info %}active{% endblock %}
+	{% endembed %}
+{% endblock %}
+
+{% block form_container %}
+	<p class="text-right"><a href="{{ path('edit_learner_performance',{'emisCode':emisCode, 'learnerId': learnerId, 'record':'add'}) }}" class="btn btn-sm"><i class="fa fa-plus fa-lg"></i> Add new performance record</a></p>
+	{% for flashMessage in app.session.flashbag.get('message') %}
+		<p class="text-center">{{ flashMessage }}</p>
+	{% endfor %}
+	
+	<fieldset>
+		<legend><small>{{ mode }}</small></legend>
+		{{ form_start(form) }}
+			{{ form_errors(form) }}
+			{{ form_row(form.std) }}
+			{{ form_row(form.term) }}
+			{{ form_row(form.year) }}
+			{{ form_row(form.grade) }}
+			{{ form_row(form.teachercomment) }}
+			<p class="text-right">{{ form_widget(form.save, {'after_label': ' <i class="fa fa-chevron-right"></i>'}) }}</p>
+		{{ form_end(form) }}
+	</fieldset>
+	
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets/datepicker/css/datepicker.css') }}">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/datepicker/js/bootstrap-datepicker.js')}}"></script>
+{% endblock %}

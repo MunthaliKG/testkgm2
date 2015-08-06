@@ -1,12 +1,12 @@
 <?php 
-// src/AppBundle/Form/Type/SchoolFinderType.php
+// src/AppBundle/Form/Type/LearnerPersonalType.php
 namespace AppBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 
-//this class build the form that is used to select a school using district name and school name
+//this class builds the form that is used to add/edit a learner's personal details
 class LearnerPersonalType extends AbstractType
 {
 	
@@ -124,7 +124,7 @@ class LearnerPersonalType extends AbstractType
 	}
 	public function getName()
 	{
-		return 'learner';
+		return 'learner_personal';
 	}
 }
 ?>

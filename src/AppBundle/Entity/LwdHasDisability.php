@@ -13,9 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class LwdHasDisability
 {
     /**
-     * @var simplearray
+     * @var string
      *
-     * @ORM\Column(name="assessed_by", type="simplearray", nullable=false)
+     * @ORM\Column(name="assessed_by", type="string", nullable=false)
      */
     private $assessedBy;
 
@@ -27,9 +27,9 @@ class LwdHasDisability
     private $dateAssessed;
 
     /**
-     * @var simplearray
+     * @var string
      *
-     * @ORM\Column(name="identified_by", type="simplearray", nullable=false)
+     * @ORM\Column(name="identified_by", type="string", nullable=false)
      */
     private $identifiedBy;
 
