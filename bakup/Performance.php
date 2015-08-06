@@ -7,15 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Performance
  *
- * @ORM\Table(name="performance", uniqueConstraints={@ORM\UniqueConstraint(name="rec_id_UNIQUE", columns={"rec_id"})}, indexes={@ORM\Index(name="fk_performance_lwd1_idx", columns={"idlwd"}), @ORM\Index(name="fk_performance_school1_idx", columns={"emiscode"})})
+ * @ORM\Table(name="performance", indexes={@ORM\Index(name="fk_performance_lwd1_idx", columns={"idlwd"}), @ORM\Index(name="fk_performance_school1_idx", columns={"emiscode"})})
  * @ORM\Entity
  */
 class Performance
 {
     /**
-     * @var string
+     * @var simplearray
      *
-     * @ORM\Column(name="grade", type="string", nullable=true)
+     * @ORM\Column(name="grade", type="simplearray", nullable=true)
      */
     private $grade;
 
@@ -36,13 +36,6 @@ class Performance
     /**
      * @var integer
      *
-     * @ORM\Column(name="rec_id", type="bigint", nullable=false)
-     */
-    private $recId;
-
-    /**
-     * @var integer
-     *
      * @ORM\Column(name="std", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
@@ -50,9 +43,9 @@ class Performance
     private $std;
 
     /**
-     * @var year
+     * @var \DateTime
      *
-     * @ORM\Column(name="year", type="year")
+     * @ORM\Column(name="year", type="date")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
@@ -96,10 +89,10 @@ class Performance
     /**
      * Set grade
      *
-     * @param string $grade
+     * @param \simplearray $grade
      * @return Performance
      */
-    public function setGrade($grade)
+    public function setGrade(\simplearray $grade)
     {
         $this->grade = $grade;
 
@@ -109,7 +102,7 @@ class Performance
     /**
      * Get grade
      *
-     * @return string 
+     * @return \simplearray 
      */
     public function getGrade()
     {
@@ -163,29 +156,6 @@ class Performance
     }
 
     /**
-     * Set recId
-     *
-     * @param integer $recId
-     * @return Performance
-     */
-    public function setRecId($recId)
-    {
-        $this->recId = $recId;
-
-        return $this;
-    }
-
-    /**
-     * Get recId
-     *
-     * @return integer 
-     */
-    public function getRecId()
-    {
-        return $this->recId;
-    }
-
-    /**
      * Set std
      *
      * @param integer $std
@@ -211,7 +181,7 @@ class Performance
     /**
      * Set year
      *
-     * @param year $year
+     * @param \DateTime $year
      * @return Performance
      */
     public function setYear($year)
@@ -224,7 +194,7 @@ class Performance
     /**
      * Get year
      *
-     * @return year 
+     * @return \DateTime 
      */
     public function getYear()
     {
