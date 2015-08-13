@@ -11,10 +11,10 @@
         {% block stylesheets %}
             <!-- Bootstrap core CSS -->
             <link href="{{asset('bootstrap/dist/css/bootstrap.css')}}" rel="stylesheet">
-            <!-- Custom styles for this template -->
-            <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
             <!-- Font-awesome -->
             <link href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet">
+            <!-- Custom styles for this template -->
+            <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
         {% endblock %}
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media
         queries -->
@@ -61,14 +61,14 @@
                 
             </div><!--row2 -->
             <div class="row row3">
-                <div class="col-lg-2 left-column col-push-2">
+                <div class="col-sm-2 left-column col-push-2">
                     <ul class="nav nav-pills nav-stacked">
                         {%block vertnav%}
 
                         {%endblock%}
                     </ul>
                 </div>
-                <div class="col-lg-10 right-column col-pull-10">
+                <div class="col-sm-10 right-column col-pull-10">
                     {%block rightcolumn%}{%endblock%}
                 </div>
             </div>
@@ -83,6 +83,8 @@
         <script src="{{asset('bootstrap/dist/js/bootstrap.min.js')}}"></script>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="{{asset('assets/js/ie10-viewport-bug-workaround.js')}}"></script>
+        <!--js that applies to entire system -->
+        <script src="{{asset('assets/js/global.js')}}"></script>
         {% endblock %}
     </body>
 

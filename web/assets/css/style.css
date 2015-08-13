@@ -1,1 +1,93 @@
-.title-div{background-color:#260126}.row2,.row3{background-color:#59323C}.left-column{font-size:90%}.left-column a{color:#F2EEB3}.left-column a:focus,.left-column a:hover{color:#260126}.right-column{background-color:#fff;min-height:500px}.gray-border{border:1px solid #a9a9a9}.school-choose{padding-left:10px;background-image:-webkit-radial-gradient(circle,#606060,#484848);background-image:radial-gradient(circle,#606060,#484848);background-repeat:no-repeat;color:#f5f5f5;padding-bottom:15px}.limited-select{max-width:150px}.content{padding:7px}.btn{background-color:#260126;border-color:#59323C;color:#fff}hr{margin-top:1px;margin-bottom:2px;height:5px}
+@import "../font-awesome/css/font-awesome.min.css";
+.title-div {
+  background-color: #260126;
+}
+.row2 {
+  background-color: #59323C;
+}
+.row3 {
+  background-color: #59323C;
+}
+.left-column {
+  font-size: 90%;
+}
+.left-column a {
+  color: #F2EEB3;
+}
+.left-column a:hover {
+  color: #260126;
+}
+.left-column a:focus {
+  color: #260126;
+}
+.right-column {
+  background-color: white;
+  min-height: 500px;
+}
+.gray-border {
+  border: 1px darkgray solid;
+}
+.school-choose {
+  padding-left: 10px;
+  background-image: -webkit-radial-gradient(circle, #606060, #484848);
+  background-image: radial-gradient(circle, #606060, #484848);
+  background-repeat: no-repeat;
+  color: whitesmoke;
+  padding-bottom: 15px;
+}
+.limited-select {
+  max-width: 150px;
+}
+.content {
+  padding: 7px 7px 7px 7px;
+}
+.btn {
+  background-color: #260126;
+  border-color: #59323C;
+  color: white;
+}
+hr {
+  margin-top: 1px;
+  margin-bottom: 2px;
+  height: 5px;
+}
+/*custom styling for checkboxes*/
+input[type=checkbox] {
+  display: none;
+}
+/* to hide the checkbox itself */
+label > input[type=checkbox] + span:before {
+  font-family: FontAwesome;
+  color: #260126;
+  content: "\f096";
+  /* unchecked icon */
+  letter-spacing: 5px;
+  /* space between checkbox and label */
+  margin-left: -18px;
+  /* make the new checkbox overlap the old one
+}
+label>input[type=checkbox]:checked + span:before { 
+    content: "\f046"; /* checked icon */
+}
+/*custom styling for radio buttons*/
+input[type=radio] {
+  display: none;
+}
+/* to hide the checkbox itself */
+label > input[type=radio] + span:before {
+  font-family: FontAwesome;
+  color: #260126;
+  content: "\f10c";
+  /* unchecked icon */
+  letter-spacing: 5px;
+  /* space between checkbox and label */
+  margin-left: -18px;
+  /* make the new radio button overlap the old one */
+}
+label > input[type=radio]:checked + span:before {
+  content: "\f192";
+  /* checked icon */
+}
+.nav-tabs {
+  font-size: 85%;
+}

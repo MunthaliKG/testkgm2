@@ -1,4 +1,4 @@
-<ul class="nav nav-sm nav-tabs">
+<ul class="nav nav-tabs">
 	<li class="{% block personal_info %}{% endblock %}"><a href="{{ path('edit_learner_personal',{'learnerId':learner, 'emisCode':emisCode})}}">Personal Details</a></li>
 	<li class="{% block disability_info %}{% endblock %}"><a href="{{ path('edit_learner_disability',{'learnerId':learner, 'emisCode':emisCode})}}">Special Needs Details</a></li>
 	<li class="{% block performance_info %}{% endblock %}"><a href="{{ path('edit_learner_performance',{'learnerId':learner, 'emisCode':emisCode})}}">Performance records</a></li>

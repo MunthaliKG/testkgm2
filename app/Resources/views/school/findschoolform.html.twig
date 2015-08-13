@@ -1,6 +1,16 @@
 <div class="row school-choose">
     <div class="col-sm-12">
-        <div class="row"><h4>Choose School</h4></div>
+        <div class="row">
+            <div class="col-sm-4"><h4>Choose School</h4></div>
+            <div class="col-sm-8">
+                <h5><p class="text-right">
+                    {% if schoolName != "" %}
+                        {{ "<strong>currently selected</strong>: " }}
+                    {% endif %}
+                    {{ schoolName }}</p>
+                </h5>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-4">
                 {{ form_start(form1, {'attr':{'class':'form-inline', 'role':'form'}}) }}

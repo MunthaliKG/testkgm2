@@ -55,7 +55,16 @@ class LearnerPersonalType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
 			)
-		)//The following are fields for guardian
+		)
+		->add('distance_to_school', 'integer', array(
+			'label' => 'Distance to school (Km)',
+			'constraints' => array(
+				new NotBlank(), 
+				new Type(array('type'=>'integer','message'=>'Please enter a valid distance value'))
+				)
+			)
+		)
+		//The following are fields for guardian
 		->add('idguardian','hidden', array(
 			)
 		)

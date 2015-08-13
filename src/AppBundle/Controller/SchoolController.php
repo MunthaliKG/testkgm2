@@ -8,17 +8,20 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\LearnerPersonalType;
 use AppBundle\Form\Type\RoomStateType;
 use AppBundle\Form\Type\TeacherType;
 use AppBundle\Form\Type\LearnerDisabilityType;
 use AppBundle\Form\Type\LearnerPerformanceType;
+use AppBundle\Form\Type\NeedsType;
 use AppBundle\Entity\Guardian;
 use AppBundle\Entity\Lwd;
 use AppBundle\Entity\RoomState;
 use AppBundle\Entity\Snt;
 use AppBundle\Entity\SchoolHasSnt;
 use AppBundle\Entity\Performance;
+use AppBundle\Entity\LwdHasDisability;
 
 class SchoolController extends Controller{
 	/**
@@ -36,6 +39,12 @@ class SchoolController extends Controller{
 		$disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
 			FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
 			WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$emisCode,date('Y')));
+
+		$session = $request->getSession();
+		//keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
+		$session->set('emiscode', $emisCode);
+		//keep the name of the selected school in the session to access it from the school selection form
+		$session->set('school_name', $schools[0]['school_name']);
 
 		return $this->render('school/school2.html.twig',
 			array('school' => $schools[0],
@@ -372,6 +381,7 @@ class SchoolController extends Controller{
       		$learner->setHomeaddress($formData['home_address']);
       		$learner->setFirstName($formData['first_name']);
       		$learner->setDob($formData['dob']);
+      		$learner->setDistanceToSchool($formData['distance_to_school']);
       		$learner->setIdguardian($guardian);
       		$learner->setGuardianRelationship($formData['guardian_relationship']);
 
@@ -410,9 +420,10 @@ class SchoolController extends Controller{
     /**
      * @Route("/school/{emisCode}/learners/{learnerId}/need", name="edit_learner_disability", requirements ={"learnerId":"new|\d+"})
      */
-    public function editLearnerDisabilityAction(Request $request, $learnerId){
+    public function editLearnerDisabilityAction(Request $request, $learnerId, $emisCode){
 
     	$forms = array(); //array to keep the forms: there could be more than one disability form for a learner
+    	$needForms = array(); //array to keep forms for the needs of each disability
     	$connection = $this->get('database_connection'); 
     	$disabilities = $connection->fetchAll("SELECT * FROM disability");
 
@@ -420,21 +431,124 @@ class SchoolController extends Controller{
     		$learnerDisabilities = $connection->fetchAll("SELECT * FROM lwd_has_disability WHERE idlwd = ?", array(
     			$learnerId));
     		if($learnerDisabilities){
-    			foreach($learnerDisabilities as $key => $row){
+    			$formCounter = 1;
+    			foreach($learnerDisabilities as $key => $disability){
+    				//get the levels to show in the form for this disability
     				$levels = $connection->fetchAll("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
-    					WHERE iddisability = ".$row['iddisability']);
-    				$forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels), $row)->createView(); 
+    					WHERE iddisability = ?", array($disability['iddisability']));
+    				$disability['identification_date'] = new \DateTime($disability['identification_date']);
+    				$disability['iddisability_2'] = $disability['iddisability'];//set default data for the hidden field since iddisability will be disabled
+    				$forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels, $formCounter), $disability); 
+
+    				//get the needs for this disability
+    				$needs = $connection->fetchAll("SELECT idneed, needname FROM disability_has_need NATURAL JOIN need 
+    					WHERE iddisability = ?", array($disability['iddisability']));
+    				//get the needs that the learner has access to for this disability
+    				$availableNeedsRows = $connection->fetchAll("SELECT idneed FROM lwd_has_disability_has_need WHERE idlwd = ? 
+    					AND iddisability = ?", array($learnerId, $disability['iddisability']));
+    				//get the ids of all the available needs as a single array
+    				$availableNeeds = array_column($availableNeedsRows, 'idneed');
+    				$needForms[] = $this->createForm(new NeedsType($needs, $formCounter), ['needs'=>$availableNeeds]);
+    				$formCounter++;
     			}
+    		}
+    		//process each of the forms
+    		$formCounter = 1;
+    		foreach(array_combine($forms, $needForms) as &$form => &$needForm){
+    			$form->handleRequest($request);
+    			if($form->isValid()){
+    				$formData = $form->getData();
+    				$em = $this->getDoctrine()->getManager();
+    				$lwdHasDisability = $em->getRepository('AppBundle:LwdHasDisability')->findOneBy([
+    					'idlwd'=>$learnerId,
+    					'iddisability' =>$formData['iddisability_2']
+    					]
+					);
+					if($form->get('remove')->isClicked()){//if the remove button was clicked for this record
+						$em->remove($lwdHasDisability);
+						$message = "Disability/Special need record removed";
+						$messageType = 'recordRemovedMessage';
+					}
+					else{
+						$lwdHasDisability->setIdentifiedBy($formData['identified_by']);
+			    		$lwdHasDisability->setIdentificationDate($formData['identification_date']);
+			    		$lwdHasDisability->setCaseDescription($formData['case_description']);
+			    		$lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
+			    		$em->persist($lwdHasDisability);
+			    		$message = "Disability/Special need record updated";
+			    		$messageType = $formCounter;
+					}
+					$em->flush();
+
+					$this->addFlash($messageType, $message);
+					return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+    			}
+    			$formCounter++;
     		}
     	}
 
     	//the form for adding a new disability to this learner's profile
-    	$
+    	$levels2 = array();
+    	if($this->get('session')->getFlashBag()->has('levels')){
+    		$levels2 = $this->get('session')->getFlashBag()->get('levels');
+    	}
+    	$newForm = $this->createForm(new LearnerDisabilityType($disabilities, $levels2, "",false));
+
+    	$newForm->handleRequest($request);
+    	if($newForm->isValid()){
+    		$em = $this->getDoctrine()->getManager();
+    		$formData = $newForm->getData();
+    		$lwdHasDisability = new LwdHasDisability();
+    		$lwdHasDisability->setIdlwd($em->getReference('AppBundle:Lwd', $learnerId));
+    		$idDisability = $this->getDoctrine()->getRepository('AppBundle:Disability')->findOneByIddisability($formData['iddisability']);
+    		$lwdHasDisability->setIddisability($idDisability);
+    		$lwdHasDisability->setIdentifiedBy($formData['identified_by']);
+    		$lwdHasDisability->setIdentificationDate($formData['identification_date']);
+    		$lwdHasDisability->setCaseDescription($formData['case_description']);
+    		if($this->get('session')->getFlashBag()->has('levels')){
+	    		$lwdHasDisability->setIdlevel($em->getReference('AppBundle:DisabilityHasLevel', [
+	    			'iddisability'=>$formData['iddisability'], 
+	    			'idlevel' => $formData['idlevel']
+	    			])
+	    		);
+	    	}
+    		
+    		$em->persist($lwdHasDisability);
+    		$em->flush();
+
+    		$message = "New disability/special need record added for student ".$learnerId;
+    		$this->addFlash('disabilityAddedMessage', $message);
+    		return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+    	}
+
+    	//create a view of each of the forms
+    	foreach($forms as &$form){
+    		$form = $form->createView();
+    	}
+    	foreach($needForms as &$needForm){
+    		$needForm = $needForm->createView();
+    	}
     	return $this->render('school/learners/edit_learner_disability.html.twig', array(
-    		'forms' => $forms)
+    		'forms' => $forms, 'needForms'=>$needForms, 'newform' => $newForm->createView())
     	);
     } 
-
+    //controller called through ajax to autopopulate level select list
+    /**
+     * @Route("/populatelevels/{disabilityId}", name="populate_levels", requirements ={"iddisability":"\d+"}, condition="request.isXmlHttpRequest()", options={"expose":true})
+     */
+    public function populateLevelsAction($disabilityId){
+    	$connection = $this->get('database_connection');
+    	$levels = $connection->fetchAll("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
+    					WHERE iddisability = ?", array($disabilityId));
+    	$html = '';
+    	if($levels){
+    		$this->get('session')->getFlashBag()->set('levels', $levels);
+    		foreach($levels as $key => $level){
+    			$html .= '<option value="'.$level['idlevel'].'">'.$level['level_name'].'</option>';
+    		}
+    	}
+    	return new Response($html);
+    }
      /**
      * @Route("/school/{emisCode}/learners/{learnerId}/performance/{record}", name="edit_learner_performance", requirements ={"learnerId":"new|\d+", "record":"update|add"}, defaults={"record":"update"})
      */

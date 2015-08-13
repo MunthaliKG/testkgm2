@@ -1,5 +1,7 @@
 @import "../../bootstrap/less/variables.less";
 @import "../../bootstrap/less/mixins.less";
+@import "../font-awesome/css/font-awesome.min.css";
+
 .title-div{
     background-color: #260126;
 }
@@ -49,4 +51,37 @@ hr{
     margin-top: 1px;
     margin-bottom: 2px;
     height: 5px;
+}
+/*custom styling for checkboxes*/
+input[type=checkbox] { 
+    display:none; 
+} /* to hide the checkbox itself */
+label>input[type=checkbox] + span:before {
+    font-family: FontAwesome;
+    color: #260126;
+    content: "\f096"; /* unchecked icon */
+    letter-spacing: 5px; /* space between checkbox and label */
+    margin-left: -18px; /* make the new checkbox overlap the old one
+}
+label>input[type=checkbox]:checked + span:before { 
+    content: "\f046"; /* checked icon */
+} 
+
+/*custom styling for radio buttons*/
+input[type=radio] { 
+    display: none;
+} /* to hide the checkbox itself */
+label>input[type=radio] + span:before {
+    font-family: FontAwesome;
+    color: #260126;
+    content: "\f10c"; /* unchecked icon */
+    letter-spacing: 5px; /* space between checkbox and label */
+    margin-left: -18px; /* make the new radio button overlap the old one */
+}
+label>input[type=radio]:checked + span:before { 
+    content: "\f192"; /* checked icon */
+} 
+
+.nav-tabs{
+    font-size: 85%;
 }

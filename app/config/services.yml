@@ -3,6 +3,7 @@
 parameters:
 #    parameter_name: value
     schoolfinderform.class: AppBundle\Helpers\FindSchoolForm
+    dataconverter.class: AppBundle\Helpers\DataConverter
 
 services:
 #    service_name:
@@ -14,6 +15,10 @@ services:
                 - "@doctrine.orm.entity_manager"
                 - "@form.factory"
                 - "@request_stack"
+    data_converter:
+        class: %dataconverter.class%
+        arguments:
+                - "@doctrine.dbal.default_connection"
     app_bundle.button_type_extension:
         class: AppBundle\Form\Extension\ButtonTypeExtension
         tags:
