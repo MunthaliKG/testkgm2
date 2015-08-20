@@ -17,33 +17,33 @@
 		
 		<div class="row">
 
-			<div class="col-sm-6">
-				<fieldset class="fieldset">
-					<legend><small>Personal Information</small></legend>
-					{{ form_row(form1.idlwd, {'attr':{'readonly': readonly}}) }}			
-					{{ form_row(form1.first_name) }}
-					{{ form_row(form1.last_name) }}
-					{{ form_row(form1.initials) }}
-					{{ form_row(form1.sex, {'label_attr':{'class':'radio-inline'}}) }}
-					{{ form_row(form1.dob) }}
-					{{ form_row(form1.home_address) }}										
-				</fieldset>
-			</div>
-			<div class="col-sm-6">
-				<fieldset>
-					<legend><small>Guardian Information</small></legend>
-					{{ form_row(form1.guardian_relationship, {'label_attr':{'class':'radio-inline'}}) }}
-					{{ form_row(form1.gfirst_name) }}
-					{{ form_row(form1.glast_name) }}
-					{{ form_row(form1.gsex, {'label_attr':{'class':'radio-inline'}}) }}
-					{{ form_row(form1.gdob) }}
-					{{ form_row(form1.gaddress) }}					
-					{{ form_row(form1.occupation) }}
-					{{ form_row(form1.income_level, {'label_attr':{'class':'radio-inline'}}) }}
-					{{ form_row(form1.district) }}
-					{{ form_row(form1.idguardian) }}
-				</fieldset>
-			</div>
+                    <div class="col-sm-6">
+                        <fieldset class="fieldset">
+                            <legend><small>Personal Information</small></legend>
+                            {{ form_row(form1.idlwd, {'attr':{'readonly': readonly}}) }}			
+                            {{ form_row(form1.first_name) }}
+                            {{ form_row(form1.last_name) }}
+                            {{ form_row(form1.initials) }}
+                            {{ form_row(form1.sex, {'label_attr':{'class':'radio-inline'}}) }}
+                            {{ form_row(form1.dob) }}
+                            {{ form_row(form1.home_address) }}										
+                        </fieldset>
+                    </div>
+                    <div class="col-sm-6">
+                        <fieldset>
+                            <legend><small>Guardian Information</small></legend>
+                            {{ form_row(form1.guardian_relationship, {'label_attr':{'class':'radio-inline'}}) }}
+                            {{ form_row(form1.gfirst_name) }}
+                            {{ form_row(form1.glast_name) }}
+                            {{ form_row(form1.gsex, {'label_attr':{'class':'radio-inline'}}) }}
+                            {{ form_row(form1.gdob) }}
+                            {{ form_row(form1.gaddress) }}					
+                            {{ form_row(form1.occupation) }}
+                            {{ form_row(form1.income_level, {'label_attr':{'class':'radio-inline'}}) }}
+                            {{ form_row(form1.district) }}
+                            {{ form_row(form1.idguardian) }}
+                        </fieldset>
+                    </div>
 		</div>
 		<p class="text-right">
 			{{ form_widget(form1.save, {'attr':{'class':'btn btn-default'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}

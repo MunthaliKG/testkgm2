@@ -1,8 +1,6 @@
 {% extends "base.html.twig" %}
 
-{% block navschool%}
-active
-{% endblock %}
+{% block navschool %}{% endblock %}
 
 {% block stylesheets %}
 	{{parent()}}
@@ -12,9 +10,13 @@ active
 {% block rightcolumn %}
 	{# include the form used for selecting a school #}
 	{{ render(controller('AppBundle:Default:schoolSelectForm')) }}
-
+        
 	<div class="row content">
 		{% block content %}
+                    {% block material1 %}{% endblock %}
+                    {% block resource1 %}{% endblock %}
+                     {% block material2 %}{% endblock %}
+                    {% block resource2 %}{% endblock %}
 			{# {% if message is not null %}
 				<br><br><h2 class="text-center"><small>{{ message }}</small></h2>
 
@@ -30,4 +32,4 @@ active
 	    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
             <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
 
-{% endblock %}
+        {% endblock %}

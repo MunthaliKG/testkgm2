@@ -3,13 +3,10 @@
 {% set emisCode = app.request.attributes.get('_route_params')['emisCode'] %} {# get the emisCode from the Route#}
 
 {% block vertnav %}
-	<li class="{% block learners_menuitem %}{% endblock %}"><a id="pupils" emis="{{ emisCode }}" href="{{ path('school_learners',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add/update learner records</a></li>
-
-	<li class="{% block facilities_menuitem %}{% endblock %}"><a id="materials" emis="{{ emisCode }}" href="{{ path('school_materials',{"emisCode": emisCode})}}" class="text-center menu.itm"> Add/update materials and facilities</a></li>
-
-	<li class="{% block teachers_menuitem %}{% endblock %}"><a href="{{ path('school_teachers',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add specialist teacher records</a></li>
-
-	<li class="{% block reports_menuitem %}{% endblock %}"><a href="#" class="text-center menu-itm"> Reports</a></li>
+    <li class="{% block learners_menuitem %}{% endblock %}"><a id="pupils" emis="{{ emisCode }}" href="{{ path('school_learners',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add/update learner records</a></li>
+    <li class="{% block teachers_menuitem %}{% endblock %}"><a href="{{ path('school_teachers',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add specialist teacher records</a></li>
+    <li class="{% block facilities_menuitem %}{% endblock %}"><a id="materials" emis="{{ emisCode }}" href="{{ path('school_materials',{"emisCode": emisCode,"link": "fresh"})}}" class="text-center menu.itm"> Add/update materials and facilities</a></li>
+    <li class="{% block reports_menuitem %}{% endblock %}"><a href="#" class="text-center menu-itm"> Reports</a></li>
 {% endblock %}
 
 {% block content %}
@@ -53,5 +50,8 @@
 		</table>
 	</div>	
 </div>
-
+{% block material1 %}{% endblock %}
+{% block resource1 %}{% endblock %}
+{% block material2 %}{% endblock %}
+{% block resource2 %}{% endblock %}
 {% endblock %}

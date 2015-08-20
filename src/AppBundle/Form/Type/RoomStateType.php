@@ -13,40 +13,33 @@ class RoomStateType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		//add the form fields
-		
 		$builder
 		->add('room_id','text', array(
-			'label' => 'Material Id',
+			'label' => 'Room Id',
 			'constraints' => array(new NotBlank()),
 			)
 		)
-		/*->add('emiscode','hidden', array(
-			'label' => 'EMIS Code',
-			)
-                )
-                 * 
-                 */
-		->add('year_started', 'datetime', array(
-			'label' => 'Year Started',
+		->add('year', 'datetime', array(
+			'label' => 'Year',
 			'widget' => 'single_text',
-			'format' => 'yyyy',
+                        'format' => 'dd-MM-yyyy',
+			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
 			'constraints' => array(new NotBlank()),
-			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy'),
 			)
 		)
                 ->add('enough_light', 'choice', array(
 			'label' => 'Enough Lighting',
-			'choices' => array('Yes'=>'Yes','No'=>'No'),
+			'choices' => array('No'=>'No','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => true,
+			'expanded' => false,
 			'multiple' => false,
 			)
                 )
 		->add('enough_space', 'choice', array(
 			'label' => 'Enough Space',
-			'choices' => array('Yes'=>'Yes','No'=>'No'),
+			'choices' => array('No'=>'No','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => true,
+			'expanded' => false,
 			'multiple' => false,
 			)
                 )
@@ -57,17 +50,25 @@ class RoomStateType extends AbstractType
                 )
                 ->add('access', 'choice', array(
 			'label' => 'Accessible',
-			'choices' => array('Yes'=>'Yes','No'=>'No'),
+			'choices' => array('No'=>'No','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => true,
+			'expanded' => false,
+			'multiple' => false,
+			)
+                )
+                ->add('room_type', 'choice', array(
+			'label' => 'Room Type',
+			'choices' => array('Permanent'=>'Permanent', 'Temporary'=>'Temporary'),
+			'constraints' => array(new NotBlank()),
+			'expanded' => false,
 			'multiple' => false,
 			)
                 )
                 ->add('enough_ventilation', 'choice', array(
 			'label' => 'Enough Ventilation',
-			'choices' => array('Yes'=>'Yes','No'=>'No'),
+			'choices' => array('No'=>'No','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => true,
+			'expanded' => false,
 			'multiple' => false,
 			)
                 )

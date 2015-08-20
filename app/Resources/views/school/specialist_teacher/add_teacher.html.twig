@@ -3,37 +3,50 @@
 {% set teacher = app.request.attributes.get('_route_params')['teacherId'] %} {# get the material id from the Route #}
 
 {% block form_container %}
-	{# put the different forms for adding teacher information in a carousel #}
-        {{ form_start(form2) }}
-	{{ form_errors(form2) }}
-        <div class='row'>
-            <div class="col-sm-6">
-                <fieldset class="fieldset">
-                    <legend><small>SNT Personal Details</small></legend>		
-                    {{ form_row(form2.idsnt, {'attr':{'readonly': readonly}}) }}
+    {# put the different forms for adding teacher information in a carousel #}
+    {{ form_start(form2) }}
+    {{ form_errors(form2) }}
+    <div class="row">
+        <div class="col-sm-12">
+            <legend><small>SNT Personal Details</small></legend>
+            <div class="col-sm-6">                
+                <fieldset class="fieldset">                    		
+                    {{ form_row(form2.employment_number, {'attr':{'readonly': readonly}}) }}
                     {{ form_row(form2.sfirst_name) }}
                     {{ form_row(form2.slast_name) }}
                     {{ form_row(form2.sinitials) }}
-                    {{ form_row(form2.s_dob) }}
+                    {{ form_row(form2.s_dob) }}                    
+                </fieldset>
+            </div>
+            <div class="col-sm-6">
+                <fieldset>
                     {{ form_row(form2.s_sex) }}
                     {{ form_row(form2.qualification) }}
                     {{ form_row(form2.speciality) }}
                     {{ form_row(form2.year_started) }}
                 </fieldset>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <legend><small>School SNT details</small></legend>
             <div class="col-sm-6">
-                <fieldset>
-                    <legend><small>School Details about SNT</small></legend>
-                    {{ form_row(form2.year) }}
-                </fieldset>
+                {#<legend><small>School Details about SNT</small></legend>#}
+                {{ form_row(form2.year) }}
+            </div>
+             <div class="col-sm-5">
+                {#<legend><small>School Details about SNT</small></legend>#}
+                {{ form_row(form2.snt_type) }}
+            </div>
+            <div class="col-sm-1">
+                <p class="text-right">
+                    {{ form_widget(form2.next, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
+                </p>
             </div>
         </div>
-        <div class='row'>
-            <p class="text-right">
-                {{ form_widget(form2.next, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
-            </p>
-                {{ form_end(form2) }}
-        </div>
+        {{ form_end(form2) }}
+    </div>
 {% endblock %}
 {% block stylesheets %}
     {{ parent() }}

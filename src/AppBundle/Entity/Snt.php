@@ -25,6 +25,13 @@ class Snt
      * @ORM\Column(name="slast_name", type="string", length=25, nullable=false)
      */
     private $slastName;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="employment_number", type="string", length=10, nullable=false)
+     */
+    private $employmentNumber;
 
     /**
      * @var string
@@ -67,28 +74,27 @@ class Snt
      */
     private $yearStarted;
 
-    /**
-     * @var string
+     /**
+     * @var integer
      *
-     * @ORM\Column(name="idsnt", type="string")
+     * @ORM\Column(name="idsnt", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $idsnt;
 
-    /**
-     * Set string
-     *
-     * @param string $idsnt
-     * @return SNT
-     */
-    public function setIdsnt($idsnt)
-    {
-        $this->idsnt = $idsnt;
+   // /**
+    // * Set string
+     //*
+     //* @param string $idsnt
+     //* @return SNT
+     //*/
+    //public function setIdsnt($idsnt)
+    //{
+     //   $this->idsnt = $idsnt;
 
-        return $this;
-    }
-
+//        return $this;
+  //  }
     /**
      * Set sfirstName
      *
@@ -110,6 +116,28 @@ class Snt
     public function getSfirstName()
     {
         return $this->sfirstName;
+    }
+    /**
+     * Set employmentNumber
+     *
+     * @param string $employmentNumber
+     * @return Snt
+     */
+    public function setEmploymentNumber($employmentNumber)
+    {
+        $this->employmentNumber = $employmentNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get employmentNumber
+     *
+     * @return string 
+     */
+    public function getEmploymentNumber()
+    {
+        return $this->employmentNumber;
     }
 
     /**

@@ -3,29 +3,44 @@
 
 {% set material = app.request.attributes.get('_route_params')['materialId'] %} {# get the material id from the Route #}
 
+{% block material_form_nav %}
+    {{ parent() }}
+{% endblock %}
 {% block form_container %}
-	{# put the different forms for adding teacher information in a carousel #}
-        <div id="formCarousel" class="carousel slide" data-ride="carousel">
-		<!-- Wrapper for slides -->
-		<div class="carousel-inner" role="listbox">
-			<div class="item active">
-				{{ form_start(form1) }}
-				{{ form_errors(form1) }}
-					
-				{{ form_row(form1.room_id, {'attr':{'readonly': readonly}}) }}			
-				{#{{ form_row(form1.emiscode) }}#}                               
-				{{ form_row(form1.year_started) }}
-				{{ form_row(form1.enough_light) }}
-				{{ form_row(form1.enough_space) }}
-				{{ form_row(form1.adaptive_chairs) }}
-                                {{ form_row(form1.access) }}
-                                {{ form_row(form1.enough_ventilation) }}
-                                {{ form_row(form1.other_observations) }}          
-				<p class="text-right">
-                                    {{ form_widget(form1.save, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
-				</p>
-				{{ form_end(form1) }}
-			</div>
-
-		</div>
+    {{ form_start(form1) }}
+    {{ form_errors(form1) }}
+    <div class="row">
+        <div class="col-sm-12">
+            {#<legend><small>SNT Personal Details</small></legend>#}
+            <div class="col-sm-6">                
+                <fieldset class="fieldset">                    		
+                    {{ form_row(form1.room_id, {'attr':{'readonly': readonly}}) }}			                          
+                    {{ form_row(form1.year) }}
+                    {{ form_row(form1.adaptive_chairs) }}
+                    {{ form_row(form1.room_type) }}
+                    {{ form_row(form1.other_observations) }}
+                </fieldset>
+            </div>
+            <div class="col-sm-6">
+                <fieldset>
+                    {{ form_row(form1.enough_light) }}
+                    {{ form_row(form1.enough_space) }}
+                    {{ form_row(form1.access) }}
+                    {{ form_row(form1.enough_ventilation) }}
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <p class="text-right">
+        {{ form_widget(form1.save, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
+    </p>
+    {{ form_end(form1) }}
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/datepicker/css/datepicker.css') }}">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/datepicker/js/bootstrap-datepicker.js')}}"></script>
 {% endblock %}

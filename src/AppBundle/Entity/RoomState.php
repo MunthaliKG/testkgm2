@@ -39,6 +39,12 @@ class RoomState
      * @ORM\Column(name="access", type="string", nullable=false)
      */
     private $access;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="room_type", type="string", nullable=false)
+     */
+    private $room_type;
 
     /**
      * @var string
@@ -55,6 +61,12 @@ class RoomState
     private $otherObservations;
 
     /**
+     * @var text
+     *
+     * @ORM\Column(name="updates", type="text")
+     */
+    private $updates;
+    /**
      * @var string
      *
      * @ORM\Column(name="room_id", type="string", length=2)
@@ -66,7 +78,7 @@ class RoomState
      /**
      * @var \DateTime
      *
-     * @ORM\Column(name="year_started", type="year", nullable=false)
+     * @ORM\Column(name="year", type="year", nullable=false)
      */
     private $year_started;
 
@@ -154,26 +166,26 @@ class RoomState
     }
 
     /**
-     * Set access
+     * Set room_type
      *
-     * @param string $access
+     * @param string $room_type
      * @return RoomState
      */
-    public function setAccess($access)
+    public function setRoomType($room_type)
     {
-        $this->access = $access;
+        $this->room_type = $room_type;
 
         return $this;
     }
 
     /**
-     * Get access
+     * Get room_type
      *
      * @return string 
      */
-    public function getAccess()
+    public function getRoomType()
     {
-        return $this->access;
+        return $this->room_type;
     }
 
     /**
@@ -220,6 +232,28 @@ class RoomState
     public function getOtherObservations()
     {
         return $this->otherObservations;
+    }
+    
+    /**
+     * Set updates
+     *
+     * @param text $updates
+     * @return RoomState
+     */
+    public function setUpdates($updates)
+    {
+        $this->updates = $updates;
+
+        return $this;
+    }
+    /**
+     * Get updates
+     *
+     * @return text
+     */
+    public function getUpdates()
+    {
+        return $this->updates;
     }
 
     /**
@@ -289,5 +323,27 @@ class RoomState
     public function getEmiscode()
     {
         return $this->emiscode;
+    }
+    /**
+     * Set access
+     *
+     * @param string $access
+     * @return RoomState
+     */
+    public function setAccess($access)
+    {
+        $this->access = $access;
+
+        return $this;
+    }
+
+    /**
+     * Get access
+     *
+     * @return string 
+     */
+    public function getAccess()
+    {
+        return $this->access;
     }
 }
