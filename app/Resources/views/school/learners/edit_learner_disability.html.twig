@@ -1,6 +1,11 @@
 {% for form in forms %}
 		{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% endfor %}
+{% for form in needForms %}
+		{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% endfor %}
+{% form_theme newform 'bootstrap_3_horizontal_layout.html.twig' %}
+
 {% extends 'school/learners/learners_main.html.twig' %}
 
 {% set learner = app.request.attributes.get('_route_params')['learnerId'] %} {# get the learner id from the Route #}
@@ -10,12 +15,118 @@
 	{% endembed %}
 {% endblock %}
 {% block form_container %}
-	{% for form in forms %}
-		{{ form_start(form) }}
-		{{ form_errors(form) }}
-		{{ form_row(form.disability_name) }}
-		{{ form_row(form.level_name) }}
-		{{ form_row(form.case_description) }}
-		{{ form_end(form) }}
-	{% endfor %}
+			{# show new disability added flash message #}
+			{% set disabilityAddedMessage = app.session.flashbag.get('disabilityAddedMessage') %}
+			{% if disabilityAddedMessage is not empty %}
+				{% for message in disabilityAddedMessage %}
+					<div class="alert alert-success alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
+			{# show record deleted flash message #}
+			{% set recordRemovedMessage = app.session.flashbag.get('recordRemovedMessage') %}
+			{% if recordRemovedMessage is not empty %}
+				{% for message in recordRemovedMessage %}
+					<div class="alert alert-success alert-dismissible" alert="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
+
+			{% set counter = 1 %}
+			{% for form in forms %}
+				{% if counter > 1 %}
+					<div class="clearfix"></div>
+					<br>
+				{% endif %}
+				<fieldset>
+					<legend class="text-center"><small>{{ counter }}</small></legend>
+					{# show record deleted flash message #}
+					{% set recordUpdatedMessage = app.session.flashbag.get(counter) %}
+					{% set needUpdatedMessage = app.session.flashbag.get('needs_'~counter) %}
+					{% if recordUpdatedMessage is not empty %}
+						{% for message in recordUpdatedMessage %}
+							<div class="alert alert-success alert-dismissible" alert="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% elseif needUpdatedMessage is not empty %}
+						{% for message in needUpdatedMessage %}
+							<div class="alert alert-success alert-dismissible" alert="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% endif %}
+					<div class="row">
+						<div class="col-sm-8" style="border-right: lightgray 1px solid">
+							{{ form_start(form)}}
+							{{ form_errors(form) }}
+							{{ form_row(form.iddisability, {'attr':{'disabled':'disabled'}}) }}
+							{{ form_row(form.iddisability_2) }}
+							{{ form_row(form.idlevel) }}
+							{{ form_row(form.identified_by, {'label_attr':{'class':'radio-inline'}}) }}
+							{{ form_row(form.identification_date) }}
+							{{ form_row(form.case_description) }}
+							<div class="row">
+								<div class="col-sm-6 col-sm-offset-3">
+									{{ form_widget(form.remove, {'attr':{'class':'pull-left','data-toggle':'confirmation','data-prompt':'Remove this disability/special need record?'},'before_label':'<i class="fa fa-remove"></i> '}) }}
+									{{ form_widget(form.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
+								</div>
+							</div>	
+
+							{{ form_end(form) }}
+						</div>
+						{% set needForm = needForms[counter-1] %}
+						
+						<div class="col-sm-4">
+							<strong><u>Needs available to the student for this disability</u></strong>
+							{{ form_start(needForm) }}
+							{{ form_errors(needForm) }}
+							{{ form_widget(needForm.needs) }}
+							{{ form_widget(needForm.iddisability) }}
+							{{ form_widget(needForm.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
+							{{ form_end(needForm) }}
+						</div>
+						
+					</div>
+					
+					{% set counter = counter + 1 %}
+				</fieldset>
+				
+			{% endfor %}
+			<div class="clearfix"></div>
+	
+	<hr/>
+	<br>
+	<fieldset>
+		<legend class="text-center"><small>Add new disability/special need</small></legend>
+		{{ form_start(newform) }}
+		{{ form_errors(newform) }}
+		{{ form_row(newform.iddisability, {'attr':{'class':'disability-select'}}) }}
+		{{ form_row(newform.idlevel, {'attr':{'class':'level-select'}}) }}
+		{{ form_row(newform.identified_by, {'label_attr':{'class':'radio-inline'}}) }}
+		{{ form_row(newform.identification_date) }}
+		{{ form_row(newform.case_description) }}
+		<div class="col-sm-6 col-sm-offset-3">
+			{{ form_widget(newform.save, {'before_label':'<i class="fa fa-check"></i> '}) }}
+		</div>
+		{{ form_end(newform) }}
+	</fieldset>
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets/datepicker/css/datepicker.css') }}">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/js/bootstrap-confirmation.min.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/enable-confirmation.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('assets/datepicker/js/bootstrap-datepicker.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/learner_disability.js')}}"></script>
 {% endblock %}

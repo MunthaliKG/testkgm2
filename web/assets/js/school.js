@@ -43,6 +43,9 @@ $(document).ready(function(){
 		}
 	});
 
-	$('.datepicker').datepicker();
+    if($('.datepicker').length){
+		$('.datepicker').datepicker();
+    }
+    
 
 });

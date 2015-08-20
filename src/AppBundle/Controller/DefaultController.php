@@ -37,43 +37,16 @@ class DefaultController extends Controller
      * @Route("/school", name="school")
      */
     public function schoolAction(Request $request){
-        // $defaultData = array('field' => 'Please enter your name');/*passing this into the createForm() method causes the form values
-        // to be put into an array as opposed to an object*/
-
-        // /*create the array to be used for storing the list of schools for the dynamically populated select element. 
-        // (set to an aempty array if not found in the session)  */
-        // $session = $this->get('session');
-        // $schoolList = array();
-        // if($session->getFlashBag()->has('schoolList')){
-        //     $schoolList = $session->getFlashBag()->get('schoolList');
-        //     $em = $this->getDoctrine()->getManager();
-        //     foreach($schoolList as $school){
-        //         $em->persist($school);
-        //     }
-        // }
-        // $form = $this->createForm(new SchoolFinderType($schoolList), $defaultData);/*create a form using the
-        // SchoolFinderType form class*/
-        
-        // $form->handleRequest($request);
-
-        // $emisCode;
-        // if($form->isValid()){/*if the form was not submitted or contains invalid values, this returns
-        // false*/
-        //     $emisCode = $form->getData();           
-        //     $school = $this->getDoctrine()->getRepository('AppBundle:School')->find($emisCode['school']);
-        //     if($school){
-        //         return $this->redirectToRoute('school_main',array('emisCode'=>$school->getId()), 301);
-        //     }else{
-
-        //     }             
-        //  }
-
+        $session = $request->getSession();
+        if($session->has('emiscode')){
+            return $this->redirectToRoute('school_main', array('emisCode'=>$session->get('emiscode')), 301);
+        }
         return $this->render('school/school.html.twig');
     }
     /**
      * @Route("/findSchoolForm", name="find_school_form")
      */
-    public function schoolSelectFormAction(){
+    public function schoolSelectFormAction(Request $request){
         $schoolFinderForms = $this->container->get('school_finder');
         $formAction = $this->generateUrl('find_school_form');
         $schoolFinderForms->createForms($formAction);
@@ -82,11 +55,16 @@ class DefaultController extends Controller
         if($schoolFinderForms->areValid()){
             return $this->redirectToRoute('school_main',array('emisCode'=>$schoolFinderForms->getSchoolId()), 301);
         }
-
+        $schoolName = "";
+        if($request->getSession()->has('emiscode')){
+            $schoolName = $request->getSession()->get('school_name');
+        }
         return $this->render('school/findschoolform.html.twig',
                              array('form2' => $schoolFinderForms->getView2(),
                                     'form1' => $schoolFinderForms->getView1(),
-                                    'error'=>$schoolFinderForms->getError())
+                                    'error'=>$schoolFinderForms->getError(),
+                                    'schoolName' => $schoolName,
+                                    )                                   
                              );
     }
     /**

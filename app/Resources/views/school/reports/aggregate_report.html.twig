@@ -1,0 +1,40 @@
+{% extends (isHtml)? 'school/reports/reports_basic.html.twig':'base.html.twig' %}
+
+
+{% block body %} 
+	{% if isHtml %}
+		{{ parent() }}
+	{% else %}
+		{{ block('reports_body') }}
+	{% endif %}
+	
+{% endblock %}
+{% block reports_body %}	
+		<h3><p class="text-center">Special Needs Education Management Information System Basic Report</p></h3>
+		
+		{# school identification section #}
+		<h4>SCHOOL IDENTIFICATION</h4>
+		<table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+			<tr>
+				<th rowspan="4" width="20%">SCHOOL ID LABEL</th>
+				<th align="center">Identifier</th>
+				<th align="center">Name</th>
+				<th align="center">Numeric code</th>
+			</tr>
+			<tr>
+				<td>1. School</td>
+				<td>{{ school.school_name }}</td>
+				<td align="right">{{ school.emiscode }}</td>
+			</tr>
+			<tr>
+				<td>2. Zone</td>
+				<td>{{ school.zone_name }}</td>
+				<td align="right">{{ school.idzone }}</td>
+			</tr>
+			<tr>
+				<td>3. District</td>
+				<td>{{ school.district_name }}</td>
+				<td align="">{{ school.iddistrict }}</td>
+			</tr>
+		</table>
+	{% endblock %}

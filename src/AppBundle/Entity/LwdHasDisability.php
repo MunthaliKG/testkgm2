@@ -15,14 +15,14 @@ class LwdHasDisability
     /**
      * @var string
      *
-     * @ORM\Column(name="assessed_by", type="string", nullable=false)
+     * @ORM\Column(name="assessed_by", type="string", nullable=true)
      */
     private $assessedBy;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="date_assessed", type="date", nullable=false)
+     * @ORM\Column(name="date_assessed", type="date", nullable=true)
      */
     private $dateAssessed;
 
@@ -72,25 +72,47 @@ class LwdHasDisability
     private $idlwd;
 
     /**
-     * @var \AppBundle\Entity\DisabilityHasLevel
+     * @var \AppBundle\Entity\Level
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\DisabilityHasLevel")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Level")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idlevel", referencedColumnName="idlevel"),
-     *   @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
+     *   @ORM\JoinColumn(name="idlevel", referencedColumnName="idlevel", nullable=true)
      * })
      */
     private $idlevel;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Need", inversedBy="idlwd")
+     * @ORM\JoinTable(name="lwd_has_disability_has_need",
+     *   joinColumns={
+     *     @ORM\JoinColumn(name="idlwd", referencedColumnName="idlwd"),
+     *     @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
+     *   },
+     *   inverseJoinColumns={
+     *     @ORM\JoinColumn(name="idneed", referencedColumnName="idneed")
+     *   }
+     * )
+     */
+    private $idneed;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->idneed = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
 
     /**
      * Set assessedBy
      *
-     * @param \simplearray $assessedBy
+     * @param string $assessedBy
      * @return LwdHasDisability
      */
-    public function setAssessedBy(\simplearray $assessedBy)
+    public function setAssessedBy($assessedBy)
     {
         $this->assessedBy = $assessedBy;
 
@@ -100,7 +122,7 @@ class LwdHasDisability
     /**
      * Get assessedBy
      *
-     * @return \simplearray 
+     * @return string 
      */
     public function getAssessedBy()
     {
@@ -133,10 +155,10 @@ class LwdHasDisability
     /**
      * Set identifiedBy
      *
-     * @param \simplearray $identifiedBy
+     * @param string $identifiedBy
      * @return LwdHasDisability
      */
-    public function setIdentifiedBy(\simplearray $identifiedBy)
+    public function setIdentifiedBy($identifiedBy)
     {
         $this->identifiedBy = $identifiedBy;
 
@@ -146,7 +168,7 @@ class LwdHasDisability
     /**
      * Get identifiedBy
      *
-     * @return \simplearray 
+     * @return string 
      */
     public function getIdentifiedBy()
     {
@@ -248,10 +270,10 @@ class LwdHasDisability
     /**
      * Set idlevel
      *
-     * @param \AppBundle\Entity\DisabilityHasLevel $idlevel
+     * @param \AppBundle\Entity\Level $idlevel
      * @return LwdHasDisability
      */
-    public function setIdlevel(\AppBundle\Entity\DisabilityHasLevel $idlevel = null)
+    public function setIdlevel(\AppBundle\Entity\Level $idlevel = null)
     {
         $this->idlevel = $idlevel;
 
@@ -266,5 +288,38 @@ class LwdHasDisability
     public function getIdlevel()
     {
         return $this->idlevel;
+    }
+
+    /**
+     * Add idneed
+     *
+     * @param \AppBundle\Entity\Need $idneed
+     * @return LwdHasDisability
+     */
+    public function addIdneed(\AppBundle\Entity\Need $idneed)
+    {
+        $this->idneed[] = $idneed;
+
+        return $this;
+    }
+
+    /**
+     * Remove idneed
+     *
+     * @param \AppBundle\Entity\Need $idneed
+     */
+    public function removeIdneed(\AppBundle\Entity\Need $idneed)
+    {
+        $this->idneed->removeElement($idneed);
+    }
+
+    /**
+     * Get idneed
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIdneed()
+    {
+        return $this->idneed;
     }
 }
