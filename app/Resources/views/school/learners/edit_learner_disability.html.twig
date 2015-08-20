@@ -46,8 +46,16 @@
 					<legend class="text-center"><small>{{ counter }}</small></legend>
 					{# show record deleted flash message #}
 					{% set recordUpdatedMessage = app.session.flashbag.get(counter) %}
+					{% set needUpdatedMessage = app.session.flashbag.get('needs_'~counter) %}
 					{% if recordUpdatedMessage is not empty %}
 						{% for message in recordUpdatedMessage %}
+							<div class="alert alert-success alert-dismissible" alert="alert">
+								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% elseif needUpdatedMessage is not empty %}
+						{% for message in needUpdatedMessage %}
 							<div class="alert alert-success alert-dismissible" alert="alert">
 								<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 								{{ message }}
@@ -64,24 +72,27 @@
 							{{ form_row(form.identified_by, {'label_attr':{'class':'radio-inline'}}) }}
 							{{ form_row(form.identification_date) }}
 							{{ form_row(form.case_description) }}
-							<div class="col-sm-6 col-sm-offset-3">
-								{{ form_widget(form.remove, {'attr':{'class':'pull-left','data-toggle':'confirmation','data-prompt':'Remove this disability/special need record?'},'before_label':'<i class="fa fa-remove"></i> '}) }}
-								{{ form_widget(form.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
+							<div class="row">
+								<div class="col-sm-6 col-sm-offset-3">
+									{{ form_widget(form.remove, {'attr':{'class':'pull-left','data-toggle':'confirmation','data-prompt':'Remove this disability/special need record?'},'before_label':'<i class="fa fa-remove"></i> '}) }}
+									{{ form_widget(form.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
+								</div>
 							</div>	
 
 							{{ form_end(form) }}
 						</div>
 						{% set needForm = needForms[counter-1] %}
-						<div class="row">
-							<div class="col-sm-4">
-								<strong><u>Needs available to the student for this disability</u></strong>
-								{{ form_start(needForm) }}
-								{{ form_errors(needForm) }}
-								{{ form_widget(needForm.needs) }}
-								{{ form_widget(needForm.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
-								{{ form_end(needForm) }}
-							</div>
+						
+						<div class="col-sm-4">
+							<strong><u>Needs available to the student for this disability</u></strong>
+							{{ form_start(needForm) }}
+							{{ form_errors(needForm) }}
+							{{ form_widget(needForm.needs) }}
+							{{ form_widget(needForm.iddisability) }}
+							{{ form_widget(needForm.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
+							{{ form_end(needForm) }}
 						</div>
+						
 					</div>
 					
 					{% set counter = counter + 1 %}

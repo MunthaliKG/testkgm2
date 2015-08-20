@@ -432,29 +432,45 @@ class SchoolController extends Controller{
     			$learnerId));
     		if($learnerDisabilities){
     			$formCounter = 1;
+    			//prepare SQL statements to be executed with each iteration
+    			$levelsStmt = $connection->prepare("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
+    					WHERE iddisability = ?");
+    			$needsStmt = $connection->prepare("SELECT idneed, needname FROM disability_has_need NATURAL JOIN need 
+    					WHERE iddisability = ?");
+    			$needsRowsStmt = $connection->prepare("SELECT idneed FROM lwd_has_disability_has_need WHERE idlwd = ? 
+    					AND iddisability = ?");
+
+    			//iterate over each disability for this learner
     			foreach($learnerDisabilities as $key => $disability){
     				//get the levels to show in the form for this disability
-    				$levels = $connection->fetchAll("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
-    					WHERE iddisability = ?", array($disability['iddisability']));
-    				$disability['identification_date'] = new \DateTime($disability['identification_date']);
-    				$disability['iddisability_2'] = $disability['iddisability'];//set default data for the hidden field since iddisability will be disabled
-    				$forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels, $formCounter), $disability); 
+    				$levelsStmt->bindParam(1, $disability['iddisability']);
+    				$levelsStmt->execute();
+    				$levels = $levelsStmt->fetchAll();
 
+    				$disability['identification_date'] = new \DateTime($disability['identification_date']);
+    				$disability['iddisability_2'] = $disability['iddisability'];//set default data for the hidden field since the true iddisability will be disabled
+    				$forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels, $formCounter), $disability); 
     				//get the needs for this disability
-    				$needs = $connection->fetchAll("SELECT idneed, needname FROM disability_has_need NATURAL JOIN need 
-    					WHERE iddisability = ?", array($disability['iddisability']));
+    				$needsStmt->bindParam(1, $disability['iddisability']);
+    				$needsStmt->execute();
+    				$needs = $needsStmt->fetchAll();
     				//get the needs that the learner has access to for this disability
-    				$availableNeedsRows = $connection->fetchAll("SELECT idneed FROM lwd_has_disability_has_need WHERE idlwd = ? 
-    					AND iddisability = ?", array($learnerId, $disability['iddisability']));
+    				$needsRowsStmt->bindParam(1, $learnerId);
+    				$needsRowsStmt->bindParam(2, $disability['iddisability']);
+    				$needsRowsStmt->execute();
+    				$availableNeedsRows = $needsRowsStmt->fetchAll();
     				//get the ids of all the available needs as a single array
     				$availableNeeds = array_column($availableNeedsRows, 'idneed');
-    				$needForms[] = $this->createForm(new NeedsType($needs, $formCounter), ['needs'=>$availableNeeds]);
+    				$needForms[] = $this->createForm(new NeedsType($needs, $formCounter), ['needs'=>$availableNeeds, 'iddisability'=>$disability['iddisability']]);
     				$formCounter++;
     			}
+    			$levelsStmt->closeCursor();
+    			$needsStmt->closeCursor();
+    			$needsRowsStmt->closeCursor();
     		}
     		//process each of the forms
     		$formCounter = 1;
-    		foreach(array_combine($forms, $needForms) as &$form => &$needForm){
+    		foreach($forms as $form){
     			$form->handleRequest($request);
     			if($form->isValid()){
     				$formData = $form->getData();
@@ -482,6 +498,34 @@ class SchoolController extends Controller{
 
 					$this->addFlash($messageType, $message);
 					return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+    			}
+    			$needForm = $needForms[$formCounter-1];
+    			$needForm->handleRequest($request);
+    			if($needForm->isValid()){
+    				$formData = $needForm->getData();
+    				$dataConverter = $this->get('data_converter');
+    				$selectedNeeds = $dataConverter->arrayRemoveQuotes($formData['needs']);    				
+    				$commaString = $dataConverter->convertToCommaString($selectedNeeds); /*convert array 
+    				of checked values to comma delimited string */
+    				$connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
+    					AND idlwd = ? AND idneed NOT IN (?)', array($formData['iddisability'], $learnerId, $commaString));/*delete all records in the db
+    				that are not checked on the form*/
+    				//write the records for needs available to this learner if the records do not already exist in the db
+    				$writeNeeds = $connection->prepare('INSERT IGNORE INTO lwd_has_disability_has_need SET idlwd = ?, 
+    					iddisability = ?, idneed = ?');
+    				$writeNeeds->bindParam(1, $learnerId);
+    				$writeNeeds->bindParam(2, $formData['iddisability']);
+    				//iterate over array of needs checked on the form and add each one to the database
+    				foreach($selectedNeeds as $selectedNeed){
+    					$writeNeeds->bindParam(3, $selectedNeed);
+    					$writeNeeds->execute();
+    				}
+    				$writeNeeds->closeCursor();
+    				$messageType = 'needs_'.$formCounter;
+    				$message = "Available needs for this learner have been updated";
+    				$this->addFlash($messageType, $message);
+					return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+
     			}
     			$formCounter++;
     		}

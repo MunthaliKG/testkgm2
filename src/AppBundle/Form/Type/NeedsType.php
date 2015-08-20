@@ -20,10 +20,14 @@ class NeedsType extends AbstractType{
 		$builder
 		->add('needs','choice',array(
 			'label'=>'',
-			'constraints' => array(new NotBlank(array('message'=>'Please check at least one item'))),
 			'expanded' => true,
 			'multiple' => true,
 			'choices' => $this->needs,
+			'required' => true,
+			)
+		)
+		->add('iddisability', 'hidden', array(
+			'constraints' => array(new NotBlank())
 			)
 		)
 		->add('save','submit', array(

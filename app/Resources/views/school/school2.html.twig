@@ -9,7 +9,7 @@
 
 	<li class="{% block teachers_menuitem %}{% endblock %}"><a href="{{ path('school_teachers',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add specialist teacher records</a></li>
 
-	<li class="{% block reports_menuitem %}{% endblock %}"><a href="#" class="text-center menu-itm"> Reports</a></li>
+	<li class="{% block reports_menuitem %}{% endblock %}"><a href="{{ path('school_reports',{"emisCode": emisCode})}}" class="text-center menu-itm"> Reports</a></li>
 {% endblock %}
 
 {% block content %}

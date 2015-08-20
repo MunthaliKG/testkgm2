@@ -7,7 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>LWD tracking information system</title>
+        <title>{% block title %}LWD tracking information system{% endblock %}</title>
         {% block stylesheets %}
             <!-- Bootstrap core CSS -->
             <link href="{{asset('bootstrap/dist/css/bootstrap.css')}}" rel="stylesheet">
@@ -25,6 +25,7 @@
     </head>
     
     <body>
+        {% block body %}
         <div class="container pg-empty-placeholder gray-border">
             <div class="row title-div">
                 <h3 class="col-lg-7"><img class="" src="{{asset('assets/images/snlis-logo.png')}}">
@@ -86,6 +87,7 @@
         <!--js that applies to entire system -->
         <script src="{{asset('assets/js/global.js')}}"></script>
         {% endblock %}
+    {% endblock %}
     </body>
 
 </html>
