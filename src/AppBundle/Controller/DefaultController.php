@@ -104,6 +104,7 @@ class DefaultController extends Controller
         $user->setPassword($encoded);
         $user->setUsername('jonathan');
         $user->setEmail('jonathanmojoo@yahoo.com');
+        $user->setEnabled(true);
 
         $em->persist($user);
         $em->flush();
