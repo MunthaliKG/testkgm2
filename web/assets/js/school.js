@@ -37,6 +37,11 @@ $(document).ready(function(){
 			$('#findMaterialForm').submit();
 		}
 	});
+        $('#form_need').change(function(event){
+		if($(this).val() !== ""){
+			$('#findResourceForm').submit();
+		}
+	});
 
     if($('.datepicker').length){
 		$('.datepicker').datepicker();

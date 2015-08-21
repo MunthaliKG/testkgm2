@@ -12,7 +12,12 @@ class TeacherType extends AbstractType
 	
 	public function buildForm(FormBuilderInterface $builder, array $options){
 		$builder
-		->add('sfirst_name','text', array(
+		->add('employment_number','text', array(
+			'label' => 'Employment Number',
+			'constraints' => array(new NotBlank()),
+			)
+		)
+                ->add('sfirst_name','text', array(
 			'label' => 'First name',
 			'constraints' => array(new NotBlank()),
 			)
@@ -27,18 +32,35 @@ class TeacherType extends AbstractType
 			'required' => false,
 			)
 		)
+                ->add('s_dob', 'date', array(
+			'label' => 'Date of birth',
+			'widget' => 'single_text',
+			'format' => 'dd-MM-yyyy',
+			'constraints' => array(new NotBlank()),
+			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
+			)
+		)
 		->add('s_sex', 'choice', array(
 			'label' => 'Sex',
 			'choices' => array('M'=>'M','F'=>'F'),
+                        'placeholder' => '--Gender--',
 			'constraints' => array(new NotBlank()),
-			'expanded' => true,
+			'expanded' => false,
 			'multiple' => false,
 			)
 		)
 		->add('qualification', 'choice', array(
 			'label' => 'Qualification',
+                        'placeholder' => '--Qualification--',
 			'choices' => array('certificate'=>'certificate', 'diploma'=>'diploma', 'degree'=>'degree'),
-			'expanded' => true,
+			'expanded' => false,
+			'multiple' => false,)
+		)
+                ->add('snt_type', 'choice', array(
+			'label' => 'Teacher Type',
+                        'placeholder' => '-- Type --',
+			'choices' => array('Itinerant'=>'Itinerant', 'Resident'=>'Resident'),
+			'expanded' => false,
 			'multiple' => false,)
 		)
 		->add('speciality', 'choice', array(
@@ -47,20 +69,20 @@ class TeacherType extends AbstractType
 			'expanded' => true,
 			'multiple' => true,)
 		)
-		->add('year_started', 'datetime', array(
-			'label' => 'Year Started',
+		->add('year_started', 'date', array(
+			'label' => 'Year Started Teaching',
 			'widget' => 'single_text',
-			'format' => 'yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
+			'format' => 'dd-MM-yyyy',
+			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
 			'constraints' => array(new NotBlank()),
 			)
 		)
                 //This is for school_has_snt table
-                ->add('year', 'datetime', array(
+                ->add('year', 'date', array(
 			'label' => 'Current working year at School',
 			'widget' => 'single_text',
-			'format' => 'yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
+			'format' => 'dd-MM-yyyy',
+			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
 			'constraints' => array(new NotBlank()),
 			)
 		)

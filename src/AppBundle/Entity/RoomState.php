@@ -36,9 +36,15 @@ class RoomState
     /**
      * @var string
      *
-     * @ORM\Column(name="accessible", type="string", nullable=false)
+     * @ORM\Column(name="access", type="string", nullable=false)
      */
-    private $accessible;
+    private $access;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="room_type", type="string", nullable=false)
+     */
+    private $room_type;
 
     /**
      * @var string
@@ -55,6 +61,12 @@ class RoomState
     private $otherObservations;
 
     /**
+     * @var text
+     *
+     * @ORM\Column(name="updates", type="text")
+     */
+    private $updates;
+    /**
      * @var string
      *
      * @ORM\Column(name="room_id", type="string", length=2)
@@ -63,13 +75,12 @@ class RoomState
      */
     private $idRoom;
 
-    /**
-     * Set year
+     /**
+     * @var \DateTime
      *
-     * @param \DateTime $year
-     * @return RoomState
+     * @ORM\Column(name="year", type="year", nullable=false)
      */
-     private $year;
+    private $year_started;
 
     /**
      * @var \AppBundle\Entity\School
@@ -155,26 +166,26 @@ class RoomState
     }
 
     /**
-     * Set accessible
+     * Set room_type
      *
-     * @param string $accessible
+     * @param string $room_type
      * @return RoomState
      */
-    public function setAccessible($accessible)
+    public function setRoomType($room_type)
     {
-        $this->accessible = $accessible;
+        $this->room_type = $room_type;
 
         return $this;
     }
 
     /**
-     * Get accessible
+     * Get room_type
      *
      * @return string 
      */
-    public function getAccessible()
+    public function getRoomType()
     {
-        return $this->accessible;
+        return $this->room_type;
     }
 
     /**
@@ -222,6 +233,28 @@ class RoomState
     {
         return $this->otherObservations;
     }
+    
+    /**
+     * Set updates
+     *
+     * @param text $updates
+     * @return RoomState
+     */
+    public function setUpdates($updates)
+    {
+        $this->updates = $updates;
+
+        return $this;
+    }
+    /**
+     * Get updates
+     *
+     * @return text
+     */
+    public function getUpdates()
+    {
+        return $this->updates;
+    }
 
     /**
      * Set idRoom
@@ -245,28 +278,28 @@ class RoomState
     {
         return $this->idRoom;
     }
-
+    
     /**
-     * Set year
+     * Set year_started
      *
-     * @param \DateTime $year
+     * @param \DateTime $year_started
      * @return RoomState
      */
-    public function setYear($year)
+    public function setYearStarted($year_started)
     {
-        $this->year = $year;
+        $this->year_started = $year_started;
 
         return $this;
     }
 
     /**
-     * Get year
+     * Get year_started
      *
      * @return \DateTime 
      */
     public function getYear()
     {
-        return $this->year;
+        return $this->year_started;
     }
 
     /**
@@ -290,5 +323,27 @@ class RoomState
     public function getEmiscode()
     {
         return $this->emiscode;
+    }
+    /**
+     * Set access
+     *
+     * @param string $access
+     * @return RoomState
+     */
+    public function setAccess($access)
+    {
+        $this->access = $access;
+
+        return $this;
+    }
+
+    /**
+     * Get access
+     *
+     * @return string 
+     */
+    public function getAccess()
+    {
+        return $this->access;
     }
 }

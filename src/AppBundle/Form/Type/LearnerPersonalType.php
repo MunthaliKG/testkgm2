@@ -13,7 +13,6 @@ class LearnerPersonalType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		//add the form fields
-		
 		$builder
 		->add('idlwd','text', array(
 			'label' => 'Learner Id',

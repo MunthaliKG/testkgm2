@@ -15,7 +15,7 @@ class SchoolHasSnt
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="year", type="date")
+     * @ORM\Column(name="year", type="year")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
@@ -32,7 +32,13 @@ class SchoolHasSnt
      * })
      */
     private $idsnt;
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="snt_type", type="string", nullable=true)
+     */
+    private $snt_type;
+    
     /**
      * @var \AppBundle\Entity\School
      *
@@ -74,7 +80,7 @@ class SchoolHasSnt
      * Set idsnt
      *
      * @param \AppBundle\Entity\Snt $idsnt
-     * @return SchoolHasSnt
+     * @return Snt
      */
     public function setIdsnt(\AppBundle\Entity\Snt $idsnt)
     {
@@ -114,5 +120,27 @@ class SchoolHasSnt
     public function getEmiscode()
     {
         return $this->emiscode;
+    }
+     /**
+     * Set snt_type
+     *
+     * @param string $snt_type
+     * @return SchoolHasSnt
+     */
+    public function setSntType($snt_type)
+    {
+        $this->snt_type = $snt_type;
+
+        return $this;
+    }
+
+    /**
+     * Get snt_type
+     *
+     * @return string 
+     */
+    public function getSntType()
+    {
+        return $this->snt_type;
     }
 }

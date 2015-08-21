@@ -7,29 +7,31 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-sm-2">
+        <div class="col-sm-3">
             
-                {# embed the controller that returns the form for selecting existing materials #}
-                {{ render(controller('AppBundle:School:findMaterialForm',{"emisCode":emisCode}))}}
+                    {# embed the controller that returns the form for selecting existing materials #}
+                    {{ render(controller('AppBundle:School:findResourceForm',{"emisCode":emisCode}))}}
+                
             
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
             {% block material_form_nav %}
                 {% embed 'school/materials/material_form_nav.html.twig' %}
-                    {% block class_info %}active {% endblock %}
+                    {% block resource_room_info %}active {% endblock %}
                     {% block material_link %}
-                        {#{{ path('school_materials',{"emisCode": emisCode,"link": "need"})}}#}
+                        {{ path('school_materials',{"emisCode": emisCode,"link": "room"})}}
                     {% endblock %}
                     {% block resource_link %}
-                        {{ path('school_materials',{"emisCode": emisCode,"link": "resource"})}}
+                        {#{{ path('school_materials',{"emisCode": emisCode,"link": "resource"})}}#}
                     {% endblock %}
                 {% endembed %}
             {% endblock %}
         </div>			
         
-            <div class="col-sm-2">
+            <div class="col-sm-3">
+                
                
-                    <p class="text-right"><a href="{{ path('edit_school_material',{"emisCode":emisCode, "materialId": "new"}) }}" class="btn btn-sm" id="add_room"><i class="fa fa-plus fa-lg"></i> &nbsp; Add New Room</a></p>
+                    <p class="text-right"><a href="{{ path('edit_resource_material',{"emisCode":emisCode, "needId": "new"}) }}" class="btn btn-sm" id="add_rc"><i class="fa fa-plus fa-lg"></i> &nbsp; Add New Resource</a></p>
                 
             </div>
         </div>
@@ -38,8 +40,9 @@
     <div class="row">
         <div class="col-sm-8 col-sm-offset-2">
             {% block form_container %}
-                <br><br><h2 class="text-center"><small>Choose a room to edit OR Add a new room</small></h2>
+            <br><br><h2 class="text-center"><small>Choose a resource to edit OR Add a new resource</small></h2>
             {% endblock %}
         </div>
     </div>
 {% endblock %}
+{# empty Twig template #}

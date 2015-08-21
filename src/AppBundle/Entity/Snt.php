@@ -25,6 +25,13 @@ class Snt
      * @ORM\Column(name="slast_name", type="string", length=25, nullable=false)
      */
     private $slastName;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="employment_number", type="string", length=10, nullable=false)
+     */
+    private $employmentNumber;
 
     /**
      * @var string
@@ -32,6 +39,12 @@ class Snt
      * @ORM\Column(name="sinitials", type="string", length=25, nullable=false)
      */
     private $sinitials;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="s_dob", type="date", nullable=false)
+     */
+    private $s_dob;
 
     /**
      * @var string
@@ -61,7 +74,7 @@ class Snt
      */
     private $yearStarted;
 
-    /**
+     /**
      * @var integer
      *
      * @ORM\Column(name="idsnt", type="integer")
@@ -70,19 +83,18 @@ class Snt
      */
     private $idsnt;
 
-    /**
-     * Set idsnt
-     *
-     * @param integer $idsnt
-     * @return SNT
-     */
-    public function setIdsnt($idsnt)
-    {
-        $this->idsnt = $idsnt;
+   // /**
+    // * Set string
+     //*
+     //* @param string $idsnt
+     //* @return SNT
+     //*/
+    //public function setIdsnt($idsnt)
+    //{
+     //   $this->idsnt = $idsnt;
 
-        return $this;
-    }
-
+//        return $this;
+  //  }
     /**
      * Set sfirstName
      *
@@ -104,6 +116,28 @@ class Snt
     public function getSfirstName()
     {
         return $this->sfirstName;
+    }
+    /**
+     * Set employmentNumber
+     *
+     * @param string $employmentNumber
+     * @return Snt
+     */
+    public function setEmploymentNumber($employmentNumber)
+    {
+        $this->employmentNumber = $employmentNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get employmentNumber
+     *
+     * @return string 
+     */
+    public function getEmploymentNumber()
+    {
+        return $this->employmentNumber;
     }
 
     /**
@@ -164,7 +198,28 @@ class Snt
 
         return $this;
     }
+    /**
+     * Set s_dob
+     *
+     * @param \DateTime $s_dob
+     * @return Snt
+     */
+    public function setSdob($s_dob)
+    {
+        $this->s_dob = $s_dob;
 
+        return $this;
+    }
+
+    /**
+     * Get s_dob
+     *
+     * @return \DateTime 
+     */
+    public function getSdob()
+    {
+        return $this->s_dob;
+    }
     /**
      * Get sSex
      *
