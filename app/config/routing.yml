@@ -3,3 +3,11 @@ app:
     type:     annotation
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+remove_trailing_slash:
+    path: /{url}
+    defaults: { _controller: AppBundle:Default:removeTrailingSlash }
+    requirements:
+            url: .*/$
+            methods: 'GET'
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"

@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Form\Type\SchoolFinderType;
+use AppBundle\Entity\User;
 
 class DefaultController extends Controller
 {
@@ -15,7 +16,7 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('default/index.html.twig');
+        return $this->redirectToRoute('school', array(), 301);
     }
     /**
      * @Route("/schoollist_ajax", name="school_ajax", condition="request.isXmlHttpRequest()",options={"expose"=true})
@@ -84,5 +85,29 @@ class DefaultController extends Controller
      */
     public function nationalAction(){
         return $this->render('national/national.html.twig');
+    }
+    public function removeTrailingSlashAction(Request $request){
+        $pathInfo = $request->getPathInfo();
+        $requestUri = $request->getRequestUri();
+        $url = str_replace($pathInfo, rtrim($pathInfo, ' /'), $requestUri);
+        return $this->redirect($url, 301);
+    }
+    /**
+     * @Route("/add_user", name="add_user")
+     */
+    public function addUser(){
+        $em = $this->getDoctrine()->getManager();
+        $user = new User();
+        $plainPassword = 'jonathanpass';
+        $encoder = $this->container->get('security.password_encoder');
+        $encoded = $encoder->encodePassword($user, $plainPassword);
+        $user->setPassword($encoded);
+        $user->setUsername('jonathan');
+        $user->setEmail('jonathanmojoo@yahoo.com');
+
+        $em->persist($user);
+        $em->flush();
+
+        return $this->redirectToRoute('homepage', array(), 301);
     }
 }
