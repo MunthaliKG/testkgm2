@@ -22,7 +22,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/jsrouting-bundle": "^1.5",
         "tfox/mpdf-port-bundle": "1.2.*",
-        "liuggio/excelbundle": "^2.0"
+        "liuggio/excelbundle": "^2.0",
+        "friendsofsymfony/user-bundle": "~2.0@dev"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
