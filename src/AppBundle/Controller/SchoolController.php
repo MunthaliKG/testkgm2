@@ -25,6 +25,7 @@ use AppBundle\Entity\SchoolHasSnt;
 use AppBundle\Entity\Need;
 use AppBundle\Entity\ResourceRoom;
 use AppBundle\Form\Type\ResourceRoomType;
+use AppBundle\Entity\Performance;
 use AppBundle\Entity\LwdHasDisability;
 
 class SchoolController extends Controller{
