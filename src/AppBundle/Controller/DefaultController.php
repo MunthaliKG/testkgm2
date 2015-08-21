@@ -95,7 +95,7 @@ class DefaultController extends Controller
     /**
      * @Route("/add_user", name="add_user")
      */
-    public function addUser(){
+    public function addUserAction(){
         $em = $this->getDoctrine()->getManager();
         $user = new User();
         $plainPassword = 'jonathanpass';
