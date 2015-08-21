@@ -272,23 +272,11 @@ abstract class AbstractNormalizer extends SerializerAwareNormalizer implements N
      */
     protected function prepareForDenormalization($data)
     {
-        if (is_array($data) || is_object($data) && $data instanceof \ArrayAccess) {
-            $normalizedData = $data;
-        } elseif (is_object($data)) {
-            $normalizedData = array();
-
-            foreach ($data as $attribute => $value) {
-                $normalizedData[$attribute] = $value;
-            }
-        } else {
-            $normalizedData = array();
-        }
-
-        return $normalizedData;
+        return (array) $data;
     }
 
     /**
-     * Instantiates an object using contructor parameters when needed.
+     * Instantiates an object using constructor parameters when needed.
      *
      * This method also allows to denormalize data into an existing object if
      * it is present in the context with the object_to_populate key.
@@ -303,7 +291,7 @@ abstract class AbstractNormalizer extends SerializerAwareNormalizer implements N
      *
      * @throws RuntimeException
      */
-    protected function instantiateObject(array $data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes)
+    protected function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes)
     {
         if (
             isset($context['object_to_populate']) &&
