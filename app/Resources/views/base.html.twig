@@ -30,7 +30,10 @@
             <div class="row title-div">
                 <h3 class="col-lg-7"><img class="" src="{{asset('assets/images/snlis-logo.png')}}">
                         <small class="hidden-xs"><span class="text-nowrap">Special Needs Education Management Information System</span></small>
-                </h3>                                                        
+                </h3>
+                <div class="col-lg-3 col-lg-offset-2">
+                    {% block user_corner %}{% endblock %}
+                </div>                                                        
             </div>
             <div class="row row2">
                 <div class="col-md-12">
@@ -69,7 +72,7 @@
                         {%endblock%}
                     </ul>
                 </div>
-                <div class="col-sm-10 right-column col-pull-10">
+                <div class="col-sm-10 right-column col-pull-10" style="{% block right_column_style %}{% endblock %}">
                     {%block rightcolumn%}{%endblock%}
                 </div>
             </div>
