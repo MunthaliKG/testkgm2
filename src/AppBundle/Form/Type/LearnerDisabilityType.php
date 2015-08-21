@@ -53,7 +53,7 @@ class LearnerDisabilityType extends AbstractType
 		)
 		->add('identified_by','choice', array(
 			'label' => 'Identified by',
-			'expanded' => true,
+			'expanded' => false,
 			'multiple' => false,
 			'constraints' => array(new NotBlank()),
 			'choices' => array(
