@@ -1,5 +1,6 @@
 @import "../../bootstrap/less/variables.less";
 @import "../../bootstrap/less/mixins.less";
+@import "../../bootstrap/less/mixins/border-radius.less";
 @import "../font-awesome/css/font-awesome.min.css";
 
 .title-div{
@@ -81,7 +82,18 @@ label>input[type=radio] + span:before {
 label>input[type=radio]:checked + span:before { 
     content: "\f192"; /* checked icon */
 } 
-
 .nav-tabs{
     font-size: 85%;
+}
+.user-corner{
+    color: #F2EEB3;
+}
+.user-corner a{
+    color: #F2EEB3;
+}
+.login-form{
+    .border-right-radius(5px);
+    .border-left-radius(5px);
+    background-color: white;
+    padding: 10px; 
 }

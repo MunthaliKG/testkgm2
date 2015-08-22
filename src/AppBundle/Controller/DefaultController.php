@@ -95,7 +95,7 @@ class DefaultController extends Controller
     /**
      * @Route("/add_user", name="add_user")
      */
-    public function addUser(){
+    public function addUserAction(){
         $em = $this->getDoctrine()->getManager();
         $user = new User();
         $plainPassword = 'jonathanpass';
@@ -104,6 +104,7 @@ class DefaultController extends Controller
         $user->setPassword($encoded);
         $user->setUsername('jonathan');
         $user->setEmail('jonathanmojoo@yahoo.com');
+        $user->setEnabled(true);
 
         $em->persist($user);
         $em->flush();
