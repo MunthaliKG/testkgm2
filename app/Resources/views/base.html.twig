@@ -10,11 +10,11 @@
         <title>{% block title %}LWD tracking information system{% endblock %}</title>
         {% block stylesheets %}
             <!-- Bootstrap core CSS -->
-            <link href="{{asset('bootstrap/dist/css/bootstrap.css')}}" rel="stylesheet">
+            <link type="text/css" href="{{asset('bootstrap/dist/css/bootstrap.css')}}" rel="stylesheet"/>
             <!-- Font-awesome -->
-            <link href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet">
+            <link type="text/css" href="{{asset('assets/font-awesome/css/font-awesome.min.css')}}" rel="stylesheet"/>
             <!-- Custom styles for this template -->
-            <link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
+            <link type="text/css" href="{{asset('assets/css/style.css')}}" rel="stylesheet"/>
         {% endblock %}
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media
         queries -->
@@ -26,69 +26,77 @@
     
     <body>
         {% block body %}
-        <div class="container pg-empty-placeholder gray-border">
-            <div class="row title-div">
-                <h3 class="col-sm-7"><img class="" src="{{asset('assets/images/snlis-logo.png')}}">
-                        <small class="hidden-xs"><span class="text-nowrap">Special Needs Education Management Information System</span></small>
-                </h3>
-                <div class="col-sm-3 col-sm-offset-2"><br><br>
-                    <p class="text-right user-corner">
-                        {% block user_corner %}
-                            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                {{ 'Logged in as: <b>%username%</b>'|trans({'%username%': app.user.username}, 'FOSUserBundle')|raw }} |
-                                <a href="{{ path('fos_user_security_logout') }}">
-                                    {{ 'logout'|trans({}, 'FOSUserBundle') }}
-                                </a>
-                            {% else %}
-                                <a href="{{ path('fos_user_security_login') }}">{{ 'Login'|trans({}, 'FOSUserBundle') }}</a>
-                            {% endif %}
-                        {% endblock %}
-                </p> 
-                </div>                                                        
-            </div>
-            <div class="row row2">
-                <div class="col-md-12">
-                    {# <img src="{{asset('assets/images/banner.jpg')}}" class="img-responsive col-xs-10 col-xs-offset-1"> #}
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <nav class="navbar navbar-default" role="navigation">
-                                <div class="navbar-header">
-                                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapsing-navbar">
-                                      <span class="sr-only">Toggle navigation</span>
-                                      <span class="icon-bar"></span>
-                                      <span class="icon-bar"></span>
-                                    </button>
-                                    <a class="navbar-brand" href="#">Level</a>
-                                </div>
+            <div class="container pg-empty-placeholder gray-border">           
+                <div class="row title-div">
+                    <h3 class="col-sm-7"><img class="" src="{{asset('assets/images/snlis-logo.png')}}">
+                            <small class="hidden-xs"><span class="text-nowrap">Special Needs Education Management Information System</span></small>
+                    </h3>
+                    <div class="col-sm-3 col-sm-offset-2"><br><br>
+                        <p class="text-right user-corner">
+                            {% block user_corner %}
+                                {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                    {{ 'Logged in as: <b>%username%</b>'|trans({'%username%': app.user.username}, 'FOSUserBundle')|raw }} |
+                                    <a href="{{ path('fos_user_security_logout') }}">
+                                        {{ 'logout'|trans({}, 'FOSUserBundle') }}
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('fos_user_security_login') }}">{{ 'Login'|trans({}, 'FOSUserBundle') }}</a>
+                                {% endif %}
+                            {% endblock %}
+                    </p> 
+                    </div>                                                        
+                </div>
+                <div class="row row2">
+                    <div class="col-md-12">
+                        {# <img src="{{asset('assets/images/banner.jpg')}}" class="img-responsive col-xs-10 col-xs-offset-1"> #}
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <nav class="navbar navbar-default" role="navigation">
+                                    <div class="navbar-header">
+                                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#collapsing-navbar">
+                                          <span class="sr-only">Toggle navigation</span>
+                                          <span class="icon-bar"></span>
+                                          <span class="icon-bar"></span>
+                                        </button>
+                                        <a class="navbar-brand" href="#">Level</a>
+                                    </div>
 
-                                <div class="collapse navbar-collapse" id="collapsing-navbar">
-                                    <ul class="nav navbar-nav">
-                                        <li class="{%block navschool%}{%endblock%}"><a href="{{path('school')}}">School</a></li>
-                                        <li class="{%block navzone%}{%endblock%}"><a href="{{path('zone')}}">Zone</a></li>
-                                        <li class="{%block navdistr%}{%endblock%}"><a href="{{path('district')}}">District</a></li>
-                                        <li class="{%block navnat%}{%endblock%}"><a href="{{path('national')}}">National</a></li>
-                                    </ul>
-                                </div>
-                            </nav>
+                                    <div class="collapse navbar-collapse" id="collapsing-navbar">
+                                        <ul class="nav navbar-nav">
+                                            <li class="{%block navschool%}{%endblock%}"><a href="{{path('school')}}">School</a></li>
+                                            <li class="{%block navzone%}{%endblock%}"><a href="{{path('zone')}}">Zone</a></li>
+                                            <li class="{%block navdistr%}{%endblock%}"><a href="{{path('district')}}">District</a></li>
+                                            <li class="{%block navnat%}{%endblock%}"><a href="{{path('national')}}">National</a></li>
+                                        </ul>
+                                    </div>
+                                </nav>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-            </div><!--row2 -->
-            <div class="row row3">
-                <div class="col-sm-2 left-column col-push-2">
-                    <ul class="nav nav-pills nav-stacked">
-                        {%block vertnav%}
+                    
+                </div><!--row2 -->
+                <div class="row row3">
+                    <div class="col-sm-2 left-column col-push-2">
+                        <ul class="nav nav-pills nav-stacked">
+                            {%block vertnav%}
 
-                        {%endblock%}
-                    </ul>
+                            {%endblock%}
+                        </ul>
+                    </div>
+                    <div class="col-sm-10 right-column col-pull-10" style="{% block right_column_style %}{% endblock %}">
+                        {%block rightcolumn%}{%endblock%}
+                    </div>
                 </div>
-                <div class="col-sm-10 right-column col-pull-10" style="{% block right_column_style %}{% endblock %}">
-                    {%block rightcolumn%}{%endblock%}
+                <div class="row hidden-xs pagefooter">
+                    <div class="col-sm-12">
+                        <p class="text-center"><br>
+                            Copyright &copy; Ministry of Education {{ "now"|date("Y") }} <br>
+                            Development by Chancellor College - Department of Computer Science
+                        </p>
+                    </div>
                 </div>
             </div>
-            
-        </div>
+        {% endblock %}
         <!-- Bootstrap core JavaScript==================================================-
         ->
 
@@ -101,7 +109,7 @@
         <!--js that applies to entire system -->
         <script src="{{asset('assets/js/global.js')}}"></script>
         {% endblock %}
-    {% endblock %}
+    
     </body>
 
 </html>

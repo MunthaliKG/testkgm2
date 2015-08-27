@@ -5,6 +5,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Range;
 
 //this class builds the form that is used to add/edit a learner's personal details
 class LearnerPersonalType extends AbstractType
@@ -60,6 +61,15 @@ class LearnerPersonalType extends AbstractType
 			'constraints' => array(
 				new NotBlank(), 
 				new Type(array('type'=>'integer','message'=>'Please enter a valid distance value'))
+				)
+			)
+		)
+		->add('std', 'integer', array(
+			'label' => 'Standard',
+			'constraints' => array(
+				new NotBlank(),
+				new Type(array('type'=>'integer','message'=>'Please enter a valid std value')),
+				new Range(array('min'=> 1,'max'=>8, 'invalidMessage'=>'Please enter a value between 1 and 8')),
 				)
 			)
 		)

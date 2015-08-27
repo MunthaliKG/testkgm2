@@ -54,28 +54,84 @@ class SchoolReportController extends Controller{
 
 			$options['school'] = $school;
 
-			/*Preliminary counts section*/
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
-			if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
-				$options['preliminary'] = true;
+			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
 
-				//learner preliminary counts
-				$learners = $connection->fetchAll('SELECT * FROM lwd_has_disability NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school 
+				//get the latest year from the lwd_belongs to school table
+				$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
 					WHERE emiscode = ?', [$emisCode]);
-				$options['numBoys'] = $dataConverter->countArray($learners, 'sex', 'M');//get the number of boys
-				$options['numGirls'] = $dataConverter->countArray($learners, 'sex', 'M');//get the number of girls
+				//learner preliminary counts
+				$learners = $connection->fetchAll('SELECT DISTINCT(idlwd), sex  FROM lwd NATURAL JOIN lwd_belongs_to_school 
+					WHERE emiscode = ?', [$emisCode]);
 
-				//snt preliminary counts
-				$latestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt 
-					WHERE emiscode = ?',[$emisCode]);
-				$teachers = $connection->fetchAll('SELECT * FROM school_has_snt NATURAL JOIN snt 
-					WHERE `year` = ? AND emiscode = ?', [$latestYr['yr'], $emisCode]);
-				$options['sntMale'] = $dataConverter->countArray($teachers, 's_sex', 'M');
-				$options['sntFemale'] = $dataConverter->countArray($teachers, 's_sex', 'F');
+				/*Preliminary counts section*/
+				if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
+					$options['preliminary'] = true;
+
+					$options['learnersTotal'] = count($learners);
+					$options['numBoys'] = $dataConverter->countArray($learners, 'sex', "M");//get the number of boys
+					$options['numGirls'] = $options['learnersTotal'] - $options['numBoys'];//get the number of girls
+
+					//snt preliminary counts
+					$latestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt 
+						WHERE emiscode = ?',[$emisCode]);
+					$teachers = $connection->fetchAll('SELECT * FROM school_has_snt NATURAL JOIN snt 
+						WHERE `year` = ? AND emiscode = ?', [$latestYr['yr'], $emisCode]);
+					$options['sntTotal'] = count($teachers);
+					$options['sntMale'] = $dataConverter->countArray($teachers, 's_sex', 'M');
+					$options['sntFemale'] = $options['sntTotal'] - $options['sntMale'];
+					$options['sntItinerant'] = $dataConverter->countArray($teachers, 'snt_type', 'Itinerant');
+					$options['sntResident'] = $options['sntTotal'] - $options['sntItinerant'];
+
+					//classroom preliminary counts
+					$classPopulations = $connection->fetchAll('SELECT std, COUNT(DISTINCT(idlwd)) as numLearners FROM lwd_belongs_to_school 
+						NATURAL JOIN lwd WHERE emiscode = ? AND `year` = ? GROUP BY std', [$emisCode, $yearQuery['maxYear']]);
+					$options['maxLearners'] = $dataConverter->findArrayMax($classPopulations, 'numLearners');
+					$options['minLearners'] = $dataConverter->findArrayMin($classPopulations, 'numLearners');
+
+					//room state preliminary counts
+					$rooms = $connection->fetchAll('SELECT room_id,enough_light,enough_space,enough_ventilation,adaptive_chairs,room_type,`access` 
+						FROM room_state WHERE emiscode = ? AND `year` = ?', [$emisCode, $yearQuery['maxYear']]);
+					$options['rmTotal'] = count($rooms);
+					$options['rmEnoughLight'] = $dataConverter->countArray($rooms, 'enough_light', 'Yes');
+					$options['rmEnoughSpace'] = $dataConverter->countArray($rooms, 'enough_space', 'Yes');
+					$options['rmEnoughVent'] = $dataConverter->countArray($rooms, 'enough_ventilation', 'Yes');
+					$options['rmAdaptiveChairs'] = $dataConverter->countArrayBool($rooms, 'adaptive_chairs', '>0');
+					$options['rmAccessible'] = $dataConverter->countArray($rooms, 'access', 'Yes');
+					$options['rmTemporary'] = $dataConverter->countArray($rooms, 'room_type', 'Temporary');
+					$options['rmPermanent'] = $options['rmTotal'] - $options['rmTemporary'];			
+				}
+				/*End of preliminary counts section*/
+
+				/*Summary of learners with special needs section*/
+				if(in_array(1, $formData['reports'])){
+					$options['specialNeeds'] = true;
+					//get students enrolled this year
+					$enrolled = $connection->fetchAll('SELECT sex, year FROM lwd NATURAL JOIN lwd_belongs_to_school 
+						WHERE emiscode = ? GROUP BY idlwd HAVING COUNT(idlwd) = 1 AND `year` = ?', 
+						[$emisCode, $yearQuery['maxYear']]);
+					$options['enrolledTotal'] = count($enrolled);
+					$options['enrolledBoys'] = $dataConverter->countArray($enrolled, 'sex', 'M');
+					$options['enrolledGirls'] = $options['enrolledTotal'] - $options['enrolledBoys'];
+
+					//get students who exited the school
+					$exited = $connection->fetchAll('SELECT sex, reason FROM lwd NATURAL JOIN school_exit WHERE emiscode = ? 
+						AND `year` = ?', [$emisCode, $yearQuery['maxYear']]);
+					//get dropouts
+					$dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', ' != '.$compString);
+					$options['dropoutTotal'] = count($dropouts);
+					$options['dropoutBoys'] = $dataConverter->countArray($dropouts, 'sex', 'M');
+					$options['dropoutGirls'] = $options['dropoutTotal'] - $options['dropoutBoys'];
+
+					//get learners completed std 8
+					$completed = $dataConverter->selectFromArrayBool($exited, 'reason', '= "completed"');
+					$options['completedTotal'] = count($completed);
+					$options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');
+					$options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
+				}
 			}
-			/*End of preliminary counts section*/
-
+			
 			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
 			if($formData['format'] == 'html' || $formData['format'] == 'pdf'){

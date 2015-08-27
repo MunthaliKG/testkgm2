@@ -1,0 +1,33 @@
+<br>
+<p><b>LEARNER WITH DISABILITY INFORMATION</b></p>
+
+<i>Enrollments, Dropouts and Transfers</i>
+<table class="{% if isHtml %} table table-condensed {% else %} pdf {% endif %}" {% if not isHtml %} border="1" {% endif %}>
+	<tr>
+		<th colspan="3">LWD Enrolled this Year</th>
+		<th colspan="3">Transfers to Other Schools</th>
+		<th colspan="3">Dropouts</th>
+		<th colspan="3">LWD Who Completed Std 8</th>
+	</tr>
+	<tr>
+		{% for i in 0..3 %}
+			<td>Boys</td><td>Girls</td><td>Total</td>
+		{% endfor %}
+	</tr>
+	<tr>
+		{# learners enrolled this year #}
+		<td>{{ enrolledBoys }}</td>
+		<td>{{ enrolledGirls }}</td>
+		<td>{{ enrolledTotal }}</td>
+		<td></td><td></td><td></td>
+		{# dropouts #}
+		<td>{{ dropoutBoys }}</td>
+		<td>{{ dropoutGirls }}</td>
+		<td>{{ dropoutTotal }}</td>
+		{# completed std 8 #}
+		<td>{{ completedBoys }}</td>
+		<td>{{ completedGirls }}</td>
+		<td>{{ completedTotal }}</td>
+	</tr>
+
+</table>

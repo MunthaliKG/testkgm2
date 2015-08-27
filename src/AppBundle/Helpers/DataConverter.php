@@ -44,16 +44,66 @@ class DataConverter{
 		}
 		return $count;
 	}
+	function countArrayBool($array, $key, $condition){
+		$count = 0;
+		foreach($array as $element){
+			if(is_array($element)){
+				if(eval("return ".$element[$key].$condition.";"))
+					$count++;
+			}
+		}
+		return $count;
+	}
 	function selectFromArray($array, $key, $value){
 		$array = array();
 		foreach($array as $element){
 			if(is_array($element)){
-				if($element[$key] == value){
+				if($element[$key] == $value){
 					$array[] = $element;
 				}
 			}
 		}
 		return $array;
+	}
+	function selectFromArrayBool($array, $key, $condition){
+		$array = array();
+		foreach($array as $element){
+			echo 'Method found';
+			if(is_array($element)){
+				if(eval("return ".$element[$key].$condition.";")){
+					$array[] = $element;
+				}
+			}
+		}
+		return $array;
+	}
+	function findArrayMax($array, $key){
+		$max = 0;
+		foreach($array as $element){
+			$max = $element[$key];
+			break;
+		}
+		foreach($array as $element){
+			if(is_array($element)){
+				if($element[$key] > $max)
+					$max = $element[$key];
+			}
+		}
+		return $max;
+	}
+	function findArrayMin($array, $key){
+		$min = 0;
+		foreach($array as $element){
+			$min = $element[$key];
+			break;
+		}
+		foreach($array as $element){
+			if(is_array($element)){
+				if($element[$key] < $min)
+					$min = $element[$key];
+			}
+		}
+		return $min;
 	}
 
 }

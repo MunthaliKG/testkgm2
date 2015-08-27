@@ -531,9 +531,8 @@ class SchoolController extends Controller{
     	$defaultData = array();
       	if($learnerId != 'new'){/*if we are not adding a new learner, fill the form fields with
             the data of the selected learner.*/
-            $learner = $connection->fetchAll('SELECT * FROM lwd, guardian
-                    WHERE lwd.idguardian = guardian.idguardian AND idlwd = ?', array($learnerId));
-            $defaultData = $learner[0];
+            $defaultData = $connection->fetchAssoc('SELECT * FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school 
+            	WHERE emiscode = ? AND idlwd = ? ORDER BY `year` DESC', array($emisCode, $learnerId));
             //convert the dates into their corresponding objects so that they will be rendered correctly by the form
             $defaultData['dob'] = new \DateTime($defaultData['dob']);
             $defaultData['gdob'] = new \DateTime($defaultData['gdob']);
@@ -589,15 +588,20 @@ class SchoolController extends Controller{
       		$metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
       		$em->flush();
 
-      		//if this is a new learner, add an entry in the lwd_belongs_to_school table
-      		if($learnerId == 'new'){
-      			$values = ['idlwd'=>$id_lwd, 'emiscode'=>$emisCode, 'year'=> new \DateTime('y')];
-      			$types = [\PDO::PARAM_INT, \PDO::PARAM_INT, 'datetime'];
-      			$connection->insert('lwd_belongs_to_school',$values, $types);
+      		$today = new \DateTime('y');
+      		//if this is a new learner, add an entry in the lwd_belongs_to_school table, otherwise, just update the std column
+      		$connection->executeQuery('INSERT IGNORE INTO lwd_belongs_to_school (idlwd, emiscode, `year`, `std`) VALUES 
+      			(?,?,?,?)', [$id_lwd, $emisCode, $today->format('Y-m-d'), $formData['std']]);
+      		// if($learnerId == 'new'){
+      		// 	$values = ['idlwd'=>$id_lwd, 'emiscode'=>$emisCode, 'year'=> new \DateTime('y'), 'std'=> $formData['std']];
+      		// 	$types = [\PDO::PARAM_INT, \PDO::PARAM_INT, 'datetime', \PDO::PARAM_INT];
+      		// 	$connection->insert('lwd_belongs_to_school',$values, $types);
 
-      			return $this->redirectToRoute('edit_learner_disability',['emisCode'=>$emisCode, 'learnerId'=>$id_lwd], 301);
-      		}
-      		
+      		// 	return $this->redirectToRoute('edit_learner_disability',['emisCode'=>$emisCode, 'learnerId'=>$id_lwd], 301);
+      		// }else{
+      		// 	$data = []
+      		// }
+      		return $this->redirectToRoute('edit_learner_disability',['emisCode'=>$emisCode, 'learnerId'=>$id_lwd], 301);
       	}
 
       	//if this is a new learner being added, we want to make the id field uneditable
@@ -725,14 +729,11 @@ class SchoolController extends Controller{
     		}
     	}
 
-    	//the form for adding a new disability to this learner's profile
-
-    	//$
-
     	$levels2 = array();
     	if($this->get('session')->getFlashBag()->has('levels')){
     		$levels2 = $this->get('session')->getFlashBag()->get('levels');
     	}
+        //the form for adding a new disability to this learner's profile
     	$newForm = $this->createForm(new LearnerDisabilityType($disabilities, $levels2, "",false));
 
     	$newForm->handleRequest($request);
@@ -774,6 +775,12 @@ class SchoolController extends Controller{
     		'forms' => $forms, 'needForms'=>$needForms, 'newform' => $newForm->createView())
     	);
     } 
+    /**
+     * @Route("/school/{emisCode}/learners/{learnerId}/exit", name="learner_exit", requirements ={"learnerId":"new|\d+"})
+     */
+    public function learnerExitAction(Request $request, $learnerId, $emisCode){
+        
+    }
     //controller called through ajax to autopopulate level select list
     /**
      * @Route("/populatelevels/{disabilityId}", name="populate_levels", requirements ={"iddisability":"\d+"}, condition="request.isXmlHttpRequest()", options={"expose":true})

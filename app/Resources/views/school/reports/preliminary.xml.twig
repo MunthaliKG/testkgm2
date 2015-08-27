@@ -4,6 +4,11 @@
   <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
   <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
   <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
+  <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
+  <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
+  <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
+  <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
+
   <Row>
     <Cell ss:MergeRight="1" ss:StyleID="s2"><Data ss:Type="String">Preliminary Counts</Data></Cell>
   </Row>
@@ -22,6 +27,48 @@
     <Cell><Data ss:Type="String">Resource</Data></Cell>
     <Cell><Data ss:Type="String">Permanent</Data></Cell>
     <Cell><Data ss:Type="String">Temporary</Data></Cell>
+ </Row>
+ <Row>
+    <Cell><Data ss:Type="Number">{{ numBoys }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ numGirls }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ numBoys + numGirls }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ sntMale }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ sntFemale }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ sntMale + sntFemale }}</Data></Cell>
+ </Row>
+ <Row ss:Index="9">
+    <Cell ss:MergeRight="1" ss:StyleID="s3"><Data ss:Type="String">Special Needs Education Teachers</Data></Cell>
+    <Cell ss:MergeRight="1" ss:Index="3" ss:StyleID="s3"><Data ss:Type="String">Total Number of Learners per Class</Data></Cell>
+ </Row>
+ <Row>
+    <Cell><Data ss:Type="String">Full Time</Data></Cell>
+    <Cell><Data ss:Type="String">Itinerant</Data></Cell>
+    <Cell><Data ss:Type="String">Maximum</Data></Cell>
+    <Cell><Data ss:Type="String">Minimum</Data></Cell>
+ </Row>
+ <Row>
+    <Cell><Data ss:Type="Number">{{ sntResident }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ sntItinerant }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ maxLearners }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ minLearners }}</Data></Cell>
+ </Row>
+
+ <Row ss:Index="13">
+    <Cell><Data ss:Type="String">CLASSROOM STATUS</Data></Cell>
+ </Row>
+ <Row>
+    <Cell><Data ss:Type="String">With enough lighting</Data></Cell>
+    <Cell><Data ss:Type="String">With enough space</Data></Cell>
+    <Cell><Data ss:Type="String">With enough ventilation</Data></Cell>
+    <Cell><Data ss:Type="String">With Adaptive Chairs</Data></Cell>
+    <Cell><Data ss:Type="String">Temporary classes</Data></Cell>
+ </Row>
+ <Row>
+    <Cell><Data ss:Type="Number">{{ rmEnoughLight }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ rmEnoughSpace }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ rmEnoughVent }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ rmAdaptiveChairs }}</Data></Cell>
+    <Cell><Data ss:Type="Number">{{ rmTemporary }}</Data></Cell>
  </Row>
 
 </Table>
