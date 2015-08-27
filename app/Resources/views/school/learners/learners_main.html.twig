@@ -24,6 +24,7 @@
 	<hr>
 	<div class="row">
 		<div class="col-sm-12">
+			<a href="{{ path('exit', {"emisCode":emisCode, "learnerId":learnerId})}}" class="btn btn-sm">Student exited school</a>
 			{% block form_container %}{% endblock %}
 		</div>
 	</div>
