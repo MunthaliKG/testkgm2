@@ -51,7 +51,7 @@ class SchoolReportController extends Controller{
 			$options = array(); //list of options to pass to the template
 			$school = $connection->fetchAssoc('SELECT emiscode,school_name,iddistrict,district_name,idzone,zone_name 
 				FROM school NATURAL JOIN district NATURAL JOIN zone WHERE emiscode = ?', [$emisCode]);
-
+                        
 			$options['school'] = $school;
 
 			/*Preliminary counts section*/

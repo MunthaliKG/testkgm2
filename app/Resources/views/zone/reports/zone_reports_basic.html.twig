@@ -1,0 +1,28 @@
+{% if form is defined %}
+	{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% endif %}
+{% extends 'zone/reports/zone_reports_main.html.twig' %}
+
+{% block basic_reports %} active {% endblock %} {# activate the tab for this page #}
+
+{% block reports_body %}
+	{{ form_start(form) }}
+	{{ form_errors(form) }}
+	{{ form_row(form.reports) }}
+	{{ form_row(form.format )}}
+	{# {{ form_errors(form.format) }}
+	{{ form_label(form.format) }}
+	{% for type in form.format %}
+	    {{ form_label(type) }}
+	    <i class="fa fa-file-pdf-o"></i>
+	    {{ form_widget(type) }}
+	{% endfor %} #}
+	{{ form_row(form.produce, {'before_label':'<i class="fa fa-table"></i> '})}}
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('assets/js/reports.js')}}"></script>
+{% endblock %}
+

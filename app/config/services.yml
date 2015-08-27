@@ -3,12 +3,19 @@
 parameters:
 #    parameter_name: value
     schoolfinderform.class: AppBundle\Helpers\FindSchoolForm
+    zonefinderform.class: AppBundle\Helpers\FindZoneForm
     dataconverter.class: AppBundle\Helpers\DataConverter
     excel_iofactory.class: PHPExcel\PHPExcel\PHPExcel_IOFactory
 services:
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    zone_finder:
+        class: %zonefinderform.class%
+        arguments: 
+                - "@doctrine.orm.entity_manager"
+                - "@form.factory"
+                - "@request_stack"
     school_finder:
         class: %schoolfinderform.class%
         arguments: 

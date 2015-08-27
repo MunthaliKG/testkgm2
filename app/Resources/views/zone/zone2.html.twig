@@ -1,0 +1,44 @@
+{% extends 'zone/zone.html.twig' %}
+
+{% set idzone = app.request.attributes.get('_route_params')['idzone'] %} {# get the zone id from the Route#}
+
+{% block vertnav %}
+    <li><a id="materials" zone="{{ idzone }}" href="{{ path('zone_snl',{"idzone": idzone,})}}" class="{% block zonal_snl %}{% endblock %}"> Zonal SNL reports</a></li>
+    <li><a href="#" class="{% block zonal_facility %}{% endblock %}"> Zonal school facility reports </a></li>
+{%endblock%}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-1">                        
+        </div>
+        <div class="col-sm-8">
+                <h4><b>{{zone.zone_name}} zone | Zone number: {{ idzone }} | District: {{ zone.district_name }}</b></h4>
+        </div>	
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-1">                        
+        </div>
+        <div class="col-sm-8">
+            <i class="text-center">Summary of learners with special needs</i>
+            <table class="table">
+                <tr><td><b>Impairment</b></td><td align="center"><b>Number of learners</b></td></tr>
+                {% for disability in disabilities %}
+                    <tr>
+                        <td>{{disability.disability_name}}</td>
+                        <td align="center">{{disability.num_learners}}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    {% if disabilities is not empty %}
+                    <td><b>Total Number of Special Needs cases</b></td>
+                    <td align="center">					
+                        <b>{{ disabilities.0.total }}</b>				
+                    </td>
+                    {% endif %}
+                </tr>
+            </table>
+        </div>	
+    </div>
+{% endblock %}
+

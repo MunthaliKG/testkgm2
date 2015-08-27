@@ -71,8 +71,51 @@ class DefaultController extends Controller
     /**
      * @Route("/zone", name="zone")
      */
-    public function zoneAction(){
+    public function zoneAction(Request $request){
+        $session = $request->getSession();
+        if($session->has('idzone')){
+            return $this->redirectToRoute('zone_main', array('idzone'=>$session->get('idzone')), 301);
+        }
         return $this->render('zone/zone.html.twig');
+    }
+    /**
+     * @Route("/findZoneForm", name="find_zone_form")
+     */
+    public function zoneSelectFormAction(Request $request){
+        $zoneFinderForms = $this->container->get('zone_finder');
+        $formAction = $this->generateUrl('find_zone_form');
+        $zoneFinderForms->createForms($formAction);
+        $zoneFinderForms->processForms();
+        
+        if($zoneFinderForms->areValid()){
+            return $this->redirectToRoute('zone_main',array('idzone'=>$zoneFinderForms->getZoneId()), 301);
+        }
+        $zoneName = "";
+        if($request->getSession()->has('idzone')){
+            $zoneName = $request->getSession()->get('zone_name');
+        }
+        return $this->render('zone/findzoneform.html.twig',
+                             array( 'form1' => $zoneFinderForms->getView1(),
+                                    'error'=>$zoneFinderForms->getError(),
+                                    'zoneName' => $zoneName,
+                                    )                                   
+                             );
+    }
+    /**
+     * @Route("/zonelist_ajax", name="zone_ajax", condition="request.isXmlHttpRequest()",options={"expose"=true})
+     */
+    public function listZonesAction(Request $request){//this method will only be called through ajax
+        $id = $request->query->get('id');
+        $zones = $this->getDoctrine()->getRepository('AppBundle:Zone')->findBy(array('districtdistrict'=>$id));
+
+        /*add the list of schools to the session
+        The reason we want to do this is because select lists populated using ajax always cause $form->isValid()
+         to return false. Therefore, we need to change the 'choices' attribute of this element in the SchoolFinderType
+         form class to include the new list.
+        since we are using a FlashBag, this session variable will be cleared after the next request
+        */
+        $this->get('session')->getFlashBag()->set('zoneList', $zones);
+        return $this->render('zone/zonelist.html.twig', array('zones'=>$zones));
     }
     /**
      * @Route("/district", name="district")
@@ -98,12 +141,12 @@ class DefaultController extends Controller
     public function addUserAction(){
         $em = $this->getDoctrine()->getManager();
         $user = new User();
-        $plainPassword = 'jonathanpass';
+        $plainPassword = 'kondwani';
         $encoder = $this->container->get('security.password_encoder');
         $encoded = $encoder->encodePassword($user, $plainPassword);
         $user->setPassword($encoded);
-        $user->setUsername('jonathan');
-        $user->setEmail('jonathanmojoo@yahoo.com');
+        $user->setUsername('kgmunthali');
+        $user->setEmail('kmunthali@gmail.com');
         $user->setEnabled(true);
 
         $em->persist($user);

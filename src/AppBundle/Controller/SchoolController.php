@@ -33,27 +33,27 @@ class SchoolController extends Controller{
 	 */
 	public function schoolMainAction($emisCode, Request $request){
 
-		$connection = $this->get('database_connection');
-		$schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
-			NATURAL JOIN district WHERE emiscode = ?',array($emisCode));
+            $connection = $this->get('database_connection');
+            $schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
+                    NATURAL JOIN district WHERE emiscode = ?',array($emisCode));
 
-		$sumquery = 'SELECT count(iddisability) FROM lwd 
-		NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-		WHERE emiscode = ?';
-		$disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
-			FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-			WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$emisCode,date('Y')));
+            $sumquery = 'SELECT count(iddisability) FROM lwd 
+            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
+            WHERE emiscode = ?';
+            $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
+                    FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
+                    WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$emisCode,date('Y')));
 
-		$session = $request->getSession();
-		//keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
-		$session->set('emiscode', $emisCode);
-		//keep the name of the selected school in the session to access it from the school selection form
-		$session->set('school_name', $schools[0]['school_name']);
+            $session = $request->getSession();
+            //keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
+            $session->set('emiscode', $emisCode);
+            //keep the name of the selected school in the session to access it from the school selection form
+            $session->set('school_name', $schools[0]['school_name']);
 
-		return $this->render('school/school2.html.twig',
-			array('school' => $schools[0],
-				'disabilities' => $disabilities)
-			);
+            return $this->render('school/school2.html.twig',
+                    array('school' => $schools[0],
+                            'disabilities' => $disabilities)
+                    );
 	}
         /**
 	 *@Route("/school/{emisCode}/materials/{link}", name="school_materials", requirements = {"emisCode":"\d+", "link":"fresh|resource|room"}, options={"expose"= true})
@@ -599,7 +599,7 @@ class SchoolController extends Controller{
       		}
       		
       	}
-
+']'
       	//if this is a new learner being added, we want to make the id field uneditable
       	if($learnerId != 'new'){
       		$readOnly = true;

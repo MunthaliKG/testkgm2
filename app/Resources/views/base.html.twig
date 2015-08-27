@@ -25,7 +25,7 @@
     </head>
     
     <body>
-        {% block body %}
+    {% block body %}
         <div class="container pg-empty-placeholder gray-border">
             <div class="row title-div">
                 <h3 class="col-sm-7"><img class="" src="{{asset('assets/images/snlis-logo.png')}}">
@@ -64,9 +64,9 @@
                                 <div class="collapse navbar-collapse" id="collapsing-navbar">
                                     <ul class="nav navbar-nav">
                                         <li class="{%block navschool%}{%endblock%}"><a href="{{path('school')}}">School</a></li>
-                                        <li class="{%block navzone%}{%endblock%}"><a href="{{path('zone')}}">Zone</a></li>
-                                        <li class="{%block navdistr%}{%endblock%}"><a href="{{path('district')}}">District</a></li>
-                                        <li class="{%block navnat%}{%endblock%}"><a href="{{path('national')}}">National</a></li>
+                                        <li class="{% block navzone %}{%endblock%}"><a href="{{path('zone')}}">Zone</a></li>
+                                        <li class="{% block navdistr %}{%endblock%}"><a href="{{path('district')}}">District</a></li>
+                                        <li class="{% block navnat %}{%endblock%}"><a href="{{path('national')}}">National</a></li>
                                     </ul>
                                 </div>
                             </nav>
@@ -78,13 +78,13 @@
             <div class="row row3">
                 <div class="col-sm-2 left-column col-push-2">
                     <ul class="nav nav-pills nav-stacked">
-                        {%block vertnav%}
+                        {%block vertnav %}
 
-                        {%endblock%}
+                        {% endblock %}
                     </ul>
                 </div>
                 <div class="col-sm-10 right-column col-pull-10" style="{% block right_column_style %}{% endblock %}">
-                    {%block rightcolumn%}{%endblock%}
+                    {% block rightcolumn %}{% endblock %}
                 </div>
             </div>
             
