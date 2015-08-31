@@ -24,8 +24,26 @@
 	<hr>
 	<div class="row">
 		<div class="col-sm-12">
-			<a href="{{ path('exit', {"emisCode":emisCode, "learnerId":learnerId})}}" class="btn btn-sm">Student exited school</a>
-			{% block form_container %}{% endblock %}
+			{% block student_exit_button %}
+				{% if learnerId is not null %}
+					<div class="row">
+						<div class="col-sm-12">
+							<a href="{{ path('learner_exit', {"emisCode":emisCode, "learnerId":learnerId }) }}" class="btn btn-sm">Learner exited school</a>
+						</div>
+					</div>				
+				{% endif %}
+			{% endblock %}
+			{% block form_container %}
+				{% set learnerExitMessage = app.session.flashbag.get('exitMessage') %}
+				{% if learnerExitMessage is not empty %}
+					{% for message in learnerExitMessage %}
+						<div class="alert alert-success alert-dismissible" alert="alert">
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							{{ message }}
+						</div>
+					{% endfor %}
+				{% endif %}
+			{% endblock %}
 		</div>
 	</div>
 {% endblock %}

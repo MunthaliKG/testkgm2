@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * SchoolExit
  *
- * @ORM\Table(name="school_exit", indexes={@ORM\Index(name="fk_dropout_school1_idx", columns={"emiscode"}), @ORM\Index(name="fk_dropout_lwd1_idx", columns={"idlwd"})})
+ * @ORM\Table(name="school_exit", indexes={@ORM\Index(name="fk_dropout_school1_idx", columns={"school_emiscode"}), @ORM\Index(name="fk_dropout_lwd1_idx", columns={"lwd_idlwd"})})
  * @ORM\Entity
  */
 class SchoolExit
@@ -15,7 +15,7 @@ class SchoolExit
     /**
      * @var simplearray
      *
-     * @ORM\Column(name="reason", type="string", nullable=false)
+     * @ORM\Column(name="reason", type="simplearray", nullable=false)
      */
     private $reason;
 
@@ -27,25 +27,13 @@ class SchoolExit
     private $otherReason;
 
     /**
-     * @var year
+     * @var \DateTime
      *
-     * @ORM\Column(name="year", type="year")
+     * @ORM\Column(name="year", type="date")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $year;
-
-    /**
-     * @var \AppBundle\Entity\Lwd
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Lwd")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idlwd", referencedColumnName="idlwd")
-     * })
-     */
-    private $idlwd;
 
     /**
      * @var \AppBundle\Entity\School
@@ -54,20 +42,32 @@ class SchoolExit
      * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\School")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="emiscode", referencedColumnName="emiscode")
+     *   @ORM\JoinColumn(name="school_emiscode", referencedColumnName="emiscode")
      * })
      */
-    private $emiscode;
+    private $schoolEmiscode;
+
+    /**
+     * @var \AppBundle\Entity\Lwd
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Lwd")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="lwd_idlwd", referencedColumnName="idlwd")
+     * })
+     */
+    private $lwdlwd;
 
 
 
     /**
      * Set reason
      *
-     * @param string $reason
+     * @param \simplearray $reason
      * @return SchoolExit
      */
-    public function setReason($reason)
+    public function setReason(\simplearray $reason)
     {
         $this->reason = $reason;
 
@@ -110,7 +110,7 @@ class SchoolExit
     /**
      * Set year
      *
-     * @param year $year
+     * @param \DateTime $year
      * @return SchoolExit
      */
     public function setYear($year)
@@ -123,7 +123,7 @@ class SchoolExit
     /**
      * Get year
      *
-     * @return year 
+     * @return \DateTime 
      */
     public function getYear()
     {
@@ -131,48 +131,48 @@ class SchoolExit
     }
 
     /**
-     * Set idlwd
+     * Set schoolEmiscode
      *
-     * @param \AppBundle\Entity\Lwd $idlwd
+     * @param \AppBundle\Entity\School $schoolEmiscode
      * @return SchoolExit
      */
-    public function setIdlwd(\AppBundle\Entity\Lwd $idlwd)
+    public function setSchoolEmiscode(\AppBundle\Entity\School $schoolEmiscode)
     {
-        $this->idlwd = $idlwd;
+        $this->schoolEmiscode = $schoolEmiscode;
 
         return $this;
     }
 
     /**
-     * Get idlwd
-     *
-     * @return \AppBundle\Entity\Lwd 
-     */
-    public function getIdlwd()
-    {
-        return $this->idlwd;
-    }
-
-    /**
-     * Set emiscode
-     *
-     * @param \AppBundle\Entity\School $emiscode
-     * @return SchoolExit
-     */
-    public function setEmiscode(\AppBundle\Entity\School $emiscode)
-    {
-        $this->emiscode = $emiscode;
-
-        return $this;
-    }
-
-    /**
-     * Get emiscode
+     * Get schoolEmiscode
      *
      * @return \AppBundle\Entity\School 
      */
-    public function getEmiscode()
+    public function getSchoolEmiscode()
     {
-        return $this->emiscode;
+        return $this->schoolEmiscode;
+    }
+
+    /**
+     * Set lwdlwd
+     *
+     * @param \AppBundle\Entity\Lwd $lwdlwd
+     * @return SchoolExit
+     */
+    public function setLwdlwd(\AppBundle\Entity\Lwd $lwdlwd)
+    {
+        $this->lwdlwd = $lwdlwd;
+
+        return $this;
+    }
+
+    /**
+     * Get lwdlwd
+     *
+     * @return \AppBundle\Entity\Lwd 
+     */
+    public function getLwdlwd()
+    {
+        return $this->lwdlwd;
     }
 }

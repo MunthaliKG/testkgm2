@@ -31,14 +31,15 @@
                     <h3 class="col-sm-7"><img class="" src="{{asset('assets/images/snlis-logo.png')}}">
                             <small class="hidden-xs"><span class="text-nowrap">Special Needs Education Management Information System</span></small>
                     </h3>
-                    <div class="col-sm-3 col-sm-offset-2"><br><br>
+                    <div class="col-sm-3 col-sm-offset-2"><br>
                         <p class="text-right user-corner">
                             {% block user_corner %}
                                 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                                     {{ 'Logged in as: <b>%username%</b>'|trans({'%username%': app.user.username}, 'FOSUserBundle')|raw }} |
-                                    <a href="{{ path('fos_user_security_logout') }}">
-                                        {{ 'logout'|trans({}, 'FOSUserBundle') }}
-                                    </a>
+                                    <a style="color: whitesmoke" href="{{ path('fos_user_security_logout') }}">
+                                        {{ 'Logout'|trans({}, 'FOSUserBundle') }}
+                                    </a><br>
+                                    <a href="{{ path('fos_user_change_password')}}">Change password</a>
                                 {% else %}
                                     <a href="{{ path('fos_user_security_login') }}">{{ 'Login'|trans({}, 'FOSUserBundle') }}</a>
                                 {% endif %}

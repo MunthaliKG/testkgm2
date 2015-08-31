@@ -47,5 +47,12 @@ $(document).ready(function(){
 		$('.datepicker').datepicker();
     }
     
+    $('#learner_exit_reason').change(function(event){
+		if($(this).val() === "other"){
+			$('#learner_exit_other_reason').prop('readonly','');
+		}else{
+			$('#learner_exit_other_reason').prop('readonly','readonly');
+		}
+	});
 
 });

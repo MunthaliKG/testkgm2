@@ -56,21 +56,6 @@ class School
     private $idzone;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Need", inversedBy="emiscode")
-     * @ORM\JoinTable(name="school_has_need",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="emiscode", referencedColumnName="emiscode")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idneed", referencedColumnName="idneed")
-     *   }
-     * )
-     */
-    private $idneed;
-
-    /**
      * Constructor
      */
     public function __construct()

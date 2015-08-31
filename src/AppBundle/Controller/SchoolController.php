@@ -26,6 +26,8 @@ use AppBundle\Entity\Need;
 use AppBundle\Entity\ResourceRoom;
 use AppBundle\Form\Type\ResourceRoomType;
 use AppBundle\Entity\LwdHasDisability;
+use AppBundle\Form\Type\LearnerExitType;
+use AppBundle\Entity\SchoolExit;
 
 class SchoolController extends Controller{
 	/**
@@ -358,8 +360,11 @@ class SchoolController extends Controller{
 	 */
 	public function findLearnerFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
 		$connection = $this->get('database_connection');
-		$students = $connection->fetchAll('SELECT idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school
-			WHERE emiscode = ?', array($emisCode));
+        $thisYear = date('Y');
+		$students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  lwd NATURAL JOIN lwd_belongs_to_school lbts
+            LEFT JOIN school_exit ON lwd.idlwd = school_exit.idlwd AND lbts.emiscode = school_exit.emiscode AND 
+            lbts.year <= school_exit.year WHERE school_exit.idlwd IS NULL AND
+            school_exit.emiscode IS NULL AND lbts.emiscode = ?', array($emisCode));
 
 		//create the associative array to be used for the select list
 		$choices = array();
@@ -477,10 +482,7 @@ class SchoolController extends Controller{
             $teacher->setQualification($formData['qualification']);
             $teacher->setSpeciality($formData['speciality']);
             $teacher->setYearStarted($formData['year_started']->format('Y'));
-            
-            
-//echo 'fine';
-//exit;
+                      
             //write the objects to the database
             $em = $this->getDoctrine()->getManager();
 
@@ -779,7 +781,37 @@ class SchoolController extends Controller{
      * @Route("/school/{emisCode}/learners/{learnerId}/exit", name="learner_exit", requirements ={"learnerId":"new|\d+"})
      */
     public function learnerExitAction(Request $request, $learnerId, $emisCode){
-        
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm(new LearnerExitType);
+
+        $form->handleRequest($request);
+        if($form->isValid()){
+            $formData = $form->getData();
+            $exit = new SchoolExit();
+            $exit->setIdlwd($em->getReference('AppBundle:Lwd', $learnerId));
+            $exit->setEmiscode($em->getReference('AppBundle:School', $emisCode));
+            $exit->setReason($formData['reason']);
+            $today = new \DateTime('y');
+            $exit->setYear($today->format('Y-m-d'));
+            if($formData['reason'] != "other"){
+                $exit->setOtherReason($formData['other_reason']);
+            }
+
+            $em->persist($exit);
+            $em->flush();
+
+            $schoolName = "";
+            if($request->getSession()->has('emiscode')){
+                $schoolName = ' from '.$request->getSession()->get('school_name');
+            }
+            $this->addFlash('exitMessage', 'Exit of student '.$learnerId.$schoolName.' recorded');
+            return $this->redirectToRoute('school_learners', ['emisCode' => $emisCode], 301);
+        }
+
+        return $this->render('school/learners/learner_exit.html.twig', array(
+                'form' => $form->createView()
+            )
+        );
     }
     //controller called through ajax to autopopulate level select list
     /**

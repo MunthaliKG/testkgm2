@@ -1,0 +1,35 @@
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{% extends 'school/learners/learners_main.html.twig' %}
+
+{% block student_exit_button %}
+	{# hide the student exit button #}
+{% endblock %}
+
+{% block form_container %}
+	<div class="col-sm-6 col-sm-offset-3">
+		{{ form_start(form) }}
+		<fieldset>
+			<legend>Student exit details</legend>
+			{{ form_errors(form) }}
+			{{ form_row(form.reason) }}
+			{{ form_row(form.other_reason, {'attr':{'readonly':'readonly'}}) }}
+			<div class="form-group">
+				<div class="col-sm-5"></div>
+				<div class="col-sm-7">
+					{{ form_widget(form.save, {'attr':{'data-toggle':'confirmation','data-prompt':'Save exit record for this learner? You will not be able to edit information about this learner under this school'},'before_label': '<i class="fa fa-check"></i> '}) }}
+					&nbsp;&nbsp;
+					<a class="btn btn-default" href="{{ path('edit_learner_personal',{'emisCode':emisCode, 'learnerId':learnerId}) }}"><i class="fa fa-remove"></i> Cancel</a>
+				</div>
+			</div>
+			
+		</fieldset>
+		{{ form_end(form) }}
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/js/bootstrap-confirmation.min.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/enable-confirmation.js')}}"></script>
+{% endblock %}
