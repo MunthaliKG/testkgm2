@@ -7,6 +7,16 @@
 		{% block personal_info %}active{% endblock %}
 	{% endembed %}
 {% endblock %}
+{% block transfers %}
+    <div class="row">
+        <div class="col-sm-6">
+            <p class="text-center"><a href="{#{{ path('learner_exit', {"emisCode":emisCode, "learnerId":learnerId})}}#}" class="btn btn-sm">Student exited school</a></p>               
+        </div>
+        <div class="col-sm-6">
+            <p class="text-center"><a href="{{ path('learner_transfer', {"emisCode":emisCode, "learnerId":learnerId})}}" class="btn btn-sm">Transfer from other school</a></p>
+        </div>
+    </div>
+{% endblock %}
 
 {# Form for learner personal information and guardian information #}
 	{% block form_container %}

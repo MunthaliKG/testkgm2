@@ -44,6 +44,61 @@ class DataConverter{
 		}
 		return $count;
 	}
+        function countArrayMultipleBool($array, $conditions){
+		$count = 0; 
+		foreach($array as $element){
+			if(is_array($element)){
+                            $passed = true;
+                            foreach ($conditions as $key => $condition){
+                                echo "return \"".$element[$key]."\"".$condition.";<br>";
+                                if(!eval("return '".$element[$key].'"'.$condition.";")){
+                                    $passed = false;
+                                }
+                            }
+                            if($passed){
+                                $count++;
+                            }			
+			}
+		}
+		return $count;
+	}
+        function countArrayMultipleGtEt($array, $conditions){
+		$count = 0; 
+		foreach($array as $element){
+			if(is_array($element)){
+                            $passed = true;
+                            foreach ($conditions as $key => $condition){
+                                echo "return \"".$element[$key]."\"".$condition.";<br>";
+                                if($element[$key] > $condition){
+                                    $passed = false;
+                                }
+                            }
+                            if($passed){
+                                $count++;
+                            }			
+			}
+		}
+		return $count;
+	}
+        function countArrayMultiple($array, $values){
+		$count = 0;
+                
+		foreach($array as $element){
+                    
+			if(is_array($element)){
+                            $passed = true;
+                            foreach ($values as $key => $value){
+                                if($element[$key] != $value){
+                                    $passed = false;
+                                }
+                            }
+                            if($passed){
+                                $count++;
+                            }			
+			}
+		}
+		return $count;
+	}
 	function countArrayBool($array, $key, $condition){
 		$count = 0;
 		foreach($array as $element){

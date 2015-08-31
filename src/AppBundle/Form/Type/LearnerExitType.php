@@ -23,8 +23,8 @@ class LearnerExitType extends AbstractType
 				'death' => 'Death', 
 				'distance' => 'Distance',
 				'unconducive facilities' => 'Unconducive facilities',
-				'other' = 'Other'
-				]
+				'other' => 'Other'
+				],
 			'constraints' => array(new NotBlank()),
 			)
 		)

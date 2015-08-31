@@ -5,6 +5,7 @@ parameters:
     schoolfinderform.class: AppBundle\Helpers\FindSchoolForm
     zonefinderform.class: AppBundle\Helpers\FindZoneForm
     dataconverter.class: AppBundle\Helpers\DataConverter
+    learnerfinderform.class: AppBundle\Helpers\FindLearnerForm
     excel_iofactory.class: PHPExcel\PHPExcel\PHPExcel_IOFactory
 services:
 #    service_name:
@@ -18,6 +19,12 @@ services:
                 - "@request_stack"
     school_finder:
         class: %schoolfinderform.class%
+        arguments: 
+                - "@doctrine.orm.entity_manager"
+                - "@form.factory"
+                - "@request_stack"
+    learner_finder:
+        class: %learnerfinderform.class%
         arguments: 
                 - "@doctrine.orm.entity_manager"
                 - "@form.factory"

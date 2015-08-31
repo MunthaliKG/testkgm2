@@ -16,7 +16,7 @@
     <h4>Zone Identification</h4>
     <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
         <tr>
-            <th rowspan="4" width="20%">Zone Id Label</th>
+            <th rowspan="4" width="20%" align="middle">Zone Id Label</th>
             <th align="center">Identifier</th>
             <th align="center">Name</th>
             <th align="center">Numeric code</th>
@@ -33,29 +33,75 @@
         </tr>                    
     </table>
 
-    <h4>New Learners with Disability, Dropouts, and Learners with Disability on Transfer</h4>        
+    <h4>New Learners with Disability, Dropouts, and Learners with Disability on Transfer {{ chaka }}</h4>        
     <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
         <tr>
-            <th align="center">LWD Enrolled This Year</th>
-            <th align="center">Transfer To Other Schools</th>
+            <th align="center"></th>
+            <th align="center">Enrolment</th>
+            <th align="center">Transfers*</th>
             <th align="center">Dropouts</th>
-            <th align="center">LWD Who Completed Std 8</th>
-        </tr>			
+            <th align="center">Completed Std 8</th>
+        </tr>	
         <tr>
-            <td>
-                <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
-                    <tr>
-                        <td>Boys</td>
-                        <td>Girls</td>
-                        <td>Total</td>
-                    </tr>
-                    <tr>
-                        <td>{{ numBoys }}</td>
-                        <td>{{ numGirls }}</td>
-                        <td>{{ totalEnrolled }}</td>
-                    </tr>
-                </table>
-            </td>        
-        </tr>                    
+            <td>Boys</td>
+            <td>{{ numBoys }}</td>
+            <td>{{ numBoysTR }}</td>
+            <td>{{ numBoysDO }}</td>
+            <td>{{ numBoysC }}</td>
+        </tr>
+        <tr>                        
+            <td>Girls</td>
+            <td>{{ numGirls }}</td> 
+            <td>{{ numGirlsTR }}</td>
+            <td>{{ numGirlsDO }}</td>
+            <td>{{ numGirlsC }}</td>
+       </tr>
+       <tr>
+           <th>Total</th>
+           <th>{{ totalEnrolled }}</th>
+           <th>{{ totalTransfer }}</th>
+           <th>{{ totalDropouts }}</th>
+           <th>{{ totalCompleted }}</th>
+       </tr>
+       <tr>
+           <td colspan="5">*Transfers to schools outside the zone</td>
+       </tr>
     </table>
+   <h4>
+       Learners with Disability by Standard, Sex and Age (age at the beginning of school year - {{ chaka }})
+   </h4>
+       <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+        <tr>
+            <th align="center" rowspan="2">Age</th>
+            <th align="center" colspan="2">Std1</th>
+            <th align="center" colspan="2">Std2</th>
+            <th align="center" colspan="2">Std3</th>
+            <th align="center" colspan="2">Std4</th>
+            <th align="center" colspan="2">Std5</th>
+            <th align="center" colspan="2">Std6</th>
+            <th align="center" colspan="2">Std7</th>
+            <th align="center" colspan="2">Std8</th>
+            <th align="center" colspan="2">Total</th>
+        </tr>
+        <tr>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>
+            <th align="center">M</th> <th align="center">F</th>            
+        </tr>
+        {% for age,ages in learnersBy %}
+        <tr>
+            <td align="center">{{ age }} </td>
+            {% for std,stds in ages %}
+                {#{% for key3,value3 in value2 %}#}
+                    <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+</table>
 {% endblock %}

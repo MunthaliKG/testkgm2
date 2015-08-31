@@ -102,6 +102,29 @@ class DefaultController extends Controller
                              );
     }
     /**
+     * @Route("/findLearnerForm", name="find_lwd_form")
+     */
+    public function learnerSelectFormAction(Request $request){
+        $learnerFinderForms = $this->container->get('learner_finder');
+        $formAction = $this->generateUrl('find_lwd_form');
+        $learnerFinderForms->createForms($formAction);
+        $learnerFinderForms->processForms();
+        
+        if($learnerFinderForms->areValid()){
+            return $this->redirectToRoute('zone_main',array('idzone'=>$learnerFinderForms->getZoneId()), 301);
+        }
+        $learnerName = "";
+        if($request->getSession()->has('idzone')){
+            $learnerName = $request->getSession()->get('learner_name');
+        }
+        return $this->render('school/learners/findlwdform.html.twig',
+                             array( 'form2' => $learnerFinderForms->getView1(),
+                                    'error'=>$learnerFinderForms->getError(),
+                                    'learnerName' => $learnerName,
+                                    )                                   
+                             );
+    }
+    /**
      * @Route("/zonelist_ajax", name="zone_ajax", condition="request.isXmlHttpRequest()",options={"expose"=true})
      */
     public function listZonesAction(Request $request){//this method will only be called through ajax
@@ -116,6 +139,26 @@ class DefaultController extends Controller
         */
         $this->get('session')->getFlashBag()->set('zoneList', $zones);
         return $this->render('zone/zonelist.html.twig', array('zones'=>$zones));
+    }
+    /**
+     * @Route("/learnerlist_ajax", name="learner_ajax", condition="request.isXmlHttpRequest()",options={"expose"=true})
+     */
+    public function listLearnersAction(Request $request){//this method will only be called through ajax
+        $emis = $request->query->get('id');
+        $learners = $this->getDoctrine()->getRepository('AppBundle:LwdBelongsToSchool')->findBy(array('emiscode'=>$emis));
+
+        /*add the list of schools to the session
+        The reason we want to do this is because select lists populated using ajax always cause $form->isValid()
+         to return false. Therefore, we need to change the 'choices' attribute of this element in the SchoolFinderType
+         form class to include the new list.
+        since we are using a FlashBag, this session variable will be cleared after the next request
+        */
+        $this->get('session')->getFlashBag()->set('learnerList', $learners);
+        $connection = $this->get('database_connection');
+    	$lwd = $connection->fetchAll("SELECT first_name, last_name FROM lwd 
+    					WHERE idlwd = ?", array($learners.idld));
+        
+        return $this->render('school/learners/learnerlist.html.twig', array('learners'=>$learners));
     }
     /**
      * @Route("/district", name="district")
