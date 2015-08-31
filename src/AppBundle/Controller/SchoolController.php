@@ -28,6 +28,7 @@ use AppBundle\Form\Type\ResourceRoomType;
 use AppBundle\Entity\LwdHasDisability;
 use AppBundle\Form\Type\LearnerExitType;
 use AppBundle\Entity\SchoolExit;
+Use AppBundle\Form\Type\TransferType;
 
 class SchoolController extends Controller{
 	/**
@@ -35,27 +36,27 @@ class SchoolController extends Controller{
 	 */
 	public function schoolMainAction($emisCode, Request $request){
 
-		$connection = $this->get('database_connection');
-		$schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
-			NATURAL JOIN district WHERE emiscode = ?',array($emisCode));
+            $connection = $this->get('database_connection');
+            $schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
+                    NATURAL JOIN district WHERE emiscode = ?',array($emisCode));
 
-		$sumquery = 'SELECT count(iddisability) FROM lwd 
-		NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-		WHERE emiscode = ?';
-		$disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
-			FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-			WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$emisCode,date('Y')));
+            $sumquery = 'SELECT count(iddisability) FROM lwd 
+            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
+            WHERE emiscode = ?';
+            $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
+                    FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
+                    WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$emisCode,date('Y')));
 
-		$session = $request->getSession();
-		//keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
-		$session->set('emiscode', $emisCode);
-		//keep the name of the selected school in the session to access it from the school selection form
-		$session->set('school_name', $schools[0]['school_name']);
+            $session = $request->getSession();
+            //keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
+            $session->set('emiscode', $emisCode);
+            //keep the name of the selected school in the session to access it from the school selection form
+            $session->set('school_name', $schools[0]['school_name']);
 
-		return $this->render('school/school2.html.twig',
-			array('school' => $schools[0],
-				'disabilities' => $disabilities)
-			);
+            return $this->render('school/school2.html.twig',
+                    array('school' => $schools[0],
+                            'disabilities' => $disabilities)
+                    );
 	}
         /**
 	 *@Route("/school/{emisCode}/materials/{link}", name="school_materials", requirements = {"emisCode":"\d+", "link":"fresh|resource|room"}, options={"expose"= true})
@@ -605,7 +606,6 @@ class SchoolController extends Controller{
       		// }
       		return $this->redirectToRoute('edit_learner_disability',['emisCode'=>$emisCode, 'learnerId'=>$id_lwd], 301);
       	}
-
       	//if this is a new learner being added, we want to make the id field uneditable
       	if($learnerId != 'new'){
       		$readOnly = true;
@@ -812,6 +812,146 @@ class SchoolController extends Controller{
                 'form' => $form->createView()
             )
         );
+
+    }
+    /**
+     * @Route("/school/{emisCode}/learners/{learnerId}/transfer", name="learner_transfer", requirements ={"learnerId":"new|\d+"})
+     */
+    public function learnerTransferAction(Request $request, $learnerId, $emisCode){
+        
+        return $this->render('school/learners/transfer_learner.html.twig');
+        //$connection = $this->get('database_connection');
+        //generate an array to pass into form for a select list options    
+        /*    $districts = $connection->fetchAll('SELECT * FROM district');
+                   
+            $choices = array();
+            foreach ($districts as $key => $row) {
+                    $choices[$row['iddistrict']] = $row['district_name'];
+            }
+            $schoolStmt = $connection->prepare("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
+    					WHERE iddisability = ?");
+            $learnerStmt = $connection->prepare("SELECT idlwd, first_name, last_name from lwd NATURAL JOIN lwd_belongs_to_school
+    					WHERE emiscode = ?");
+           */ 
+            //iterate over each disability for this learner
+            /*foreach($districts as $key => $district){
+                //get the schools to show in the form for this district
+                $schoolStmt->bindParam(1, $district['iddistrict']);
+                $schoolStmt->execute();
+                $schools = $schoolStmt->fetchAll();
+                
+                //foreach ($schools as $key => $school){
+                  //  $learnerStmt->bindParam(1, $schools['emiscode']);
+                    //$learnerStmt->execute();
+                    //$learners = $learnerStmt->fetchAll();
+
+                    //$disability['identification_date'] = new \DateTime($disability['identification_date']);
+                    //$disability['iddisability_2'] = $disability['iddisability'];//set default data for the hidden field since the true iddisability will be disabled
+                    $forms[] = $this->createForm(new TransferType($districts, $schools));
+                //}
+
+                //$form1 = $this->createForm(new TransferType($choices));
+
+            }
+            //process each of the forms
+    		$formCounter = 1;
+    		foreach($forms as $form){
+                    $form->handleRequest($request);
+                    if($form->isValid()){
+                        $formData = $form->getData();
+                        $em = $this->getDoctrine()->getManager();
+                        $lwdHasDisability = $em->getRepository('AppBundle:LwdHasDisability')->findOneBy([
+                            'idlwd'=>$learnerId,
+                            'iddisability' =>$formData['iddisability_2']
+                            ]
+                            );
+                        if($form->get('remove')->isClicked()){//if the remove button was clicked for this record
+                                $em->remove($lwdHasDisability);
+                                $message = "Disability/Special need record removed";
+                                $messageType = 'recordRemovedMessage';
+                        }
+                        else{
+                                $lwdHasDisability->setIdentifiedBy($formData['identified_by']);
+                        $lwdHasDisability->setIdentificationDate($formData['identification_date']);
+                        $lwdHasDisability->setCaseDescription($formData['case_description']);
+                        $lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
+                        $em->persist($lwdHasDisability);
+                        $message = "Disability/Special need record updated";
+                        $messageType = $formCounter;
+                        }
+                        $em->flush();
+
+                        $this->addFlash($messageType, $message);
+                        return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+                    }
+                    $needForm = $needForms[$formCounter-1];
+                    $needForm->handleRequest($request);
+                    if($needForm->isValid()){
+                        $formData = $needForm->getData();
+                        $dataConverter = $this->get('data_converter');
+                        $selectedNeeds = $dataConverter->arrayRemoveQuotes($formData['needs']);    				
+                        $commaString = $dataConverter->convertToCommaString($selectedNeeds); /*convert array 
+                        of checked values to comma delimited string */
+                        /*$connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
+                                AND idlwd = ? AND idneed NOT IN (?)', array($formData['iddisability'], $learnerId, $commaString));/*delete all records in the db
+                        that are not checked on the form*/
+                        //write the records for needs available to this learner if the records do not already exist in the db
+                        /*$writeNeeds = $connection->prepare('INSERT IGNORE INTO lwd_has_disability_has_need SET idlwd = ?, 
+                                iddisability = ?, idneed = ?');
+                        $writeNeeds->bindParam(1, $learnerId);
+                        $writeNeeds->bindParam(2, $formData['iddisability']);
+                        //iterate over array of needs checked on the form and add each one to the database
+                        foreach($selectedNeeds as $selectedNeed){
+                                $writeNeeds->bindParam(3, $selectedNeed);
+                                $writeNeeds->execute();
+                        }
+                        $writeNeeds->closeCursor();
+                        $messageType = 'needs_'.$formCounter;
+                        $message = "Available needs for this learner have been updated";
+                        $this->addFlash($messageType, $message);
+                                return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+
+                    }
+                    $formCounter++;
+    		}*/
+            //$form1->handleRequest($request);
+                        
+            //if($form1->isValid()){
+                //return $this->render('school/learners/transfer_learner.html.twig',array(
+    		//'form1' => $form1->createView()));
+            //}
+            //return $this->render('school/learners/transfer_learner.html.twig',array(
+    		//'form1' => $form1->createView()));
+    }
+    /**
+     * @Route("/populateschools/{districtId}", name="populate_schools", requirements ={"iddistrict":"\d+"}, condition="request.isXmlHttpRequest()", options={"expose":true})
+     */
+    public function populateSchoolsAction($districtId){
+    	$connection = $this->get('database_connection');
+    	$schools = $connection->fetchAll("SELECT emiscode, school_name FROM school WHERE iddistrict = ?", array($districtId));
+    	$html = '';
+    	if($schools){
+    		$this->get('session')->getFlashBag()->set('schools', $schools);
+    		foreach($schools as $key => $school){
+    			$html .= '<option value="'.$school['emiscode'].'">'.$school['emiscode'].': '.$school['school_name'].'</option>';
+    		}
+    	}
+    	return new Response($html);
+    }
+    /**
+     * @Route("/populatelearners/{schoolId}", name="populate_learners", requirements ={"emiscode":"\d+"}, condition="request.isXmlHttpRequest()", options={"expose":true})
+     */
+    public function populateLearnersAction($schoolId){
+    	$connection = $this->get('database_connection');
+    	$learners = $connection->fetchAll("SELECT idlwd, first_name, last_name FROM lwd_belongs_to_school NATURAL JOIN lwd WHERE emiscode = ?", array($schoolId));
+    	$html = '';
+    	if($learners){
+    		$this->get('session')->getFlashBag()->set('learners', $learners);
+    		foreach($learners as $key => $learner){
+    			$html .= '<option value="'.$learner['idlwd'].'">'.$learner['idlwd'].': '.$learner['first_name'].' '.$learner['last_name'].'</option>';
+    		}
+    	}
+    	return new Response($html);
     }
     //controller called through ajax to autopopulate level select list
     /**

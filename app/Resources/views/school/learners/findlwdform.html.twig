@@ -1,0 +1,24 @@
+
+    <div class="col-sm-12">
+              
+                    {{ form_start(form2, {'attr':{'class':'form-inline','id':'findByName', 'role':'form'}}) }}
+                    {{ form_errors(form2)}}
+                    <div class="form-group">
+                        {{ form_label(form2.district, null, {'label_attr':{'class':'sr-only'}}) }}
+                        {{ form_widget(form2.district, {'attr':{'class':'form-control input-sm'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form2.school, null, {'label_attr':{'class':'sr-only'}}) }}
+                        {{ form_widget(form2.school, {'attr':{'class':'form-control input-sm limited-select'}}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form2.learner, null, {'label_attr':{'class':'sr-only'}}) }}
+                        {{ form_widget(form2.learner, {'attr':{'class':'form-control input-sm limited-select'}}) }}
+                    </div>
+                    {{ form_end(form2) }}
+              
+            
+            {% set message = error %}
+        
+    </div>
+

@@ -1,0 +1,65 @@
+{#{% form_theme form1 'bootstrap_3_horizontal_layout.html.twig' %}#}
+{% extends 'school/learners/learners_main.html.twig' %}
+
+{% set learner = app.request.attributes.get('_route_params')['learnerId'] %} {# get the learner id from the Route #}
+{% block learner_form_nav %}
+	{% embed 'school/learners/learner_form_nav.html.twig' %}
+		{#{% block personal_info %}active{% endblock %}#}
+	{% endembed %}
+{% endblock %}
+{% block transfers %}
+    <div class="row">
+        <div class="col-sm-6">
+            <p class="text-center"><a href="{{ path('learner_exit', {"emisCode":emisCode, "learnerId":learnerId})}}" class="btn btn-sm">Student exited school</a></p>               
+        </div>
+        <div class="col-sm-6">
+            <p class="text-center"><a href="{{ path('learner_transfer', {"emisCode":emisCode, "learnerId":learnerId})}}" class="btn btn-sm">Transfer from other school</a></p>
+        </div>
+    </div>
+{% endblock %}
+
+{# Form for transefering learners #}
+	{% block form_container %}
+        <div class="row">
+            <div class="col-sm-8">
+             {{ render(controller('AppBundle:Default:learnerSelectForm')) }}
+            </div>
+            {# render the learner personal information form 
+            {{ form_start(form1) }}
+            {{ form_errors(form1) }}
+
+            <div class="row">
+            <div class="col-sm-8">
+                <fieldset class="fieldset">
+                    <legend><small>Transfer Learner</small></legend>
+                    {#{{ form_row(form1.district) }}			
+                    {#{{ form_row(form1.first_name) }}
+                    {{ form_row(form1.emiscode) }}
+                    {{ form_row(form1.idlwd) }}
+                    {{ form_row(form1.year) }}
+                </fieldset>
+            </div>
+                <div class="col-sm-4">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                </div>
+                <div class="col-sm-4">
+                <p class="text-left">
+                        {{ form_widget(form1.save, {'attr':{'class':'btn btn-default'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
+                </p>
+                </div>
+            </div>
+            {{ form_end(form1) }}#}
+            </div>
+	{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" type="text/css" href="{{ asset('assets/datepicker/css/datepicker.css') }}">
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('assets/datepicker/js/bootstrap-datepicker.js')}}"></script>
+{% endblock %}

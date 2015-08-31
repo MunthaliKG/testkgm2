@@ -118,7 +118,16 @@
 		{{ form_end(newform) }}
 	</fieldset>
 {% endblock %}
-
+    {% block transfers %}	
+        <div class="row">
+            <div class="col-sm-6">
+                <p class="text-center"><a href="{#{{ path('learner_exit', {"emisCode":emisCode, "learnerId":learnerId})}}#}" class="btn btn-sm">Student exited school</a></p>               
+            </div>
+            <div class="col-sm-6">
+                <p class="text-center"><a href="{{ path('learner_transfer', {"emisCode":emisCode, "learnerId":learnerId})}}" class="btn btn-sm">Transfer from other school</a></p>
+            </div>       
+	</div>
+    {% endblock %}
 {% block stylesheets %}
 	{{ parent() }}
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets/datepicker/css/datepicker.css') }}">

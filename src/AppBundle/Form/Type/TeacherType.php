@@ -43,9 +43,8 @@ class TeacherType extends AbstractType
 		->add('s_sex', 'choice', array(
 			'label' => 'Sex',
 			'choices' => array('M'=>'M','F'=>'F'),
-                        'placeholder' => '--Gender--',
-			'constraints' => array(new NotBlank()),
-			'expanded' => false,
+                        'constraints' => array(new NotBlank()),
+			'expanded' => true,
 			'multiple' => false,
 			)
 		)
@@ -58,9 +57,8 @@ class TeacherType extends AbstractType
 		)
                 ->add('snt_type', 'choice', array(
 			'label' => 'Teacher Type',
-                        'placeholder' => '-- Type --',
 			'choices' => array('Itinerant'=>'Itinerant', 'Resident'=>'Resident'),
-			'expanded' => false,
+			'expanded' => true,
 			'multiple' => false,)
 		)
 		->add('speciality', 'choice', array(

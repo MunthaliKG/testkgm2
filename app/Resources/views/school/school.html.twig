@@ -8,28 +8,27 @@
 {% endblock %}
 
 {% block rightcolumn %}
-	{# include the form used for selecting a school #}
-	{{ render(controller('AppBundle:Default:schoolSelectForm')) }}
-        
-	<div class="row content">
-		{% block content %}
-                    {% block material1 %}{% endblock %}
-                    {% block resource1 %}{% endblock %}
-                     {% block material2 %}{% endblock %}
-                    {% block resource2 %}{% endblock %}
-			{# {% if message is not null %}
-				<br><br><h2 class="text-center"><small>{{ message }}</small></h2>
+    {# include the form used for selecting a school #}
+    {{ render(controller('AppBundle:Default:schoolSelectForm')) }}
 
-			{% else %} #}
-				<br><br><h2 class="text-center"><small>School not chosen</small></h2>
-			{# {% endif %} #}
-		{% endblock %}
-	</div>
-	{% endblock %}
-	{% block javascripts %}
-	    {{parent()}}
-	    <script type="text/javascript" src="{{asset('assets/js/school.js')}}"></script>
-	    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-            <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <div class="row content">
+        {% block content %}
+            {% block material1 %}{% endblock %}
+            {% block resource1 %}{% endblock %}
+             {% block material2 %}{% endblock %}
+            {% block resource2 %}{% endblock %}
+                {# {% if message is not null %}
+                        <br><br><h2 class="text-center"><small>{{ message }}</small></h2>
 
+                {% else %} #}
+                        <br><br><h2 class="text-center"><small>School not chosen</small></h2>
+                {# {% endif %} #}
         {% endblock %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{asset('assets/js/school.js')}}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+{% endblock %}

@@ -42,6 +42,26 @@ $(document).ready(function(){
 			$('#findResourceForm').submit();
 		}
 	});
+        // listen for change of value in the district select list
+	$('#zonefinder_district').change(function(event){
+
+		var district = $(this).val();
+		//use ajax to auto-populate the school select list based on the selected district
+		$.ajax({
+			url: Routing.generate('zone_ajax',{id: district})
+		})
+		.done(function (data) {
+            $('#zonefinder_zone').html(data);
+        })
+	})
+
+	//submit the form if a school is selected
+	$('#zonefinder_zone').change(function(event){
+
+		if($(this).val() !== "0"){
+			$('#findByName').submit();
+		}
+	});
 
     if($('.datepicker').length){
 		$('.datepicker').datepicker();

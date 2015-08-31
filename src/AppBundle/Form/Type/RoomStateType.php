@@ -72,7 +72,7 @@ class RoomStateType extends AbstractType
 			'multiple' => false,
 			)
                 )
-                ->add('other_observations', 'text', array(
+                ->add('other_observations', 'textarea', array(
 			'label' => 'Other Observations',
                     )
                 )
