@@ -119,30 +119,18 @@ class ZoneReportController extends Controller{
                                         //$countStdSex = 0;
                                             foreach ($gender as $sex) {
                                                 if ($key == '<6'){
-                                                    //echo '< 6 entered<br>';
+                                                     $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learnersBySexAgeStd, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
                                                    
-                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learnersBySexAgeStd, ['age'=>$key, 'std'=>' =='.$std, 'sex'=>' == "'.$sex.'"']);
-                                                    //echo $learnersBy[$age][$std][$sex];
-                                                    //$countStdSex = $countStdSex + $learnersBy[$std][$sex][$age];
-                                                }elseif($key == '>17'){
-                                                    //echo '>17 entered<br>';
-                                                    
-                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleGtEt($learnersBySexAgeStd, ['age'=>$key, 'std'=>' =='.$std, 'sex'=>' == "'.$sex.'"']);
-                                                    //echo $learnersBy[$age][$std][$sex];
-                                                    //$countStdSex = $countStdSex + $learnersBy[$std][$sex][$age];
+                                                }elseif($key == '>17'){                                              
+                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learnersBySexAgeStd, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
                                                 }else{
                                                     
                                                     $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultiple($learnersBySexAgeStd, ['age'=>$age, 'std'=>$std, 'sex'=>$sex]);
-                                                    //echo $learnersBy[$age][$std][$sex];
-                                                    //$countStdSex = $countStdSex + $learnersBy[$age][$std][$sex];
                                                 }
 //                                            
-                                        }
-                                        //$totalStdSexAge[$std][$sex] = $countStdSex;
+                                        }                                     
                                     }
-                                }
-                               // echo print_r($learnersBy);
-                              exit;
+                                }                             
                                 $options['learnersBy'] = $learnersBy;
                                 $learnersLastYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
                                         . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
@@ -173,9 +161,7 @@ class ZoneReportController extends Controller{
                                 $options['numBoysC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'M'); 
                                 $options['numGirlsC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'F');
                                 $options['totalCompleted'] =  $options['numBoysC'] + $options['numGirlsC'];                                                      
-                                
-                                //$options['latestYr'] = $lwdLatestYr['yr'];
-                                //$options['lastYr'] = $lwdLastYr;
+                                                                
                                 //snt preliminary counts
 				$teachers = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $sntLatestYr['yr']]);
                                 

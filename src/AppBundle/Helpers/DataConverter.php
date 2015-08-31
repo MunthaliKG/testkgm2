@@ -50,8 +50,8 @@ class DataConverter{
 			if(is_array($element)){
                             $passed = true;
                             foreach ($conditions as $key => $condition){
-                                echo "return \"".$element[$key]."\"".$condition.";<br>";
-                                if(!eval("return '".$element[$key].'"'.$condition.";")){
+                                $value = (is_numeric($element[$key]))? $element[$key] : '\''.$element[$key].'\'';
+                                if(!eval("return ".$value.$condition.";")){
                                     $passed = false;
                                 }
                             }
@@ -68,8 +68,8 @@ class DataConverter{
 			if(is_array($element)){
                             $passed = true;
                             foreach ($conditions as $key => $condition){
-                                echo "return \"".$element[$key]."\"".$condition.";<br>";
-                                if($element[$key] > $condition){
+                                //echo "return \"".$element[$key]."\"".$condition.";<br>";
+                                if($element[$key] >= $condition){
                                     $passed = false;
                                 }
                             }
