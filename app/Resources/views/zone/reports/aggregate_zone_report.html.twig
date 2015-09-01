@@ -20,16 +20,19 @@
             <th align="center">Identifier</th>
             <th align="center">Name</th>
             <th align="center">Numeric code</th>
+            <th align="center">Number of Schools</th>
         </tr>			
         <tr>
             <td>1. Zone</td>
             <td>{{ zone.zone_name }}</td>
-            <td align="left">{{ zone.idzone }}</td>
+            <td align="center">{{ zone.idzone }}</td>
+            <td align="center">{{ numOfSchools }}</td>
         </tr>
         <tr>
             <td>2. District</td>
             <td>{{ zone.district_name }}</td>
-            <td align="left">{{ zone.iddistrict }}</td>
+            <td align="center">{{ zone.iddistrict }}</td>
+            <th align="center"></th>
         </tr>                    
     </table>
 
@@ -94,14 +97,24 @@
             <th align="center">M</th> <th align="center">F</th>
             <th align="center">M</th> <th align="center">F</th>            
         </tr>
-        {% for age,ages in learnersBy %}
+        {% for age,ages in learnersBy %}        
         <tr>
             <td align="center">{{ age }} </td>
-            {% for std,stds in ages %}
-                {#{% for key3,value3 in value2 %}#}
-                    <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
-            {% endfor %}
+            {% for std,stds in ages %}            
+                <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
+                {% if loop.last %}
+                    <td align="center">{{ ageBySex[age].M }} </td><td align="center">{{ ageBySex[age].F }} </td>
+                {% endif %}
+            {% endfor %}            
         </tr>
+        {% if loop.last %}
+            <tr>
+                <th align="center"> Total </th>
+                {% for std,stds in stdBySex %}
+                    <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
+                {% endfor %}
+            </tr>
+        {% endif%}
         {% endfor %}
 </table>
 {% endblock %}

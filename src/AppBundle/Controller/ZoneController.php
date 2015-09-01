@@ -33,16 +33,23 @@ class ZoneController extends Controller{
         $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
             FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
             WHERE idzone = ? AND year = ? GROUP BY iddisability", array($idzone,$idzone,date('Y')));
-
+        
+        //schools in a zone
+        $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);
+        $dataConverter = $this->get('data_converter');
+        $numOfSchools = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools		
+        
         $session = $request->getSession();
         //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
         $session->set('idzone', $idzone);
+        
         //keep the name of the selected zone in the session to access it from the school selection form
         $session->set('zone_name', $zone[0]['zone_name']);
 
         return $this->render('zone/zone2.html.twig',
                 array('zone' => $zone[0],
-                        'disabilities' => $disabilities)
+                        'disabilities' => $disabilities,
+                    'numOfSchools' => $numOfSchools)
                 );
     }
 }

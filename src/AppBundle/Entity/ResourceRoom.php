@@ -60,9 +60,9 @@ class ResourceRoom
      /**
      * @var string
      *
-     * @ORM\Column(name="available_in_rc", type="string", nullable=false)
+     * @ORM\Column(name="available_in", type="string", nullable=false)
      */
-    private $available_in_rc;
+    private $available_in;
 
  /**
      * @var integer
