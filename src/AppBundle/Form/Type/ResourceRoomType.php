@@ -58,8 +58,8 @@ class ResourceRoomType extends AbstractType
         )
         ->add('available_in', 'choice', array(
                 'label' => 'Available in:',
-                'choices' => $rooms,
-                'expanded' => false,
+                'choices' => array('No'=>'No','Yes'=>'Yes'),
+                'expanded' => true,
                 'multiple' => false,)
         )
         ->add('quantity', 'integer', array(
