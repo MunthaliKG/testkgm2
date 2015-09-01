@@ -29,7 +29,7 @@ class RoomStateType extends AbstractType
 		)
                 ->add('enough_light', 'choice', array(
 			'label' => 'Enough Lighting',
-			'choices' => array('No'=>'No','Yes'=>'Yes'),
+			'choices' => array('No'=>'No','Medium'=>'Medium','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
 			'multiple' => false,
@@ -37,7 +37,7 @@ class RoomStateType extends AbstractType
                 )
 		->add('enough_space', 'choice', array(
 			'label' => 'Enough Space',
-			'choices' => array('No'=>'No','Yes'=>'Yes'),
+			'choices' => array('No'=>'No','Medium'=>'Medium','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
 			'multiple' => false,
@@ -50,7 +50,7 @@ class RoomStateType extends AbstractType
                 )
                 ->add('access', 'choice', array(
 			'label' => 'Accessible',
-			'choices' => array('No'=>'No','Yes'=>'Yes'),
+			'choices' => array('No'=>'No','Medium'=>'Medium','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
 			'multiple' => false,
@@ -66,7 +66,7 @@ class RoomStateType extends AbstractType
                 )
                 ->add('enough_ventilation', 'choice', array(
 			'label' => 'Enough Ventilation',
-			'choices' => array('No'=>'No','Yes'=>'Yes'),
+			'choices' => array('No'=>'No','Medium'=>'Medium','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
 			'multiple' => false,
@@ -74,6 +74,34 @@ class RoomStateType extends AbstractType
                 )
                 ->add('other_observations', 'textarea', array(
 			'label' => 'Other Observations',
+                    )
+                )
+                ->add('space_note', 'textarea', array(
+			'label' => false,
+                        'attr' => array(
+                                'placeholder' => 'Remark on space E.g. too crowded',
+                                ),
+                    )
+                )
+                ->add('light_note', 'textarea', array(
+			'label' => 'Lighting description',
+                        'attr' => array(
+                                'placeholder' => 'Remark on lighting E.g. Needs more transparent iron sheets',
+                                ),
+                    )
+                )
+                ->add('ventilation_note', 'textarea', array(
+			'label' => false,
+                        'attr' => array(
+                                'placeholder' => 'Remark on ventilation E.g. windows too small',
+                                ),                       
+                    )
+                )
+                ->add('access_note', 'textarea', array(
+			'label' => false,
+                        'attr' => array(
+                                'placeholder' => 'Remark on accessibility E.g. ramp too steep',
+                                ),                  
                     )
                 )
 		->add('save','submit', array(

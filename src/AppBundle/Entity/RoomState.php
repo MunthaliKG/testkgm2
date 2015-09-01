@@ -59,6 +59,30 @@ class RoomState
      * @ORM\Column(name="other_observations", type="string", length=100, nullable=true)
      */
     private $otherObservations;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="space_note", type="string", length=100, nullable=true)
+     */
+    private $spaceNote;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="light_note", type="string", length=100, nullable=true)
+     */
+    private $lightNote;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ventilation_note", type="string", length=100, nullable=true)
+     */
+    private $ventilationNote;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="acces_note", type="string", length=100, nullable=true)
+     */
+    private $accessNote;
 
     /**
      * @var text
@@ -336,7 +360,97 @@ class RoomState
 
         return $this;
     }
+    
+    /**
+     * Set accessNote
+     *
+     * @param string $accessNote
+     * @return RoomState
+     */
+    public function setAccessNote($accessNote)
+    {
+        $this->accessNote = $accessNote;
 
+        return $this;
+    }
+
+    /**
+     * Get accessNote
+     *
+     * @return string 
+     */
+    public function getAccessNote()
+    {
+        return $this->accessNote;
+    }
+    
+    /**
+     * Set lightNote
+     *
+     * @param string $lightNote
+     * @return RoomState
+     */
+    public function setLightNote($lightNote)
+    {
+        $this->lightNote = $lightNote;
+
+        return $this;
+    }
+
+    /**
+     * Get lightNote
+     *
+     * @return string 
+     */
+    public function getLightNote()
+    {
+        return $this->lightNote;
+    }
+    
+     /**
+     * Set spaceNote
+     *
+     * @param string $spaceNote
+     * @return RoomState
+     */
+    public function setSpaceNote($spaceNote)
+    {
+        $this->spaceNote = $spaceNote;
+
+        return $this;
+    }
+
+    /**
+     * Get spaceNote
+     *
+     * @return string 
+     */
+    public function getSpaceNote()
+    {
+        return $this->spaceNote;
+    }
+    /**
+     * Set ventilationNote
+     *
+     * @param string $ventilationNote
+     * @return RoomState
+     */
+    public function setVentilationNote($ventilationNote)
+    {
+        $this->ventilationNote = $ventilationNote;
+
+        return $this;
+    }
+
+    /**
+     * Get ventilationNote
+     *
+     * @return string 
+     */
+    public function getVentilationNote()
+    {
+        return $this->ventilationNote;
+    }
     /**
      * Get access
      *

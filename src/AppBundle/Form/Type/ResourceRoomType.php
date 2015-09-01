@@ -11,19 +11,22 @@ use Symfony\Component\Validator\Constraints\Type;
 //this class build the form that is used to select a teacher using district name and school name
 class ResourceRoomType extends AbstractType
 {
-    private $choices;
+    private $needs;
+    private $rooms;
 
-    public function __construct($choices)
+    public function __construct($needs, $rooms)
     {
-        $this->choices = $choices;
+        $this->choices = $needs;
+        $this->rooms = $rooms;
     }
     public function buildForm(FormBuilderInterface $builder, array $options){
-        $choices = $this->choices;
+        $needs = $this->needs;
+        $rooms = $this->rooms;
         $builder
         ->add('idneed_2','hidden')
         ->add('idneed','choice', array(
-               'label' => 'Resource Room Item',
-               'choices' => $choices,
+               'label' => 'Special Needs Item',
+               'choices' => $needs,
                 //'constraints' => array(new NotBlank()),
                 'expanded' => false,
                 'multiple' => false,
@@ -53,10 +56,10 @@ class ResourceRoomType extends AbstractType
                 'multiple' => false,
                 )
         )
-        ->add('available_in_rc', 'choice', array(
-                'label' => 'Available in Resource Room',
-                'choices' => array('Yes'=>'Yes', 'No'=>'No'),
-                'expanded' => true,
+        ->add('available_in', 'choice', array(
+                'label' => 'Available in:',
+                'choices' => $rooms,
+                'expanded' => false,
                 'multiple' => false,)
         )
         ->add('quantity', 'integer', array(
