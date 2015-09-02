@@ -31,7 +31,7 @@
 				<fieldset class="fieldset">
 					<legend><small>Personal Information</small></legend>
 					{{ form_row(form1.idlwd, {'attr':{'readonly': readonly}}) }}			
-					{{ form_row(form1.first_name) }}
+					{{ form_row(form1.first_name, {'attr':{'autofocus':'true'}}) }}
 					{{ form_row(form1.last_name) }}
 					{{ form_row(form1.initials) }}
 					{{ form_row(form1.sex, {'label_attr':{'class':'radio-inline'}}) }}

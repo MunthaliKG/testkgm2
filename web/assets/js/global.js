@@ -3,5 +3,5 @@ $(document).ready(function(e){
 	var position = $('.alert').position();
 	if(position != undefined ){
 		$(window).scrollTop(position.top);
-	}	
+	}
 });

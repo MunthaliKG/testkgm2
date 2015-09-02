@@ -39,7 +39,7 @@
                                     <a style="color: whitesmoke" href="{{ path('fos_user_security_logout') }}">
                                         {{ 'Logout'|trans({}, 'FOSUserBundle') }}
                                     </a><br>
-                                    <a href="{{ path('fos_user_change_password')}}">Change password</a>
+                                    <a href="{{ path('fos_user_profile_show')}}">Profile</a>
                                 {% else %}
                                     <a href="{{ path('fos_user_security_login') }}">{{ 'Login'|trans({}, 'FOSUserBundle') }}</a>
                                 {% endif %}

@@ -9,20 +9,17 @@
 
 {% block rightcolumn %}
     {# include the form used for selecting a school #}
-    {{ render(controller('AppBundle:Default:schoolSelectForm')) }}
+    {% block school_select_form %}
+         {{ render(controller('AppBundle:Default:schoolSelectForm')) }}
+    {% endblock %}
 
     <div class="row content">
         {% block content %}
             {% block material1 %}{% endblock %}
             {% block resource1 %}{% endblock %}
-             {% block material2 %}{% endblock %}
+            {% block material2 %}{% endblock %}
             {% block resource2 %}{% endblock %}
-                {# {% if message is not null %}
-                        <br><br><h2 class="text-center"><small>{{ message }}</small></h2>
-
-                {% else %} #}
-                        <br><br><h2 class="text-center"><small>School not chosen</small></h2>
-                {# {% endif %} #}
+            <br><br><h2 class="text-center"><small>School not chosen</small></h2>
         {% endblock %}
     </div>
 {% endblock %}
