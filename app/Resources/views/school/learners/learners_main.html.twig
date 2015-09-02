@@ -6,7 +6,18 @@
 {% set emisCode = app.request.attributes.get('_route_params')['emisCode'] %} {# get the emisCode from the Route#}
 
 {% set learnerId = app.request.get('learnerId') %}
+{% set schoolInfo = app.session.get('schoolInfo') %}
 
+{% block school_info %}
+    <div class="row">
+            <p class="text-center"><a href="{{ path('school_return') }}" class="btn btn-sm" id="add_rc"><i class="fa fa-plus fa-lg"></i> &nbsp; Choose Another School</a></p>
+        </div>
+        <div class="row" align="center">        
+            <h4><b>{{schoolInfo.school_name}} ({{ schoolInfo.emiscode }}) | 
+                    {{schoolInfo.zone_name}} zone ({{ schoolInfo.idzone }})| {{schoolInfo.district_name}} | 
+                    {{schoolInfo.address}} </b></h4>
+        </div>        
+{% endblock %}
 {% block content %}
 	<div class="row">
 		<div class="col-sm-2">

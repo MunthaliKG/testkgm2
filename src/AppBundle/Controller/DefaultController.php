@@ -35,6 +35,12 @@ class DefaultController extends Controller
         return $this->render('school/schoollist.html.twig', array('schools'=>$schools));
     }
     /**
+     * @Route("/school", name="school_return")
+     */
+    public function schoolReturnAction(Request $request){        
+        return $this->render('school/school.html.twig');
+    }
+    /**
      * @Route("/school", name="school")
      */
     public function schoolAction(Request $request){

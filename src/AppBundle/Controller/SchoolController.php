@@ -52,7 +52,10 @@ class SchoolController extends Controller{
             $session->set('emiscode', $emisCode);
             //keep the name of the selected school in the session to access it from the school selection form
             $session->set('school_name', $schools[0]['school_name']);
-
+            
+            //keep all information about a school           
+            $session->set('schoolInfo', $schools[0]);
+                        
             return $this->render('school/school2.html.twig',
                     array('school' => $schools[0],
                             'disabilities' => $disabilities)
