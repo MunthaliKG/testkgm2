@@ -5,6 +5,12 @@
 	<form action="{{ path('fos_user_profile_edit') }}" {{ form_enctype(form) }} method="POST" class="form-horizontal">
 		<fieldset>
 			<legend class="text-center"><small>Edit Profile</small></legend>
+			<div class="form-group">
+				<div class="col-sm-5"></div>
+				<div class="col-sm-7">
+					<a href="{{ path('fos_user_change_password') }}">Change password</a>
+				</div>
+			</div>
 			{{ form_errors(form) }}
 			{{ form_row(form.username, {'label':'Username'}) }}
 			{{ form_row(form.email, {'label':'Email'}) }}
@@ -13,6 +19,7 @@
 				<div class="col-sm-5"></div>
 				<div class="col-sm-7">
 					<input type="submit" class="btn btn-default" value="{{ 'Save Changes'|trans }}" />
+					<a class="btn btn-default" href="{{path('fos_user_profile_show')}}">{{ 'Cancel'|trans }}</a>
 				</div>
 			</div>
 

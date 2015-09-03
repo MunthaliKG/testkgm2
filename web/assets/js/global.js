@@ -4,4 +4,7 @@ $(document).ready(function(e){
 	if(position != undefined ){
 		$(window).scrollTop(position.top);
 	}
+	$('#disabilityFormsCarousel').carousel({
+		interval: false
+	});
 });

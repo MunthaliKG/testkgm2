@@ -1,5 +1,5 @@
 {% extends "base.html.twig" %}
-
+{% set schoolInfo = app.session.get('schoolInfo') %}
 {% block navschool %}{% endblock %}
 
 {% block stylesheets %}
@@ -12,7 +12,7 @@
     {% block school_select_form %}
          {{ render(controller('AppBundle:Default:schoolSelectForm')) }}
     {% endblock %}
-
+    
     <div class="row content">
         {% block content %}
             {% block material1 %}{% endblock %}

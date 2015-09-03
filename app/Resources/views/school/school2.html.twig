@@ -1,7 +1,7 @@
 {% extends 'school/school.html.twig' %}
 
 {% set emisCode = app.request.attributes.get('_route_params')['emisCode'] %} {# get the emisCode from the Route#}
-
+{% set schoolInfo = app.session.get('schoolInfo') %}
 {% block vertnav %}
 
 	<li class="{% block learners_menuitem %}{% endblock %}"><a id="pupils" emis="{{ emisCode }}" href="{{ path('school_learners',{"emisCode": emisCode})}}" class="text-center menu-itm"> Add/update learner records</a></li>
@@ -13,50 +13,66 @@
 	<li class="{% block reports_menuitem %}{% endblock %}"><a href="{{ path('school_reports',{"emisCode": emisCode})}}" class="text-center menu-itm"> Reports</a></li>
 
 {% endblock %}
+{% block rightcolumn %}
+    {% block school_select_form %}
+        {% embed 'info_bar.html.twig'%}
+            {% block slot1 %}
+                {% set schoolInfo = app.session.get('schoolInfo') %}
+                <b>Selected School: </b>
+                {% if schoolInfo is not null %}
+                     {{ schoolInfo.school_name }} | {{ schoolInfo.zone_name }} Zone | {{ schoolInfo.district_name }}   
+                {% endif %}    
+                
+            {% endblock %}
+            {% block slot5 %}
+                <a href="{{ path('school_return') }}" class="btn btn-sm" id="add_rc">Choose Another School</a>
+            {% endblock %}
+        {% endembed %}
+    {% endblock %}
+    {% block content %}
+        <div class="row">
+                <div class="col-sm-6">
+                    <h4><b>{{school.school_name}} | {{ emisCode }}</b></h4>                    
+                </div>	
+        </div>
+        <hr>
+        <div class="row">
+                <div class="col-sm-2 text-center school-details">
+                        <i>School Details</i> <br>
+                        <hr>
+                        {% set address = school.address |split(',') %}
+                        {% for addressbit in address %}
+                                {{addressbit}}<br>
+                        {% endfor %} <br>
+                        <hr>
 
-{% block content %}
-<div class="row">
-	<div class="col-sm-6">
-		<h4><b>{{school.school_name}} | {{ emisCode }}</b></h4>
-	</div>	
-</div>
-<hr>
-<div class="row">
-	<div class="col-sm-2 text-center school-details">
-		<i>School Details</i> <br>
-		<hr>
-		{% set address = school.address |split(',') %}
-		{% for addressbit in address %}
-			{{addressbit}}<br>
-		{% endfor %} <br>
-		<hr>
-
-		{{ school.zone_name }} zone, <br>
-		{{ school.district_name}}			
-	</div>
-	<div class="col-sm-10">
-		<i class="text-center">Summary of learners with special needs</i>
-		<table class="table">
-			<tr><th>Impairment</th><th>Number of learners</th></tr>
-			{% for disability in disabilities %}
-				<tr>
-					<td>{{disability.disability_name}}</td>
-					<td>{{disability.num_learners}}</td>
-				</tr>
-			{% endfor %}
-			<tr>
-				{% if disabilities is not empty %}
-				<th>Total</th>
-				<th>					
-					{{ disabilities.0.total }}					
-				</th>
-				{% endif %}
-			</tr>
-		</table>
-	</div>	
-</div>
-{% block material1 %}{% endblock %}
-{% block resource1 %}{% endblock %}
-{% block material2 %}{% endblock %}
-{% block resource2 %}{% endblock %}
+                        {{ school.zone_name }} zone, <br>
+                        {{ school.district_name}}			
+                </div>
+                <div class="col-sm-10">
+                        <i class="text-center">Summary of learners with special needs</i>
+                        <table class="table">
+                                <tr><th>Impairment</th><th>Number of learners</th></tr>
+                                {% for disability in disabilities %}
+                                        <tr>
+                                                <td>{{disability.disability_name}}</td>
+                                                <td>{{disability.num_learners}}</td>
+                                        </tr>
+                                {% endfor %}
+                                <tr>
+                                        {% if disabilities is not empty %}
+                                        <th>Total</th>
+                                        <th>					
+                                                {{ disabilities.0.total }}					
+                                        </th>
+                                        {% endif %}
+                                </tr>
+                        </table>
+                </div>	
+        </div>
+        {% block material1 %}{% endblock %}
+        {% block resource1 %}{% endblock %}
+        {% block material2 %}{% endblock %}
+        {% block resource2 %}{% endblock %}
+    {% endblock %}
 {% endblock %}

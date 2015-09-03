@@ -7,16 +7,6 @@
 
 {% set learnerId = app.request.get('learnerId') %}
 
-{% block school_select_form %}
-	{% embed 'info_bar.html.twig'%}
-		{% block slot1 %}
-			<b>Selected School: </b> 
-			{% set schoolName = app.session.get('school_name') %}	
-			{{ schoolName }}		
-		{% endblock %}
-	{% endembed %}
-{% endblock %}
-
 {% block content %}
 	<div class="row">
 		<div class="col-sm-2">
