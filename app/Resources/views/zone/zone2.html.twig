@@ -3,8 +3,8 @@
 {% set idzone = app.request.attributes.get('_route_params')['idzone'] %} {# get the zone id from the Route#}
 
 {% block vertnav %}
-    <li><a id="materials" zone="{{ idzone }}" href="{{ path('zone_snl',{"idzone": idzone,})}}" class="{% block zonal_snl %}{% endblock %}"> Zonal SNL reports</a></li>
-    <li><a href="#" class="{% block zonal_facility %}{% endblock %}"> Zonal school facility reports </a></li>
+    <li><a id="materials" zone="{{ idzone }}" href="{{ path('zone_snl',{"idzone": idzone,})}}" class="{% block zonal_snl %}{% endblock %}"> Zone SNL reports</a></li>
+    <li><a href="#" class="{% block zonal_facility %}{% endblock %}"> Zone school facility reports </a></li>
 {%endblock%}
 
 {% block content %}

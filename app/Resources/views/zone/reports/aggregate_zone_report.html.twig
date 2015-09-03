@@ -1,6 +1,5 @@
 {% extends (isHtml)? 'zone/reports/zone_reports_basic.html.twig':'base.html.twig' %}
 
-
 {% block body %} 
 	{% if isHtml %}
 		{{ parent() }}
@@ -41,33 +40,37 @@
         <tr>
             <th align="center"></th>
             <th align="center">Enrolment</th>
-            <th align="center">Transfers*</th>
+            <th align="center">Transfers Out*</th>
+            <th align="center">Transfers In*</th>
             <th align="center">Dropouts</th>
             <th align="center">Completed Std 8</th>
         </tr>	
         <tr>
             <td>Boys</td>
             <td>{{ numBoys }}</td>
-            <td>{{ numBoysTR }}</td>
+            <td>{{ numBoysTRout }}</td>
+            <td>{{ numBoysTRin }}</td>
             <td>{{ numBoysDO }}</td>
             <td>{{ numBoysC }}</td>
         </tr>
         <tr>                        
             <td>Girls</td>
             <td>{{ numGirls }}</td> 
-            <td>{{ numGirlsTR }}</td>
+            <td>{{ numGirlsTRout }}</td>
+            <td>{{ numGirlsTRin }}</td>
             <td>{{ numGirlsDO }}</td>
             <td>{{ numGirlsC }}</td>
        </tr>
        <tr>
            <th>Total</th>
            <th>{{ totalEnrolled }}</th>
-           <th>{{ totalTransfer }}</th>
+           <th>{{ totalTransferOut }}</th>
+           <th>{{ totalTransferIn }}</th>
            <th>{{ totalDropouts }}</th>
            <th>{{ totalCompleted }}</th>
        </tr>
        <tr>
-           <td colspan="5">*Transfers to schools outside the zone</td>
+           <td colspan="6">*Transfers to schools into or outside the zone</td>
        </tr>
     </table>
    <h4>
@@ -117,4 +120,22 @@
         {% endif%}
         {% endfor %}
 </table>
+    <h4>
+       Teaching And Learning Needs/Resources - {{ chaka }})
+   </h4>
+        <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+            <tr>
+                <th align="center">Item</th>
+                <th align="center">Else where</th>
+                <th align="center">Resource Room</th>
+            </tr>
+            {% for need,needs in teachingNeeds %}        
+                <tr>
+                    <td align="center">{{ need }} </td>
+
+                    <td align="center">{{ needs['No'] }}</td><td align="center">{{ needs['Yes'] }}</td>                
+
+                </tr>
+            {% endfor %}
+        </table>
 {% endblock %}

@@ -158,17 +158,13 @@ class SchoolController extends Controller{
             }
             //generate an array to pass into form for select list options    
             $needs2 = $connection->fetchAll('SELECT idneed, needname FROM need');
-            $rooms = $connection->fetchAll('SELECT room_id FROM room_state where emiscode = ?',[$emisCode]);
-                   
+            
             $choices = array();
             foreach ($needs2 as $key => $row) {
                     $choices[$row['idneed']] = $row['idneed'].': '.$row['needname'];
             }
-            $choices2 = array();
-            foreach ($rooms as $key => $row) {
-                    $choices2[$row['room_id']] = $row['room_id'];
-            }
-            $form1 = $this->createForm(new ResourceRoomType($choices, $choices2), $defaultData);
+            
+            $form1 = $this->createForm(new ResourceRoomType($choices), $defaultData);
             
             $form1->handleRequest($request);
                         

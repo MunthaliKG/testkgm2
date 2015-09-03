@@ -10,7 +10,7 @@
 {% block rightcolumn %}
     {# include the form used for selecting a zone #}
     {{ render(controller('AppBundle:Default:zoneSelectForm')) }}
-
+    {% block zone_info %} {% endblock %}
     <div class="row content">
         {% block content %}
             {#

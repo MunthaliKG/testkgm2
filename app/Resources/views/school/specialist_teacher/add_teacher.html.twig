@@ -35,18 +35,20 @@
                 {#<legend><small>School Details about SNT</small></legend>#}
                 {{ form_row(form2.year) }}
             </div>
-             <div class="col-sm-5">
+             <div class="col-sm-6">
                 {#<legend><small>School Details about SNT</small></legend>#}
                 {{ form_row(form2.snt_type) }}
-            </div>
-            <div class="col-sm-1">
+            </div>            
+        </div>            
+    </div>
+                <div class="row">
+                <div class="col-sm-12">
                 <p class="text-right">
                     {{ form_widget(form2.next, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
                 </p>
+                </div>
             </div>
-        </div>
         {{ form_end(form2) }}
-    </div>
 {% endblock %}
 {% block stylesheets %}
     {{ parent() }}

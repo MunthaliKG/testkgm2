@@ -81,28 +81,61 @@ class ZoneReportController extends Controller{
                                 $options['numOfSchools'] = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools		
         
                                 //learner preliminary counts                                
-                                $learnersTrans = $connection->fetchall('select trans.* '
+                                $learnersTransOut = $connection->fetchall('select trans.* '
                                         . 'from (SELECT lastYr.* '
                                             . 'from (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?) as lastYr '
                                             . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?) as thisYr '
                                             . 'on (lastYr.idlwd = thisYr.idlwd) where thisYr.idlwd IS NULL) as trans '
-                                        . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in schoo_exit
-                                        . 'on (trans.idlwd = exits.lwd_idlwd) '
-                                        . 'where exits.lwd_idlwd IS NULL', [$idzone, $lwdLastYr, $idzone, $lwdLatestYr['yr'],$lwdLatestYr['yr']]);
+                                        . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in school_exit
+                                        . 'on (trans.idlwd = exits.idlwd) '
+                                        . 'where exits.idlwd IS NULL', [$idzone, $lwdLastYr, $idzone, $lwdLatestYr['yr'],$lwdLatestYr['yr']]);
+                                
+                                $learnersTransIn = $connection->fetchall('select trans.* '
+                                        . 'from (SELECT lastYr.* '
+                                            . 'from (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?) as lastYr '
+                                            . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?) as thisYr '
+                                            . 'on (lastYr.idlwd = thisYr.idlwd) where thisYr.idlwd IS NULL) as trans '
+                                        . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in school_exit
+                                        . 'on (trans.idlwd = exits.idlwd) '
+                                        . 'where exits.idlwd IS NULL', [$idzone, $lwdLatestYr['yr'], $idzone, $lwdLastYr, $lwdLatestYr['yr']]);
                                 
                                 $learnersDropouts = $connection->fetchall('select dropouts.* from 
                                     (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone 
                                         WHERE idzone = ? and year = ?) as dropouts, school_exit as exits
-                                    where dropouts.idlwd = exits.lwd_idlwd and exits.reason <> \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
+                                    where dropouts.idlwd = exits.idlwd and exits.reason <> \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
                                 
                                 $learnersCompleted = $connection->fetchall('select dropouts.* from 
                                     (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone 
                                         WHERE idzone = ? and year = ?) as dropouts, school_exit as exits
-                                    where dropouts.idlwd = exits.lwd_idlwd and exits.reason = \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
+                                    where dropouts.idlwd = exits.idlwd and exits.reason = \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
                                 
 				$learnersLatestYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
                                         . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
                                         . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLatestYr['yr']]);
+                                
+                                $learnersNeeds = $connection->fetchAll('SELECT idzone,school_has_need.* '
+                                        . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN zone NATURAL JOIN need '
+                                        . 'WHERE idzone = ? and school_has_need.year_recorded = ?', [$idzone, $lwdLatestYr['yr']]);
+                                
+                                $needs = $connection->fetchAll('SELECT idneed, needname FROM need');
+                                $available = array('Yes'=>'Yes','No'=>'No');
+                                $teachingNeeds = array();
+                                $needsCount = $dataConverter->countArray($learnersNeeds, 'idzone', $idzone);
+                                
+                                //loop through the selection list summing the quantity value for each need and where it is found (resource room or not)
+                                for ($x = 0; $x <= $needsCount-1; $x++){
+                                    foreach ($needs as $needkey => $need) {
+                                        foreach ($available as $key => $avail) {                                            
+                                            if (($learnersNeeds[$x]['idneed'] == $need['idneed']) && ($learnersNeeds[$x]['available_in'] == $avail)){                                                
+                                                if ($teachingNeeds[$need['needname']][$avail] == null){ //if its undefined
+                                                    $teachingNeeds[$need['needname']][$avail] = $learnersNeeds[$x]['quantity'];
+                                                }else {
+                                                    $teachingNeeds[$need['needname']][$avail] = $teachingNeeds[$need['needname']][$avail] + $learnersNeeds[$x]['quantity'];                                         ;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                                 
                                 $learnersBySexAgeStd = array();
                                 $learnersBy = array();
@@ -159,6 +192,7 @@ class ZoneReportController extends Controller{
                                 $options['stdBySex'] = $counterStdBySex;
                                 $options['ageBySex'] = $counterAgeBySex;
                                 $options['learnersBy'] = $learnersBy;
+                                $options['teachingNeeds'] = $teachingNeeds;
                                 $learnersLastYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
                                         . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
                                         . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLastYr]);
@@ -174,10 +208,15 @@ class ZoneReportController extends Controller{
 				$options['totalEnrolled'] = $options['numBoys'] + $options['numGirls'];
                                 $options['totalEnrolledLastYear'] = $options['numBoysLY'] + $options['numGirlsLY'];
                                 
-                                //transfers
-                                $options['numBoysTR'] = $dataConverter->countArray($learnersTrans, 'sex', 'M');
-                                $options['numGirlsTR'] = $dataConverter->countArray($learnersTrans, 'sex', 'F');
-                                $options['totalTransfer'] =  $options['numBoysTR'] + $options['numGirlsTR'];
+                                //transfers out
+                                $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
+                                $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
+                                $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
+                                
+                                //transfer in
+                                $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
+                                $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
+                                $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
                                 
                                 //dropouts
                                 $options['numBoysDO'] = $dataConverter->countArray($learnersDropouts, 'sex', 'M'); 
