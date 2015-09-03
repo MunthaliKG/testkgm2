@@ -155,6 +155,7 @@ class SchoolController extends Controller{
       		$defaultData['year_recorded'] = new \DateTime($defaultData['year_recorded'].'-1-1');
                 $defaultData['date_procured'] = new \DateTime($defaultData['date_procured']);
                 $defaultData['idneed_2'] = $needs[0]['idneed'];
+                
             }
             //generate an array to pass into form for select list options    
             $needs2 = $connection->fetchAll('SELECT idneed, needname FROM need');
@@ -194,9 +195,9 @@ class SchoolController extends Controller{
                         $update = $update. 'State: '.$defaultData['state']. 
                             ' --> '. $formData['state']. ' on '. $date. ';';           	
                     }
-                    if($defaultData['available_in_rc'] != $formData['available_in_rc']){
-                        $update = $update. 'AvRC: '.$defaultData['available_in_rc']. 
-                            ' --> '. $formData['available_in_rc']. ' on '. $date. ';';           	
+                    if($defaultData['available_in'] != $formData['available_in']){
+                        $update = $update. 'AvRC: '.$defaultData['available_in']. 
+                            ' --> '. $formData['available_in']. ' on '. $date. ';';           	
                     }
                     if($defaultData['date_procured'] != $formData['date_procured']){
                         $update = $update. 'DateP: '.$defaultData['date_procured']->format('Y-m-d'). 

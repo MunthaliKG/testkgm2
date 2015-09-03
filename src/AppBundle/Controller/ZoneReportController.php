@@ -207,7 +207,7 @@ class ZoneReportController extends Controller{
                                     '13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'>17'=>18);
                                 $stds = array('1'=>1, '2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8);
                                 $learnersBySexAgeStd = $connection->fetchAll('select DISTINCT idlwd, iddistrict, idzone, sex, dob, round(datediff(?,dob)/365) as age, std, emiscode, year '
-                                    .'from lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN performance NATURAL JOIN school NATURAL JOIN zone '
+                                    .'from lwd NATURAL JOIN performance NATURAL JOIN school NATURAL JOIN zone '
                                     .'where idzone = ? and year = ?', [$lwdLatestYr['yr'].'-01-01', $idzone,$lwdLatestYr['yr']]);
                                 
                                 $counterStdSex = array();
