@@ -45,6 +45,9 @@ class ZoneController extends Controller{
         
         //keep the name of the selected zone in the session to access it from the school selection form
         $session->set('zone_name', $zone[0]['zone_name']);
+        
+        //keep zone information
+        $session->set('zonInfo', $zone[0]);
 
         return $this->render('zone/zone2.html.twig',
                 array('zone' => $zone[0],

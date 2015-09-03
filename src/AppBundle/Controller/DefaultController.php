@@ -79,6 +79,12 @@ class DefaultController extends Controller
                              );
     }
     /**
+     * @Route("/zone", name="zone_return")
+     */
+    public function zoneReturnAction(Request $request){      
+        return $this->render('zone/zone.html.twig');
+    }
+    /**
      * @Route("/zone", name="zone")
      */
     public function zoneAction(Request $request){

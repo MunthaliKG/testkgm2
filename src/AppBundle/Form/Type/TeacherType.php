@@ -51,7 +51,7 @@ class TeacherType extends AbstractType
 		->add('qualification', 'choice', array(
 			'label' => 'Qualification',
                         'placeholder' => '--Qualification--',
-			'choices' => array('certificate'=>'certificate', 'diploma'=>'diploma', 'degree'=>'degree'),
+			'choices' => array('diploma'=>'diploma', 'degree'=>'degree'),
 			'expanded' => false,
 			'multiple' => false,)
 		)
