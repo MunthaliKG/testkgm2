@@ -63,25 +63,93 @@ class ZoneReportController extends Controller{
 			//	FROM school NATURAL JOIN district NATURAL JOIN zone WHERE emiscode = ?', [$emisCode]);
 
 			//$options['school'] = $school;
-
-			/*Preliminary counts section*/
-			$learners = array();
-			$dataConverter = $this->get('data_converter');
-			if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
-				$options['preliminary'] = true;
-
-                                $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
+                        $dataConverter = $this->get('data_converter');
+                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
 				$sntLastYr = $sntLatestYr['yr'] - 1;
                                 $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
 				$lwdLastYr = $lwdLatestYr['yr'] - 1;
                                 $options['chaka'] = $lwdLatestYr['yr'];
-                                
                                 //schools in a zone
                                 $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);                               
                                 $options['numOfSchools'] = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools		
         
+			/*Preliminary counts section*/
+			$learners = array();
+			
+			if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
+				$options['preliminary'] = true;
+
+                                
+                                
+                                
                                 //learner preliminary counts                                
-                                $learnersTransOut = $connection->fetchall('select trans.* '
+                                
+				$learnersLatestYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
+                                        . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
+                                        . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLatestYr['yr']]);
+                               
+                                
+                                //$options['learnersBy'] = $learnersBy;
+                                //$options['teachingNeeds'] = $teachingNeeds;
+                                $learnersLastYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
+                                        . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
+                                        . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLastYr]);
+				
+                                //Learners by sex
+                                $options['numBoys'] = $dataConverter->countArray($learnersLatestYr, 'sex', 'M');//get the number of boys
+				$options['numGirls'] = $dataConverter->countArray($learnersLatestYr, 'sex', 'F');//get the number of girls
+                                
+                                $options['numBoysLY'] = $dataConverter->countArray($learnersLastYr, 'sex', 'M');//get the number of boys
+				$options['numGirlsLY'] = $dataConverter->countArray($learnersLastYr, 'sex', 'F');//get the number of girls
+
+                                //total enrolments
+				$options['totalEnrolled'] = $options['numBoys'] + $options['numGirls'];
+                                $options['totalEnrolledLastYear'] = $options['numBoysLY'] + $options['numGirlsLY'];
+                                
+                                                          
+                                //snt preliminary counts
+				$teachers = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $sntLatestYr['yr']]);
+                                
+				$options['sntMale'] = $dataConverter->countArray($teachers, 's_sex', 'M');
+				$options['sntFemale'] = $dataConverter->countArray($teachers, 's_sex', 'F');
+                                
+                                $options['degree'] = $dataConverter->countArray($teachers, 'qualification', 'degree');
+                                $options['certificate'] = $dataConverter->countArray($teachers, 'qualification', 'certificate');
+                                $options['diploma'] = $dataConverter->countArray($teachers, 'qualification', 'diploma');
+                                
+                                $options['VI'] = $dataConverter->countArray($teachers, 'speciality', 'VI');
+                                $options['HI'] = $dataConverter->countArray($teachers, 'speciality', 'HI');
+                                $options['LD'] = $dataConverter->countArray($teachers, 'speciality', 'LD');
+                                
+                                $options['sntResident'] = $dataConverter->countArray($teachers, 'snt_type', 'Resident');
+                                $options['sntItinerant'] = $dataConverter->countArray($teachers, 'snt_type', 'Itinerant');
+                                
+                                //classroom preliminary counts
+                                $classPopulations = $connection->fetchAll('SELECT std, COUNT(DISTINCT(idlwd)) as numLearners FROM lwd_belongs_to_school 
+                                        NATURAL JOIN lwd NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? AND `year` = ? GROUP BY std', [$idzone, $lwdLatestYr['yr']]);
+                                $options['maxLearners'] = $dataConverter->findArrayMax($classPopulations, 'numLearners');
+                                $options['minLearners'] = $dataConverter->findArrayMin($classPopulations, 'numLearners');
+
+                                //room state preliminary counts
+                                $rooms = $connection->fetchAll('SELECT room_id,enough_light,enough_space,enough_ventilation,adaptive_chairs,room_type,`access` 
+                                        FROM room_state NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? AND `year` = ?', [$idzone, $lwdLatestYr['yr']]);
+                                $options['rmTotal'] = count($rooms);
+                                $options['rmEnoughLight'] = $dataConverter->countArray($rooms, 'enough_light', 'Yes');
+                                $options['rmEnoughSpace'] = $dataConverter->countArray($rooms, 'enough_space', 'Yes');
+                                $options['rmEnoughVent'] = $dataConverter->countArray($rooms, 'enough_ventilation', 'Yes');
+                                $options['rmAdaptiveChairs'] = $dataConverter->countArrayBool($rooms, 'adaptive_chairs', '>0');
+                                $options['rmAccessible'] = $dataConverter->countArray($rooms, 'access', 'Yes');
+                                $options['rmTemporary'] = $dataConverter->countArray($rooms, 'room_type', 'Temporary');
+                                $options['rmPermanent'] = $options['rmTotal'] - $options['rmTemporary'];			
+
+                                
+			}
+			/*End of preliminary counts section*/
+                        
+                        /*Start of Summary of learners with special needs*/
+                        if(in_array(1, $formData['reports'])){ //if the Summary of learners with special needs option was checked
+                            $options['specialNeeds'] = true;
+                            $learnersTransOut = $connection->fetchall('select trans.* '
                                         . 'from (SELECT lastYr.* '
                                             . 'from (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?) as lastYr '
                                             . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?) as thisYr '
@@ -109,34 +177,27 @@ class ZoneReportController extends Controller{
                                         WHERE idzone = ? and year = ?) as dropouts, school_exit as exits
                                     where dropouts.idlwd = exits.idlwd and exits.reason = \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
                                 
-				$learnersLatestYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
-                                        . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
-                                        . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLatestYr['yr']]);
+                            //transfers out
+                                $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
+                                $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
+                                $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
                                 
-                                $learnersNeeds = $connection->fetchAll('SELECT idzone,school_has_need.* '
-                                        . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN zone NATURAL JOIN need '
-                                        . 'WHERE idzone = ? and school_has_need.year_recorded = ?', [$idzone, $lwdLatestYr['yr']]);
+                                //transfer in
+                                $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
+                                $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
+                                $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
                                 
-                                $needs = $connection->fetchAll('SELECT idneed, needname FROM need');
-                                $available = array('Yes'=>'Yes','No'=>'No');
-                                $teachingNeeds = array();
-                                $needsCount = $dataConverter->countArray($learnersNeeds, 'idzone', $idzone);
+                                //dropouts
+                                $options['numBoysDO'] = $dataConverter->countArray($learnersDropouts, 'sex', 'M'); 
+                                $options['numGirlsDO'] = $dataConverter->countArray($learnersDropouts, 'sex', 'F');
+                                $options['totalDropouts'] =  $options['numBoysDO'] + $options['numGirlsDO'];
                                 
-                                //loop through the selection list summing the quantity value for each need and where it is found (resource room or not)
-                                for ($x = 0; $x <= $needsCount-1; $x++){
-                                    foreach ($needs as $needkey => $need) {
-                                        foreach ($available as $key => $avail) {                                            
-                                            if (($learnersNeeds[$x]['idneed'] == $need['idneed']) && ($learnersNeeds[$x]['available_in'] == $avail)){                                                
-                                                if ($teachingNeeds[$need['needname']][$avail] == null){ //if its undefined
-                                                    $teachingNeeds[$need['needname']][$avail] = $learnersNeeds[$x]['quantity'];
-                                                }else {
-                                                    $teachingNeeds[$need['needname']][$avail] = $teachingNeeds[$need['needname']][$avail] + $learnersNeeds[$x]['quantity'];                                         ;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                
+                                //completed
+                                $options['numBoysC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'M'); 
+                                $options['numGirlsC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'F');
+                                $options['totalCompleted'] =  $options['numBoysC'] + $options['numGirlsC'];                                                      
+                                      
+                            //learners by std, sex and age - STARTS HERE                            
                                 $learnersBySexAgeStd = array();
                                 $learnersBy = array();
                                 $totalStdSexAge = array();
@@ -189,65 +250,51 @@ class ZoneReportController extends Controller{
                                         }                                     
                                     }
                                 }
-                                $options['stdBySex'] = $counterStdBySex;
-                                $options['ageBySex'] = $counterAgeBySex;
-                                $options['learnersBy'] = $learnersBy;
+                               $options['stdBySex'] = $counterStdBySex;
+                                $options['ageBySex'] = $counterAgeBySex; 
+                               //learners by std, sex and age - ENDS HERE
+                            $options['learnersBy'] = $learnersBy;
+                        }
+                        /*End of Summary of learners with special needs*/
+                        
+                        /*Start of Teaching and learning materials*/
+                        if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
+                            $options['learningMaterials'] = true;
+                            //learners needs by resource room or not - STARTS HERE
+                                $learnersNeeds = $connection->fetchAll('SELECT idzone,needname, school_has_need.* '
+                                        . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN zone NATURAL JOIN need '
+                                        . 'WHERE idzone = ? and school_has_need.year_recorded = ?', [$idzone, $lwdLatestYr['yr']]);
+                                
+                                $dbNeeds = $connection->fetchAll('SELECT idneed, needname FROM need');
+                                $needs = array();
+                                foreach ($dbNeeds as $key => $row) {
+                                    $needs[$row['idneed']] = $row['needname'];
+                                }
+                                $available = array('Yes'=>'Yes','No'=>'No');
+                                $teachingNeeds = array();
+                                $needsCount = $dataConverter->countArray($learnersNeeds, 'idzone', $idzone);
+                                
+                                //initialise array
+                                foreach ($needs as $needkey => $need) {
+                                    foreach ($available as $key => $avail) {                                                                                    
+                                        $teachingNeeds[$need][$avail] = 0;                                                                                   
+                                    }
+                                }
+                                
+                                //loop through the selection list summing the quantity value for each need and where it is found (resource room or not)
+                                for ($x = 0; $x <= $needsCount-1; $x++){
+                                    foreach ($needs as $needkey => $need) {
+                                        foreach ($available as $key => $avail) {                                            
+                                            if (($learnersNeeds[$x]['needname'] == $need) && ($learnersNeeds[$x]['available_in'] == $avail)){                                                                                               
+                                                $teachingNeeds[$need][$avail] = $teachingNeeds[$need][$avail] + $learnersNeeds[$x]['quantity'];                                              
+                                            }
+                                        }
+                                    }
+                                }
+                                //learners needs by resource room or not - ENDS HERE
                                 $options['teachingNeeds'] = $teachingNeeds;
-                                $learnersLastYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
-                                        . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
-                                        . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLastYr]);
-				
-                                //Learners by sex
-                                $options['numBoys'] = $dataConverter->countArray($learnersLatestYr, 'sex', 'M');//get the number of boys
-				$options['numGirls'] = $dataConverter->countArray($learnersLatestYr, 'sex', 'F');//get the number of girls
-                                
-                                $options['numBoysLY'] = $dataConverter->countArray($learnersLastYr, 'sex', 'M');//get the number of boys
-				$options['numGirlsLY'] = $dataConverter->countArray($learnersLastYr, 'sex', 'F');//get the number of girls
-
-                                //total enrolments
-				$options['totalEnrolled'] = $options['numBoys'] + $options['numGirls'];
-                                $options['totalEnrolledLastYear'] = $options['numBoysLY'] + $options['numGirlsLY'];
-                                
-                                //transfers out
-                                $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
-                                $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
-                                $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
-                                
-                                //transfer in
-                                $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
-                                $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
-                                $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
-                                
-                                //dropouts
-                                $options['numBoysDO'] = $dataConverter->countArray($learnersDropouts, 'sex', 'M'); 
-                                $options['numGirlsDO'] = $dataConverter->countArray($learnersDropouts, 'sex', 'F');
-                                $options['totalDropouts'] =  $options['numBoysDO'] + $options['numGirlsDO'];
-                                
-                                //completed
-                                $options['numBoysC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'M'); 
-                                $options['numGirlsC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'F');
-                                $options['totalCompleted'] =  $options['numBoysC'] + $options['numGirlsC'];                                                      
-                                                                
-                                //snt preliminary counts
-				$teachers = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $sntLatestYr['yr']]);
-                                
-				$options['sntMale'] = $dataConverter->countArray($teachers, 's_sex', 'M');
-				$options['sntFemale'] = $dataConverter->countArray($teachers, 's_sex', 'F');
-                                
-                                $options['degree'] = $dataConverter->countArray($teachers, 'qualification', 'degree');
-                                $options['certificate'] = $dataConverter->countArray($teachers, 'qualification', 'certificate');
-                                $options['diploma'] = $dataConverter->countArray($teachers, 'qualification', 'diploma');
-                                
-                                $options['VI'] = $dataConverter->countArray($teachers, 'speciality', 'VI');
-                                $options['HI'] = $dataConverter->countArray($teachers, 'speciality', 'HI');
-                                $options['LD'] = $dataConverter->countArray($teachers, 'speciality', 'LD');
-                                
-                                $options['Resident'] = $dataConverter->countArray($teachers, 'snt_type', 'Resident');
-                                $options['Itinerant'] = $dataConverter->countArray($teachers, 'snt_type', 'Itinerant');
-                                
-                                
-			}
-			/*End of preliminary counts section*/
+                        }
+                        /*End of Teaching and learning materials*/
                         //exit;
 			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
@@ -259,7 +306,7 @@ class ZoneReportController extends Controller{
 					return new Response($html);
 				}else{
 					$mpdfService = $this->get('tfox.mpdfport');
-					$arguments = ['outputFileName'=>'report.pdf', 'outputDest'=>"I"];
+					$arguments = ['outputFileName'=>$zone[0]['zone_name'].'_zone_report.pdf', 'outputDest'=>"I"];
 					$response = $mpdfService->generatePdfResponse($html, $arguments);
 					$response->headers->set('Content-Disposition','inline; filename = '.$arguments['outputFileName']);
 					$response->headers->set('Content-Transfer-Encoding','binary');
@@ -267,29 +314,29 @@ class ZoneReportController extends Controller{
 					return $response;
 					exit;
 				}
-			}/*else{
-				$xml = $this->renderView('school/reports/aggregate_report.xml.twig', $options);
-				$temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
-            	file_put_contents($temporary_file_name, $xml);
+			}else{
+                            $xml = $this->renderView('zone/reports/aggregate_zone_report.xml.twig', $options);
+                            $temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
+                            file_put_contents($temporary_file_name, $xml);
 
-            	$reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
-            	$excelSheet = $reader->load($temporary_file_name);
-            	$writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
+                            $reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
+                            $excelSheet = $reader->load($temporary_file_name);
+                            $writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
 
-            	// create the response
-		        $response = $this->get('phpexcel')->createStreamedResponse($writer);
-		        // adding headers
-		        $dispositionHeader = $response->headers->makeDisposition(
-		            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-		            'stream-file.xlsx'
-		        );
-		        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-		        $response->headers->set('Pragma', 'public');
-		        $response->headers->set('Cache-Control', 'maxage=1');
-		        $response->headers->set('Content-Disposition', $dispositionHeader);
+                            // create the response
+                            $response = $this->get('phpexcel')->createStreamedResponse($writer);
+                            // adding headers
+                            $dispositionHeader = $response->headers->makeDisposition(
+                                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                                'stream-file.xlsx'
+                            );
+                            $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+                            $response->headers->set('Pragma', 'public');
+                            $response->headers->set('Cache-Control', 'maxage=1');
+                            $response->headers->set('Content-Disposition', $dispositionHeader);
 
-		        return $response; 
-		    } 	*/	
+                            return $response; 
+                        }	
 			
 		}
 

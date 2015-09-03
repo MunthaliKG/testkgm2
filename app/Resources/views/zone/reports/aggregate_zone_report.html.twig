@@ -35,107 +35,14 @@
         </tr>                    
     </table>
 
-    <h4>New Learners with Disability, Dropouts, and Learners with Disability on Transfer {{ chaka }}</h4>        
-    <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
-        <tr>
-            <th align="center"></th>
-            <th align="center">Enrolment</th>
-            <th align="center">Transfers Out*</th>
-            <th align="center">Transfers In*</th>
-            <th align="center">Dropouts</th>
-            <th align="center">Completed Std 8</th>
-        </tr>	
-        <tr>
-            <td>Boys</td>
-            <td>{{ numBoys }}</td>
-            <td>{{ numBoysTRout }}</td>
-            <td>{{ numBoysTRin }}</td>
-            <td>{{ numBoysDO }}</td>
-            <td>{{ numBoysC }}</td>
-        </tr>
-        <tr>                        
-            <td>Girls</td>
-            <td>{{ numGirls }}</td> 
-            <td>{{ numGirlsTRout }}</td>
-            <td>{{ numGirlsTRin }}</td>
-            <td>{{ numGirlsDO }}</td>
-            <td>{{ numGirlsC }}</td>
-       </tr>
-       <tr>
-           <th>Total</th>
-           <th>{{ totalEnrolled }}</th>
-           <th>{{ totalTransferOut }}</th>
-           <th>{{ totalTransferIn }}</th>
-           <th>{{ totalDropouts }}</th>
-           <th>{{ totalCompleted }}</th>
-       </tr>
-       <tr>
-           <td colspan="6">*Transfers to schools into or outside the zone</td>
-       </tr>
-    </table>
-   <h4>
-       Learners with Disability by Standard, Sex and Age (age at the beginning of school year - {{ chaka }})
-   </h4>
-       <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
-        <tr>
-            <th align="center" rowspan="2">Age</th>
-            <th align="center" colspan="2">Std1</th>
-            <th align="center" colspan="2">Std2</th>
-            <th align="center" colspan="2">Std3</th>
-            <th align="center" colspan="2">Std4</th>
-            <th align="center" colspan="2">Std5</th>
-            <th align="center" colspan="2">Std6</th>
-            <th align="center" colspan="2">Std7</th>
-            <th align="center" colspan="2">Std8</th>
-            <th align="center" colspan="2">Total</th>
-        </tr>
-        <tr>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>
-            <th align="center">M</th> <th align="center">F</th>            
-        </tr>
-        {% for age,ages in learnersBy %}        
-        <tr>
-            <td align="center">{{ age }} </td>
-            {% for std,stds in ages %}            
-                <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
-                {% if loop.last %}
-                    <td align="center">{{ ageBySex[age].M }} </td><td align="center">{{ ageBySex[age].F }} </td>
-                {% endif %}
-            {% endfor %}            
-        </tr>
-        {% if loop.last %}
-            <tr>
-                <th align="center"> Total </th>
-                {% for std,stds in stdBySex %}
-                    <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
-                {% endfor %}
-            </tr>
-        {% endif%}
-        {% endfor %}
-</table>
-    <h4>
-       Teaching And Learning Needs/Resources - {{ chaka }})
-   </h4>
-        <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
-            <tr>
-                <th align="center">Item</th>
-                <th align="center">Else where</th>
-                <th align="center">Resource Room</th>
-            </tr>
-            {% for need,needs in teachingNeeds %}        
-                <tr>
-                    <td align="center">{{ need }} </td>
-
-                    <td align="center">{{ needs['No'] }}</td><td align="center">{{ needs['Yes'] }}</td>                
-
-                </tr>
-            {% endfor %}
-        </table>
+    {% if preliminary is defined %}
+        {% include 'zone/reports/zone_preliminary.html.twig' %}
+    {% endif %}
+    {% if specialNeeds is defined %}
+        {% include 'zone/reports/zone_special_needs.html.twig' %}
+    {% endif %}
+    {% if learningMaterials is defined %}
+        {% include 'zone/reports/zone_teaching_materials.html.twig' %}
+    {% endif %}
+    
 {% endblock %}
