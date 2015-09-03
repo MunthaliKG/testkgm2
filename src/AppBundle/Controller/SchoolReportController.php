@@ -62,8 +62,8 @@ class SchoolReportController extends Controller{
 				$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
 					WHERE emiscode = ?', [$emisCode]);
 				//learner preliminary counts
-				$learners = $connection->fetchAll('SELECT DISTINCT(idlwd), sex  FROM lwd NATURAL JOIN lwd_belongs_to_school 
-					WHERE emiscode = ?', [$emisCode]);
+				$learners = $connection->fetchAll('SELECT DISTINCT(idlwd), sex, std  FROM lwd NATURAL JOIN lwd_belongs_to_school 
+					WHERE emiscode = ? AND `year`=?', [$emisCode, $yearQuery['maxYear']]);
 
 				/*Preliminary counts section*/
 				if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
@@ -105,7 +105,7 @@ class SchoolReportController extends Controller{
 				/*End of preliminary counts section*/
 
 				/*Summary of learners with special needs section*/
-				if(in_array(1, $formData['reports'])){
+				if(in_array(1, $formData['reports'])){//if the summary of learners with special needs option was checked
 					$options['specialNeeds'] = true;
 					//get students enrolled this year
 					$enrolled = $connection->fetchAll('SELECT sex, year FROM lwd NATURAL JOIN lwd_belongs_to_school 

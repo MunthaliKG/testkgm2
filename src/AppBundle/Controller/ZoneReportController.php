@@ -87,18 +87,18 @@ class ZoneReportController extends Controller{
                                             . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?) as thisYr '
                                             . 'on (lastYr.idlwd = thisYr.idlwd) where thisYr.idlwd IS NULL) as trans '
                                         . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in schoo_exit
-                                        . 'on (trans.idlwd = exits.lwd_idlwd) '
-                                        . 'where exits.lwd_idlwd IS NULL', [$idzone, $lwdLastYr, $idzone, $lwdLatestYr['yr'],$lwdLatestYr['yr']]);
+                                        . 'on (trans.idlwd = exits.idlwd) '
+                                        . 'where exits.idlwd IS NULL', [$idzone, $lwdLastYr, $idzone, $lwdLatestYr['yr'],$lwdLatestYr['yr']]);
                                 
                                 $learnersDropouts = $connection->fetchall('select dropouts.* from 
                                     (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone 
                                         WHERE idzone = ? and year = ?) as dropouts, school_exit as exits
-                                    where dropouts.idlwd = exits.lwd_idlwd and exits.reason <> \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
+                                    where dropouts.idlwd = exits.idlwd and exits.reason <> \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
                                 
                                 $learnersCompleted = $connection->fetchall('select dropouts.* from 
                                     (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone 
                                         WHERE idzone = ? and year = ?) as dropouts, school_exit as exits
-                                    where dropouts.idlwd = exits.lwd_idlwd and exits.reason = \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
+                                    where dropouts.idlwd = exits.idlwd and exits.reason = \'completed\' and exits.year = ?',[$idzone, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
                                 
 				$learnersLatestYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
                                         . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
