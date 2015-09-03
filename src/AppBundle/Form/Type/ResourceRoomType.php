@@ -53,7 +53,7 @@ class ResourceRoomType extends AbstractType
                 )
         )
         ->add('available_in', 'choice', array(
-                'label' => 'Available in:',
+                'label' => 'Available in Resource Room:',
                 'choices' => array('No'=>'No','Yes'=>'Yes'),
                 'expanded' => true,
                 'multiple' => false,)

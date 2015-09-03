@@ -168,26 +168,26 @@ class ResourceRoom
     }
     
      /**
-     * Set available_in_rc
+     * Set available_in
      *
-     * @param string $available_in_rc
+     * @param string $available_in
      * @return ResourceRoom
      */
-    public function setAvailableInRc($available_in_rc)
+    public function setAvailableInRc($available_in)
     {
-        $this->available_in_rc = $available_in_rc;
+        $this->available_in = $available_in;
 
         return $this;
     }
 
     /**
-     * Get available_in_rc
+     * Get available_in
      *
      * @return string 
      */
     public function getAvailableInRc()
     {
-        return $this->available_in_rc;
+        return $this->available_in;
     }
     /**
      * Set quantity
