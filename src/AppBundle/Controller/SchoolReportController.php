@@ -119,6 +119,7 @@ class SchoolReportController extends Controller{
 					$exited = $connection->fetchAll('SELECT sex, reason FROM lwd NATURAL JOIN school_exit WHERE emiscode = ? 
 						AND `year` = ?', [$emisCode, $yearQuery['maxYear']]);
 					//get dropouts
+					$compString = 'completed';
 					$dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', ' != '.$compString);
 					$options['dropoutTotal'] = count($dropouts);
 					$options['dropoutBoys'] = $dataConverter->countArray($dropouts, 'sex', 'M');
@@ -129,6 +130,9 @@ class SchoolReportController extends Controller{
 					$options['completedTotal'] = count($completed);
 					$options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');
 					$options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
+
+					//lwds by class, age and sex
+
 				}
 			}
 			

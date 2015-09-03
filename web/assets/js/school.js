@@ -75,4 +75,6 @@ $(document).ready(function(){
 		}
 	});
 
+	$('[autofocus]:first').focus();
+
 });

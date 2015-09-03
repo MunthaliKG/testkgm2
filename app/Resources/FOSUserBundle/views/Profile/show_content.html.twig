@@ -1,6 +1,28 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
-<div class="fos_user_user_show change-passwd-form">
-    <p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
-    <p>{{ 'profile.show.email'|trans }}: {{ user.email }}</p>
+<div class="col-sm-6 col-sm-offset-2 change-passwd-form">
+	<div class="fos_user_user_show change-passwd-form">
+		<div class="row">
+			<div class="col-sm-4">
+				<p class="text-right"><b>{{ 'Username'|trans }}</b>: </p>
+			</div>
+			<div class="col-sm-6">
+				{{ user.username }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-4">
+				<p class="text-right"><b>{{ 'Email'|trans }}</b>: </p>
+			</div>	
+			<div class="col-sm-6">
+				{{ user.email }}
+			</div>	
+		</div> 
+		<div class="row">
+			<div class="col-sm-4"></div>
+			<div class="col-sm-6">
+				<a href="{{ path('fos_user_profile_edit')}}">Edit profile</a>
+			</div>
+		</div>   
+	</div>
 </div>

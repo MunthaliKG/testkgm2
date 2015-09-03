@@ -110,15 +110,15 @@ class DataConverter{
 		return $count;
 	}
 	function selectFromArray($array, $key, $value){
-		$array = array();
+		$resultArray = array();
 		foreach($array as $element){
 			if(is_array($element)){
 				if($element[$key] == $value){
-					$array[] = $element;
+					$resultArray[] = $element;
 				}
 			}
 		}
-		return $array;
+		return $resultArray;
 	}
 	function selectFromArrayBool($array, $key, $condition){
 		$array = array();

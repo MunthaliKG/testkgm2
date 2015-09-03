@@ -14,8 +14,21 @@
 
 {% endblock %}
 {% block rightcolumn %}
-    <br>   
-    {% block school_info %} {% endblock %}
+    {% block school_select_form %}
+        {% embed 'info_bar.html.twig'%}
+            {% block slot1 %}
+                {% set schoolInfo = app.session.get('schoolInfo') %}
+                <b>Selected School: </b>
+                {% if schoolInfo is not null %}
+                     {{ schoolInfo.school_name }} | {{ schoolInfo.zone_name }} Zone | {{ schoolInfo.district_name }}   
+                {% endif %}    
+                
+            {% endblock %}
+            {% block slot5 %}
+                <a href="{{ path('school_return') }}" class="btn btn-sm" id="add_rc">Choose Another School</a>
+            {% endblock %}
+        {% endembed %}
+    {% endblock %}
     {% block content %}
         <div class="row">
                 <div class="col-sm-6">

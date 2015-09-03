@@ -53,7 +53,7 @@ class SchoolController extends Controller{
             //keep the name of the selected school in the session to access it from the school selection form
             $session->set('school_name', $schools[0]['school_name']);
             
-            //keep all information about a school           
+            //keep all information about the selected school in the session    
             $session->set('schoolInfo', $schools[0]);
                         
             return $this->render('school/school2.html.twig',
@@ -630,6 +630,7 @@ class SchoolController extends Controller{
     	$needForms = array(); //array to keep forms for the needs of each disability
     	$connection = $this->get('database_connection'); 
     	$disabilities = $connection->fetchAll("SELECT * FROM disability");
+        $disabilityNames = array(); //will be used in the template to provide pagination for the disabilities
 
     	if($learnerId != 'new'){
     		$learnerDisabilities = $connection->fetchAll("SELECT * FROM lwd_has_disability WHERE idlwd = ?", array(
@@ -644,8 +645,10 @@ class SchoolController extends Controller{
     			$needsRowsStmt = $connection->prepare("SELECT idneed FROM lwd_has_disability_has_need WHERE idlwd = ? 
     					AND iddisability = ?");
 
+                $dataConverter = $this->get('data_converter');
     			//iterate over each disability for this learner
-    			foreach($learnerDisabilities as $key => $disability){
+    			foreach($learnerDisabilities as $disability){
+                    $disabilityNames[] = $dataConverter->selectFromArray($disabilities, 'iddisability', $disability['iddisability'])[0]['disability_name'];
     				//get the levels to show in the form for this disability
     				$levelsStmt->bindParam(1, $disability['iddisability']);
     				$levelsStmt->execute();
@@ -776,9 +779,9 @@ class SchoolController extends Controller{
     	foreach($needForms as &$needForm){
     		$needForm = $needForm->createView();
     	}
-
     	return $this->render('school/learners/edit_learner_disability.html.twig', array(
-    		'forms' => $forms, 'needForms'=>$needForms, 'newform' => $newForm->createView())
+    		'forms' => $forms, 'needForms'=>$needForms, 'newform' => $newForm->createView(), 
+            'disabilityNames' => $disabilityNames)
     	);
     } 
     /**

@@ -7,7 +7,7 @@ remove_trailing_slash:
     path: /{url}
     defaults: { _controller: AppBundle:Default:removeTrailingSlash }
     requirements:
-            url: .*/$
+            url: .*^profile/$
             methods: 'GET'
 fos_user:
     resource: "@FOSUserBundle/Resources/config/routing/all.xml"

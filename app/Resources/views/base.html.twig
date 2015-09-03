@@ -39,7 +39,7 @@
                                     <a style="color: whitesmoke" href="{{ path('fos_user_security_logout') }}">
                                         {{ 'Logout'|trans({}, 'FOSUserBundle') }}
                                     </a><br>
-                                    <a href="{{ path('fos_user_change_password')}}">Change password</a>
+                                    <a href="{{ path('fos_user_profile_show')}}">Profile</a>
                                 {% else %}
                                     <a href="{{ path('fos_user_security_login') }}">{{ 'Login'|trans({}, 'FOSUserBundle') }}</a>
                                 {% endif %}
@@ -103,6 +103,7 @@
 
         <!-- Placed at the end of the document so the pages load faster -->
         {% block javascripts %}
+        <script src="{{ asset('./bootstrap/js/carousel.js') }}"></script>
         <script src="{{asset('assets/js/jquery.min.js')}}"></script>
         <script src="{{asset('bootstrap/dist/js/bootstrap.min.js')}}"></script>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
