@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	// listen for change of value in the disability select list
+	$('#addDisabilityForm').hide();
 	$('.disability-select').change(function(event){
 
 		var disability = $(this).val();
@@ -15,4 +16,10 @@ $(document).ready(function(){
 		}
 		
 	})
+
+	$('#showAddDisability').click(function(e){
+		$('#addDisabilityForm').show();
+		$('#showAddDisability').hide();
+	});
+
 });

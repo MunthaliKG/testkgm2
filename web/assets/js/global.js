@@ -5,6 +5,7 @@ $(document).ready(function(e){
 		$(window).scrollTop(position.top);
 	}
 	$('#disabilityFormsCarousel').carousel({
-		interval: false
+		interval: false,
+		wrap: false
 	});
 });
