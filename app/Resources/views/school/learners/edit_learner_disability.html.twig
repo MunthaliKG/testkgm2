@@ -14,6 +14,7 @@
 		{% block disability_info %}active{% endblock %}
 	{% endembed %}
 {% endblock %}
+{% block context_options %}{% endblock %}
 {% block form_container %}
 			{# show new disability added flash message #}
 			{% set disabilityAddedMessage = app.session.flashbag.get('disabilityAddedMessage') %}

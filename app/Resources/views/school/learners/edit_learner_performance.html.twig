@@ -7,16 +7,9 @@
 		{% block performance_info %}active{% endblock %}
 	{% endembed %}
 {% endblock %}
-{% block transfers %}	
-    <div class="row">
-        <div class="col-sm-6">
-            <p class="text-center"><a href="{#{{ path('learner_exit', {"emisCode":emisCode, "learnerId":learnerId})}}#}" class="btn btn-sm">Student exited school</a></p>               
-        </div>
-        <div class="col-sm-6">
-            <p class="text-center"><a href="{{ path('learner_transfer', {"emisCode":emisCode, "learnerId":learnerId})}}" class="btn btn-sm">Transfer from other school</a></p>
-        </div>       
-    </div>
-{% endblock %}
+
+{% block context_options %}{% endblock %}
+
 {% block form_container %}
 	<p class="text-right"><a href="{{ path('edit_learner_performance',{'emisCode':emisCode, 'learnerId': learnerId, 'record':'add'}) }}" class="btn btn-sm"><i class="fa fa-plus fa-lg"></i> Add new performance record</a></p>
 	{% for flashMessage in app.session.flashbag.get('message') %}
@@ -33,7 +26,7 @@
 			{{ form_row(form.year) }}
 			{{ form_row(form.grade) }}
 			{{ form_row(form.teachercomment) }}
-			<p class="text-right">{{ form_widget(form.save, {'after_label':'<i class="fa fa-chevron-right"></i>'}) }}</p>
+			<p class="text-right">{{ form_widget(form.save, {'before_label':'<i class="fa fa-check"></i> '}) }}</p>
 			{{ form_end(form) }}
 		</fieldset>
 	</div>

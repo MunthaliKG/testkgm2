@@ -80,21 +80,21 @@ class DataConverter{
 		}
 		return $count;
 	}
-        function countArrayMultiple($array, $values){
+    function countArrayMultiple($array, $values){
 		$count = 0;
                 
 		foreach($array as $element){
                     
 			if(is_array($element)){
-                            $passed = true;
-                            foreach ($values as $key => $value){
-                                if($element[$key] != $value){
-                                    $passed = false;
-                                }
-                            }
-                            if($passed){
-                                $count++;
-                            }			
+                $passed = true;
+                foreach ($values as $key => $value){
+                    if($element[$key] != $value){
+                        $passed = false;
+                    }
+                }
+                if($passed){
+                    $count++;
+                }			
 			}
 		}
 		return $count;
