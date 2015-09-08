@@ -5,7 +5,33 @@
 {% endblock %}
 
 {% block vertnav %}
-    <li><a href="#" class="text-center"> National Option One</a></li>
-    <li><a href="#" class="text-center"> National Option Two</a></li>
-    <li><a href="#" class="text-center"> National Option Three</a></li>
+    <li><a href="#" class="text-center"> National SNL report</a></li>
+    <li><a href="#" class="text-center"> National School facility Report</a></li>
 {%endblock%}
+{% block rightcolumn %}
+    {# include the form used for selecting a zone 
+    {{ render(controller('AppBundle:Default:zoneSelectForm')) }}#}
+    {% block national_info %} {% endblock %}
+    <div class="row content">
+        {% block content %}
+            {#
+            {% block material1 %}{% endblock %}
+            {% block resource1 %}{% endblock %}
+             {% block material2 %}{% endblock %}
+            {% block resource2 %}{% endblock %}
+            #}
+                {# {% if message is not null %}
+                    <br><br><h2 class="text-center"><small>{{ message }}</small></h2>
+
+                {% else %} #}
+                    <br><br><h2 class="text-center"><small>Preduce national SNL reports</small></h2>
+                {# {% endif %} #}
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{asset('assets/js/school.js')}}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+{% endblock %}

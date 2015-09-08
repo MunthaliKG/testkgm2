@@ -41,7 +41,8 @@ class DefaultController extends Controller
         $session = $request->getSession();
         $session->remove('school_name');
         $session->remove('emis_code');
-        $session->remove('schoolInfo');        
+        $session->remove('schoolInfo'); 
+        $session->invalidate();
         return $this->render('school/school.html.twig');
     }
     /**
