@@ -112,7 +112,7 @@
 				{% endfor %}
 				</div>
 				{# <!-- Left and right controls --> #}
-				{% if disabilityNames is not empty %}
+				{% if counter > 2 %}
 					<div class="row disability-pager">
 						<div class="col-sm-12">
 							<ul class="pager">
@@ -128,9 +128,10 @@
 											Disabilities <span class="caret"></span>
 										</a>
 										<ul class="dropdown-menu">
-											<li data-target="#disabilityFormsCarousel" data-slide-to="0"><a href="#">{{disabilityNames.0 }}</a></li>
-											{% for nameCounter in 1..counter-2  %}
-												<li data-target="#disabilityFormsCarousel" data-slide-to="{{nameCounter}}"><a href="#">{{disabilityNames[nameCounter] }}</a></li>
+											{% set nameCounter = 0 %}
+											{% for disabilityName in disabilityNames  %}
+												<li data-target="#disabilityFormsCarousel" data-slide-to="{{nameCounter}}"><a href="#">{{disabilityName}}</a></li>
+												{% set nameCounter = nameCounter + 1 %}
 											{% endfor %}
 										</ul>
 									</div>				
