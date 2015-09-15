@@ -62,8 +62,9 @@ class SchoolReportController extends Controller{
 				$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
 					WHERE emiscode = ?', [$emisCode]);
 				//learner preliminary counts
-				$learners = $connection->fetchAll('SELECT DISTINCT(idlwd), sex  FROM lwd NATURAL JOIN lwd_belongs_to_school 
-					WHERE emiscode = ?', [$emisCode]);
+				$learners = $connection->fetchAll('SELECT DISTINCT(idlwd), sex, std, dob, round(datediff(?,dob)/365) as age
+				  FROM lwd NATURAL JOIN lwd_belongs_to_school 
+					WHERE emiscode = ? AND `year`=?', [$yearQuery['maxYear'].'-01-01', $emisCode, $yearQuery['maxYear']]);
 
 				/*Preliminary counts section*/
 				if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
@@ -105,7 +106,7 @@ class SchoolReportController extends Controller{
 				/*End of preliminary counts section*/
 
 				/*Summary of learners with special needs section*/
-				if(in_array(1, $formData['reports'])){
+				if(in_array(1, $formData['reports'])){//if the summary of learners with special needs option was checked
 					$options['specialNeeds'] = true;
 					//get students enrolled this year
 					$enrolled = $connection->fetchAll('SELECT sex, year FROM lwd NATURAL JOIN lwd_belongs_to_school 
@@ -132,6 +133,58 @@ class SchoolReportController extends Controller{
 					$options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
 
 					//lwds by class, age and sex
+					$learnersBySexAgeStd = array();
+                    $learnersBy = array();
+                    $totalStdSexAge = array();
+                    $gender = array('M'=>'M','F'=>'F');
+                    $ages = array('<6'=>5, '6'=>6, '7'=>7, 
+                        '8'=>8, '9'=>9, '10'=>10,'11'=>11,'12'=>12,
+                        '13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'>17'=>18);
+                    $stds = array('1'=>1, '2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8);
+					$counterStdSex = array();
+                    $counterStdBySex = array();
+                    
+                    //obtain the counter and sums for age by sex
+                    foreach ($ages as $key => $age) {
+                        $counterAgeBySex[$key]['M'] = 0;
+                        $counterAgeBySex[$key]['F'] = 0;
+                        foreach ($stds as $std) {                                                                            
+                            foreach ($gender as $sex) {
+                                if ($key == '<6'){
+                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);                                                   
+                                }elseif($key == '>17'){                                              
+                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
+                                }else{                                                    
+                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultiple($learners, ['age'=>$age, 'std'=>$std, 'sex'=>$sex]);
+                                }
+                                //get totals for across age and standards by sex
+                                if ($sex == 'M'){
+                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
+                                }else {
+                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
+                                }
+                            }                                     
+                        }
+                    }
+                    //flip the array to sum downwards for std by sex
+                    foreach ($stds as $std) {                                    
+                        $counterStdBySex[$std]['M'] = 0;
+                        $counterStdBySex[$std]['F'] = 0;
+                        foreach ($ages as $key => $age) {                                        
+                            foreach ($gender as $sex) {                                            
+                                //get totals for across age and standards by sex
+                                if ($sex == 'M'){
+                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
+                                }else {
+                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
+                                }
+                            }                                     
+                        }
+                    }
+                    $options['stdBySex'] = $counterStdBySex;
+                    $options['ageBySex'] = $counterAgeBySex; 
+                    $options['learnersBy'] = $learnersBy;
+                    /* end of lwds by age, sex and std*/
 
 				}
 			}

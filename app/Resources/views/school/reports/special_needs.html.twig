@@ -29,5 +29,50 @@
 		<td>{{ completedGirls }}</td>
 		<td>{{ completedTotal }}</td>
 	</tr>
+</table><br>
 
+<i>Enrollments, Dropouts and Transfers</i>
+<table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
+    <tr>
+        <td align="center" rowspan="2" valign="middle"><b>Age</b></td>
+        <td align="center" colspan="2"><b>Std1</b></td>
+        <td align="center" colspan="2"><b>Std2</b></td>
+        <td align="center" colspan="2"><b>Std3</b></td>
+        <td align="center" colspan="2"><b>Std4</b></td>
+        <td align="center" colspan="2"><b>Std5</b></td>
+        <td align="center" colspan="2"><b>Std6</b></td>
+        <td align="center" colspan="2"><b>Std7</b></td>
+        <td align="center" colspan="2"><b>Std8</b></td>
+        <td align="center" colspan="2"><b>Total</b></td>           
+    </tr>
+    <tr>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+        <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>            
+    </tr>
+    {% for age,ages in learnersBy %}        
+    <tr>
+        <td align="center">{{ age }} </td>
+        {% for std,stds in ages %}            
+            <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
+            {% if loop.last %}
+                <td align="center">{{ ageBySex[age].M }} </td><td align="center">{{ ageBySex[age].F }} </td>
+            {% endif %}
+        {% endfor %}            
+    </tr>
+    {% if loop.last %}
+        <tr>
+            <td align="center"> <b>Total</b> </td>
+            {% for std,stds in stdBySex %}
+                <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
+            {% endfor %}
+        </tr>
+    {% endif%}
+    {% endfor %}
 </table>

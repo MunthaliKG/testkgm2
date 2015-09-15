@@ -823,7 +823,7 @@ class SchoolController extends Controller{
 
     }
     /**
-     * @Route("/school/{emisCode}/learners/{learnerId}/transfer", name="learner_transfer", requirements ={"learnerId":"new|\d+"})
+     * @Route("/school/{emisCode}/learners/new/transfer", name="learner_transfer")
      */
     public function learnerTransferAction(Request $request, $learnerId, $emisCode){
         

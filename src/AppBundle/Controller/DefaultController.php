@@ -35,12 +35,13 @@ class DefaultController extends Controller
         return $this->render('school/schoollist.html.twig', array('schools'=>$schools));
     }
     /**
-     * @Route("/school", name="school_return")
+     * @Route("/school_return", name="school_return")
      */
     public function schoolReturnAction(Request $request){
         $session = $request->getSession();
         $session->remove('school_name');
         $session->remove('emis_code');
+
         $session->remove('schoolInfo'); 
         $session->invalidate();
         return $this->render('school/school.html.twig');
