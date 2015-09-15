@@ -1,0 +1,24 @@
+{% extends (isHtml)? 'national/reports/national_reports_basic.html.twig':'base.html.twig' %}
+
+{% block body %} 
+	{% if isHtml %}
+		{{ parent() }}
+	{% else %}
+		{{ block('reports_body') }}
+	{% endif %}
+	
+{% endblock %}
+{% block reports_body %}	
+    <h3><p class="text-center">Special Needs Education Management Information System Basic Report</p></h3>
+
+    {% if preliminary is defined %}
+        {% include 'national/reports/national_preliminary.html.twig' %}
+    {% endif %}
+    {% if specialNeeds is defined %}
+        {% include 'national/reports/national_special_needs.html.twig' %}
+    {% endif %}
+    {% if learningMaterials is defined %}
+        {% include 'national/reports/national_teaching_materials.html.twig' %}
+    {% endif %}
+    
+{% endblock %}

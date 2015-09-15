@@ -47,7 +47,7 @@ class ZoneController extends Controller{
         $session->set('zone_name', $zone[0]['zone_name']);
         
         //keep zone information
-        $session->set('zonInfo', $zone[0]);
+        $session->set('zoneInfo', $zone[0]);
 
         return $this->render('zone/zone2.html.twig',
                 array('zone' => $zone[0],

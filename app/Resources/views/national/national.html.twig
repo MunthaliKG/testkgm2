@@ -1,11 +1,11 @@
 {% extends "base.html.twig" %}
 
-{% block navnat%}
+{% block navnat %}
     active
 {% endblock %}
 
 {% block vertnav %}
-    <li><a href="#" class="text-center"> National SNL report</a></li>
+    <li><a href="{{ path('national_snl')}}" class="{% block national_snl %}{% endblock %}"> National SNL report</a></li>
     <li><a href="#" class="text-center"> National School facility Report</a></li>
 {%endblock%}
 {% block rightcolumn %}
@@ -14,17 +14,31 @@
     {% block national_info %} {% endblock %}
     <div class="row content">
         {% block content %}
-            {#
-            {% block material1 %}{% endblock %}
-            {% block resource1 %}{% endblock %}
-             {% block material2 %}{% endblock %}
-            {% block resource2 %}{% endblock %}
-            #}
-                {# {% if message is not null %}
-                    <br><br><h2 class="text-center"><small>{{ message }}</small></h2>
-
-                {% else %} #}
-                    <br><br><h2 class="text-center"><small>Preduce national SNL reports</small></h2>
+            <div class="row">
+        <div class="col-sm-1">                        
+        </div>
+        <div class="col-sm-8">
+            <i class="text-center">Summary of learners with special needs</i>
+            <table class="table">
+                <tr><td><b>Impairment</b></td><td align="center"><b>Number of learners</b></td></tr>
+                {% for disability in disabilities %}
+                    <tr>
+                        <td>{{disability.disability_name}}</td>
+                        <td align="center">{{disability.num_learners}}</td>
+                    </tr>
+                {% endfor %}
+                <tr>
+                    {% if disabilities is not empty %}
+                    <td><b>Total Number of Special Needs cases</b></td>
+                    <td align="center">					
+                        <b>{{ disabilities.0.total }}</b>				
+                    </td>
+                    {% endif %}
+                </tr>
+            </table>
+        </div>	
+    </div>
+                    <br><br><h2 class="text-center"><small>Produce national SNL reports</small></h2>
                 {# {% endif %} #}
         {% endblock %}
     </div>

@@ -173,7 +173,7 @@ class DefaultController extends Controller
         $this->get('session')->getFlashBag()->set('learnerList', $learners);
         $connection = $this->get('database_connection');
     	$lwd = $connection->fetchAll("SELECT first_name, last_name FROM lwd 
-    					WHERE idlwd = ?", array($learners.idld));
+    					WHERE idlwd = ?", array($learners.idlwd));
         
         return $this->render('school/learners/learnerlist.html.twig', array('learners'=>$learners));
     }
@@ -187,7 +187,27 @@ class DefaultController extends Controller
      * @Route("/national", name="national")
      */
     public function nationalAction(){
-        return $this->render('national/national.html.twig');
+        $connection = $this->get('database_connection');
+        
+        $sumquery = 'SELECT count(iddisability) FROM lwd 
+            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school';
+        
+        //disabilities in a Malawi
+        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone');
+
+        $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
+            FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
+            WHERE year = ? GROUP BY iddisability", array($lwdLatestYr['yr']));
+        
+        //schools in a zone
+        $schoolsInMalawi = $connection->fetchAll('select emiscode, idzone from school');
+        $dataConverter = $this->get('data_converter');
+        $numOfSchools = count($schoolsInMalawi);//get the number of schools		
+      
+        return $this->render('national/national.html.twig',
+                array('disabilities' => $disabilities,
+                    'numOfSchools' => $numOfSchools)
+                );
     }
     public function removeTrailingSlashAction(Request $request){
         $pathInfo = $request->getPathInfo();
