@@ -181,9 +181,39 @@ class DefaultController extends Controller
     /**
      * @Route("/district", name="district")
      */
-    public function districtAction(){
+    public function districtAction(Request $request){
+        $session = $request->getSession();
+        if($session->has('iddistrict')){
+            return $this->redirectToRoute('district_main', array('iddistrict'=>$session->get('iddistrict')), 301);
+        }   
         return $this->render('district/district.html.twig');
     }
+     /**
+     * @Route("/findDistrictForm", name="find_district_form")
+     */
+    public function districtSelectFormAction(Request $request){
+        $districtFinderForms = $this->container->get('district_finder');
+        $formAction = $this->generateUrl('find_district_form');
+        $districtFinderForms->createForms($formAction);
+        $districtFinderForms->processForms();
+        
+        if($districtFinderForms->areValid()){
+            return $this->redirectToRoute('district_main', array('iddistrict'=>$districtFinderForms->getDistrictId()->getIddistrict()), 301);
+        }
+        $districtName = "";
+        if($request->getSession()->has('iddistrict')){
+            $districtName = $request->getSession()->get('district_name');
+        }
+        return $this->render('district/finddistrictform.html.twig',
+                             array( 
+                                 'form1' => $districtFinderForms->getView1(),
+                                    'error'=>$districtFinderForms->getError(),
+                                    'districtName' => $districtName,
+                                    )                                   
+                             );
+    }
+    
+    
     /**
      * @Route("/national", name="national")
      */

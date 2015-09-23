@@ -1,11 +1,23 @@
 {% extends "base.html.twig" %}
 
-{% block navdistr%}
-    active
+{% block stylesheets %}
+	{{parent()}}
+	<link href="{{asset('assets/css/school.css')}}" rel="stylesheet">
 {% endblock %}
-
-{% block vertnav %}
-    <li><a href="#" class="text-center"> district Option One</a></li>
-    <li><a href="#" class="text-center"> district Option Two</a></li>
-    <li><a href="#" class="text-center"> district Option Three</a></li>
-{%endblock%}
+{% block vertnav %}{%endblock%}
+{% block rightcolumn %}
+    {# include the form used for selecting a district #}
+    {{ render(controller('AppBundle:Default:districtSelectForm')) }}
+    {% block district_info %} {% endblock %}
+    <div class="row content">
+        {% block content %}            
+                    <br><br><h2 class="text-center"><small>District not chosen</small></h2>
+        {% endblock %}
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{parent()}}
+    <script type="text/javascript" src="{{asset('assets/js/school.js')}}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+{% endblock %}

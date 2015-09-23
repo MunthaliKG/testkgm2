@@ -1,0 +1,18 @@
+<h4>
+       Teaching And Learning Needs/Resources - ({{ chaka }})
+   </h4>
+        <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+            <tr>
+                <td align="center"><b>Item</b></td>
+                <td align="center"><b>Else where</b></td>
+                <td align="center"><b>Resource Room</b></td>
+            </tr>
+            {% for need,needs in teachingNeeds %}        
+                <tr>
+                    <td align="center">{{ need }} </td>
+
+                    <td align="center">{{ needs['No'] }}</td><td align="center">{{ needs['Yes'] }}</td>                
+
+                </tr>
+            {% endfor %}
+        </table>

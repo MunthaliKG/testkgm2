@@ -1,0 +1,85 @@
+<h4>New Learners with Disability, Dropouts, and Learners with Disability on Transfer - ({{ chaka }})</h4>        
+    <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+        <tr>
+            <th align="center"></th>
+            
+            <th align="center">Transfers Out*</th>
+            <th align="center">Transfers In*</th>
+            <th align="center">Dropouts</th>
+            <th align="center">Completed Std 8</th>
+        </tr>	
+        <tr>
+            <td>Boys</td>
+            
+            <td>{{ numBoysTRout }}</td>
+            <td>{{ numBoysTRin }}</td>
+            <td>{{ numBoysDO }}</td>
+            <td>{{ numBoysC }}</td>
+        </tr>
+        <tr>                        
+            <td>Girls</td>
+           
+            <td>{{ numGirlsTRout }}</td>
+            <td>{{ numGirlsTRin }}</td>
+            <td>{{ numGirlsDO }}</td>
+            <td>{{ numGirlsC }}</td>
+       </tr>
+       <tr>
+           <th>Total</th>
+           
+           <th>{{ totalTransferOut }}</th>
+           <th>{{ totalTransferIn }}</th>
+           <th>{{ totalDropouts }}</th>
+           <th>{{ totalCompleted }}</th>
+       </tr>
+       <tr>
+           <td colspan="5">*Transfers to schools into or outside the District</td>
+       </tr>
+    </table>
+<h4>
+       Learners with Disability by Standard, Sex and Age (age at the beginning of school year - ({{ chaka }})
+   </h4>
+       <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+        <tr>
+            <td align="center" rowspan="2" valign="middle"><b>Age</b></td>
+            <td align="center" colspan="2"><b>Std1</b></td>
+            <td align="center" colspan="2"><b>Std2</b></td>
+            <td align="center" colspan="2"><b>Std3</b></td>
+            <td align="center" colspan="2"><b>Std4</b></td>
+            <td align="center" colspan="2"><b>Std5</b></td>
+            <td align="center" colspan="2"><b>Std6</b></td>
+            <td align="center" colspan="2"><b>Std7</b></td>
+            <td align="center" colspan="2"><b>Std8</b></td>
+            <td align="center" colspan="2"><b>Total</b></td>           
+        </tr>
+        <tr>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>
+            <td align="center"><b>M</b></td> <td align="center"><b>F</b></td>            
+        </tr>
+        {% for age,ages in learnersBy %}        
+        <tr>
+            <td align="center">{{ age }} </td>
+            {% for std,stds in ages %}            
+                <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
+                {% if loop.last %}
+                    <td align="center">{{ ageBySex[age].M }} </td><td align="center">{{ ageBySex[age].F }} </td>
+                {% endif %}
+            {% endfor %}            
+        </tr>
+        {% if loop.last %}
+            <tr>
+                <td align="center"> <b>Total</b> </td>
+                {% for std,stds in stdBySex %}
+                    <td align="center">{{ stds.M }}</td><td align="center">{{ stds.F }}</td>
+                {% endfor %}
+            </tr>
+        {% endif%}
+        {% endfor %}
+</table>

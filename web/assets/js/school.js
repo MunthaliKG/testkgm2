@@ -46,7 +46,7 @@ $(document).ready(function(){
 	$('#zonefinder_district').change(function(event){
 
 		var district = $(this).val();
-		//use ajax to auto-populate the school select list based on the selected district
+		//use ajax to auto-populate the zone select list based on the selected district
 		$.ajax({
 			url: Routing.generate('zone_ajax',{id: district})
 		})
@@ -55,8 +55,16 @@ $(document).ready(function(){
         })
 	})
 
-	//submit the form if a school is selected
+	//submit the form if a zone is selected
 	$('#zonefinder_zone').change(function(event){
+
+		if($(this).val() !== "0"){
+			$('#findByName').submit();
+		}
+	});
+        
+        //submit the form if a district is selected
+	$('#districtfinder_district').change(function(event){
 
 		if($(this).val() !== "0"){
 			$('#findByName').submit();
