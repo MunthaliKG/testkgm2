@@ -1,0 +1,20 @@
+{% extends 'admin/usermanagement/add_user.html.twig' %}
+
+{% block rightcolumn %}
+	<div class="row">
+		<div class="col-sm-6 col-sm-offset-3">
+			<div class="alert alert-success alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				User successfully added
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<p class="text-center">
+						<a class="btn btn-sm" href="{{path('admin_add_user')}}"><i class="fa fa-user-plus fa-lg"></i> Add another user</a>
+						<a class="btn btn-sm" href="{{path('admin_users_main')}}"><i class="fa fa-chevron-left fa-lg"></i> Back to users</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

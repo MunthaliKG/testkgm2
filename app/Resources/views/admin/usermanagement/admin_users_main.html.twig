@@ -1,0 +1,98 @@
+{% if filterForm is defined %}
+	{% form_theme filterForm 'bootstrap_3_layout.html.twig' %}
+{% endif %}
+
+{% extends 'admin/admin_main.html.twig' %}
+
+{% block vertnav %}
+
+	<li class="{% block add_users_menuitem %}{% endblock %}"><a href="" class="text-center menu-itm"> Add/Deactivate users</a></li>
+
+	<li class="{% block user_privileges_menuitem %}{% endblock %}"><a href="" class="text-center menu.itm"> Edit user privileges</a></li>
+
+{% endblock %}
+
+{% block navusers %}active{% endblock %}
+
+{% block rightcolumn %}
+	<div class="row">
+		<div class="col-sm-6">
+			Number of users: <b>{{userData.numUsers}}</b> | 
+			Disabled accounts: <b>{{userData.numDisabled}}</b>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 10px; margin-bottom: 10px">
+		<div class="col-sm-10">
+			{{ form_start(filterForm, {'attr':{'class':'form-inline', 'role':'form'}}) }}
+				{{ form_widget(filterForm.show_disabled, {'attr':{'class':'checkbox-inline'}}) }} | 
+				<div class="form-group">
+					{{ form_label(filterForm.first_name) }}
+					{{ form_widget(filterForm.first_name, {'attr':{'class':'form-control input-sm'}}) }}
+				</div>
+				<div class="form-group">
+					{{ form_label(filterForm.last_name) }}
+					{{ form_widget(filterForm.last_name, {'attr':{'class':'form-control input-sm'}}) }}
+				</div>
+				
+				{{ form_widget(filterForm.filter, {'attr':{'class':'btn-sm'}}) }}
+				{{ form_widget(filterForm.clear, {'attr':{'class':'btn-sm'}}) }}
+			{{ form_end(filterForm) }}
+		</div>
+		<div class="col-sm-2">
+			<a href="{{path('admin_add_user')}}" class="pull-right"><i class="fa fa-user-plus fa-lg"></i> Add user</a>
+		</div>
+	</div>
+	{% set profileEditedMessage = app.session.flashbag.get('profileEditedMessage') %}
+	{% if profileEditedMessage is not empty %}
+		{% for message in profileEditedMessage %}
+			<div class="alert alert-success alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				{{ message }}
+			</div>
+		{% endfor %}
+	{% endif %}
+	<div class="row">
+		<div class="col-sm-12">
+			<div class="table-responsive">
+				<table class="table table-condensed table-bordered table-hover" border="0">
+					<th>Username</th><th>Full Name</th><th>Email</th><th>Enabled</th><th>Roles</th><th>Last login</th>
+					{% for user in userPagination %}
+						<tr {% if user.enabled == 0 %} class="warning" title="disabled account"{% endif %}>
+							<td>{{user.username}}</td>
+							<td>{{user.ufirst_name~" "~user.ulast_name}}
+								<td>{{user.email}}</td>
+								<td>
+									{% if user.enabled == 1 %}
+										yes
+										{% else %}
+										no
+									{% endif %}
+								</td>
+								<td>{{user.roles}}</td>
+								<td>{{user.last_login}}</td>
+								<td>
+									{% if user.enabled == 1 %}
+										<a class="btn btn-sm" data-toggle="confirmation" data-prompt="Disable this user's account?" href="{{path('admin_change_access',{'username':user.username, 'action':'disable'})}}"><i class="fa fa-user-times fa-lg"></i> Disable</a>
+										{% else %}
+										<a class="btn btn-sm" href="{{path('admin_change_access',{'username':user.username, 'action':'enable'})}}"><i class="fa fa-user fa-lg"> </i> Enable</a>
+									{% endif %}
+									<a class="btn btn-sm" href="{{path('admin_edit_user',{'username':user.username})}}"><i class="fa fa-edit"></i> Edit</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</table>
+			</div>
+			{{ knp_pagination_render(userPagination) }}
+		</div>
+		
+	</div>
+	
+{% endblock %}
+
+{% block leftcolumn %}{% endblock %}
+{% block rightcolumnwidth %}12{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('assets/js/bootstrap-confirmation.min.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/enable-confirmation.js')}}"></script>
+{% endblock %}

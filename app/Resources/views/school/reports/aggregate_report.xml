@@ -33,7 +33,7 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
    <Protection/>
    </Style>
    <Style ss:ID="s16">
-  <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+	<Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
     <Borders>
       <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
       <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
@@ -41,16 +41,16 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
       <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
     </Borders>
   </Style>
-  <Style ss:ID="s1" ss:Parent="s16">
+   <Style ss:ID="s1" ss:Name="VertAlignMiddle" ss:Parent="s16">
     <Alignment ss:Vertical="Center"/>
   </Style>
-  <Style ss:ID="s2" ss:Parent="s16">
-    <Alignment/>
+  <Style ss:ID="s2" ss:Name="Title" ss:Parent="s16">
+    <Alignment ss:Vertical="Center"/>
     <Font ss:Size="16" ss:Bold="1"/>
   </Style>
-  <Style ss:ID="s3" ss:Parent="s16">
+  <Style ss:ID="s3" ss:Name="Bold" ss:Parent="s16">
     <Font ss:Bold="1"/>
-    <Alignment/>
+    <Alignment ss:Horizontal="Center"/>
   </Style>
 </Styles>
 <Worksheet ss:Name="School Information">

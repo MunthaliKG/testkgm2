@@ -1,0 +1,49 @@
+{% if form is defined %}
+	{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% endif %}
+{% extends 'admin/usermanagement/admin_users_main.html.twig' %}
+
+{% block rightcolumn %}
+	<div class="col-sm-6 col-sm-offset-3">
+		{{ form_start(form) }}
+			<fieldset>
+				<legend class="text-center"><small>Add User</small></legend>
+				{{ form_errors(form) }}
+				{{ form_row(form.first_name) }}
+				{{ form_row(form.last_name) }}
+				{% if form.username is defined %}
+					{{ form_row(form.username) }}
+					{{ form_row(form.email) }}
+				{% endif %}				
+				{{ form_row(form.roles) }}
+				{{ form_row(form.access_level) }}
+				<div class="form-group" id="access_district_div">
+					<div class="col-sm-5"><b><i class="text-right"><p class="text-right">District containing access domain</p></i></b></div>
+					<div class="col-sm-7">
+						<select id="access_district" class="form-control">
+							<option value="">--Select district--</option>
+							{% for district in districts %}
+								<option value="{{district.iddistrict}}">{{district.district_name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>				
+				{{ form_row(form.access_domain) }}
+				{{ form_row(form.allowed_actions) }}
+				<div class="form-group">
+					<div class="col-sm-5"></div>
+					<div class="col-sm-7">
+						<a class="btn btn-sm" href="{{path('admin_users_main')}}"><i class="fa fa-times fa-lg"></i> Cancel</a>
+						{{ form_widget(form.add, {'attr':{'class':'pull-right btn-sm'}, 'before_label':'<i class="fa fa-check fa-lg"></i> '}) }}
+					</div>
+				</div>
+			</fieldset>
+		{{ form_end(form) }}
+	</div>
+{% endblock %}
+{% block javascripts %}
+	{{parent()}}
+	<script type="text/javascript" src="{{asset('assets/js/admin.js')}}"></script>
+	<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+{% endblock %}

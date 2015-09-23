@@ -160,6 +160,9 @@ class DataConverter{
 		}
 		return $min;
 	}
+	function serializeColumn(&$array, $key){
+		
+	}
 
 }
 

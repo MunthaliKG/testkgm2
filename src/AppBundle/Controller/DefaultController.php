@@ -200,12 +200,13 @@ class DefaultController extends Controller
     public function addUserAction(){
         $em = $this->getDoctrine()->getManager();
         $user = new User();
-        $plainPassword = 'kondwani';
+        $plainPassword = 'jonathanpass2';
         $encoder = $this->container->get('security.password_encoder');
         $encoded = $encoder->encodePassword($user, $plainPassword);
         $user->setPassword($encoded);
-        $user->setUsername('kgmunthali');
-        $user->setEmail('kmunthali@gmail.com');
+        $user->setUsername('jonathanadmin');
+        $user->setEmail('jaymojew@gmail.com');
+        $user->setRoles(array('ROLE_ADMIN'));
         $user->setEnabled(true);
 
         $em->persist($user);

@@ -356,7 +356,7 @@ class SchoolController extends Controller{
       		'readonly' => $readOnly));
       }
 	/**
-	 *@Route("/school/{emisCode}/learners", name="school_learners", requirements={"emisCode":"\d+"}, options={"expose"= true})
+	 *@Route("/school/{emisCode}/learners", name="school_learners", requirements={"emisCode":"\d+"})
 	 */
 	public function learnerAction($emisCode, Request $request){
             return $this->render('school/learners/learners_main.html.twig');
@@ -1049,6 +1049,7 @@ class SchoolController extends Controller{
 
     	return $this->render('school/specialist_teacher/teachers_main.html.twig');
     }
+
 
 }
 
