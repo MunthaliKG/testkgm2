@@ -1,23 +1,25 @@
-{% extends "base.html.twig" %}
+{% extends 'district/district.html.twig' %}
 
-{% block navnat %}
-    active
-{% endblock %}
+{% set iddistrict = app.request.attributes.get('_route_params')['iddistrict'] %} {# get the district id from the Route#}
 
 {% block vertnav %}
-    <li><a href="{{ path('national_snl')}}" class="{% block national_snl %}{% endblock %}"> National SNL report</a></li>
-    <li><a href="#" class="text-center"> National School facility Report</a></li>
+    <li><a id="materials" district="{{ iddistrict }}" href="{{ path('district_snl',{"iddistrict": iddistrict,})}}" class="{% block district_snl %}{% endblock %}">District SNL reports</a></li>
+    <li><a href="#" class="{% block district_facility %}{% endblock %}"> District school facility reports </a></li>
+
 {%endblock%}
-{% block rightcolumn %}
-    {# include the form used for selecting a zone 
-    {{ render(controller('AppBundle:Default:zoneSelectForm')) }}#}
-    {% block national_info %} {% endblock %}
-    <div class="row content">
-        {% block content %}
-            <div class="row">
+{% block content %}
+    <div class="row">
         <div class="col-sm-1">                        
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-11">
+                <h4><b>{{district.district_name}} | Distict number: {{ iddistrict }} | Number of Schools: {{ numOfSchools }}</b></h4>
+        </div>	
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-sm-1">                        
+        </div>
+        <div class="col-sm-11">
             <i class="text-center">Summary of learners with special needs</i>
             <table class="table">
                 <tr><td><b>Impairment</b></td><td align="center"><b>Number of learners</b></td></tr>
@@ -37,13 +39,6 @@
                 </tr>
             </table>
         </div>	
-    </div>                                    
-        {% endblock %}
     </div>
 {% endblock %}
-{% block javascripts %}
-    {{parent()}}
-    <script type="text/javascript" src="{{asset('assets/js/school.js')}}"></script>
-    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
-{% endblock %}
+

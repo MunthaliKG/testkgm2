@@ -12,19 +12,8 @@
     {{ render(controller('AppBundle:Default:zoneSelectForm')) }}
     {% block zone_info %} {% endblock %}
     <div class="row content">
-        {% block content %}
-            {#
-            {% block material1 %}{% endblock %}
-            {% block resource1 %}{% endblock %}
-             {% block material2 %}{% endblock %}
-            {% block resource2 %}{% endblock %}
-            #}
-                {# {% if message is not null %}
-                    <br><br><h2 class="text-center"><small>{{ message }}</small></h2>
-
-                {% else %} #}
+        {% block content %}            
                     <br><br><h2 class="text-center"><small>Zone not chosen</small></h2>
-                {# {% endif %} #}
         {% endblock %}
     </div>
 {% endblock %}

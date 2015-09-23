@@ -1,0 +1,32 @@
+<div class="row district-choose">
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-sm-4"><h4>Choose District</h4></div>
+            <div class="col-sm-8">
+                <h5><p class="text-right">
+                        {% if districtName != "" %}
+                            {{ "( currently selected: " }}
+                        {% endif %}
+                        {{ districtName }}
+                        {% if districtName != "" %}
+                            {{ " )" }}
+                        {% endif %}</p>
+                </h5>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-12">
+                {{ form_start(form1, {'attr':{'class':'form-inline','id':'findByName', 'role':'form'}}) }}
+                {{ form_errors(form1)}}
+                <div class="form-group">
+                    {{ form_label(form1.district, null, {'label_attr':{'class':'sr-only'}}) }}
+                    {{ form_widget(form1.district, {'attr':{'class':'form-control input-sm'}}) }}
+                </div>                
+                {{ form_end(form1) }}
+            </div>
+        </div>
+        {% set message = error %}
+    </div>
+</div>
+

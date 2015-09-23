@@ -41,8 +41,10 @@ class DefaultController extends Controller
         $session = $request->getSession();
         $session->remove('school_name');
         $session->remove('emis_code');
-        $session->remove('schoolInfo');        
-        return $this->redirectToRoute('school',array(), 301);
+
+        $session->remove('schoolInfo'); 
+        $session->invalidate();
+        return $this->render('school/school.html.twig');
     }
     /**
      * @Route("/school", name="school")
@@ -172,21 +174,71 @@ class DefaultController extends Controller
         $this->get('session')->getFlashBag()->set('learnerList', $learners);
         $connection = $this->get('database_connection');
     	$lwd = $connection->fetchAll("SELECT first_name, last_name FROM lwd 
-    					WHERE idlwd = ?", array($learners.idld));
+    					WHERE idlwd = ?", array($learners.idlwd));
         
         return $this->render('school/learners/learnerlist.html.twig', array('learners'=>$learners));
     }
     /**
      * @Route("/district", name="district")
      */
-    public function districtAction(){
+    public function districtAction(Request $request){
+        $session = $request->getSession();
+        if($session->has('iddistrict')){
+            return $this->redirectToRoute('district_main', array('iddistrict'=>$session->get('iddistrict')), 301);
+        }   
         return $this->render('district/district.html.twig');
     }
+     /**
+     * @Route("/findDistrictForm", name="find_district_form")
+     */
+    public function districtSelectFormAction(Request $request){
+        $districtFinderForms = $this->container->get('district_finder');
+        $formAction = $this->generateUrl('find_district_form');
+        $districtFinderForms->createForms($formAction);
+        $districtFinderForms->processForms();
+        
+        if($districtFinderForms->areValid()){
+            return $this->redirectToRoute('district_main', array('iddistrict'=>$districtFinderForms->getDistrictId()->getIddistrict()), 301);
+        }
+        $districtName = "";
+        if($request->getSession()->has('iddistrict')){
+            $districtName = $request->getSession()->get('district_name');
+        }
+        return $this->render('district/finddistrictform.html.twig',
+                             array( 
+                                 'form1' => $districtFinderForms->getView1(),
+                                    'error'=>$districtFinderForms->getError(),
+                                    'districtName' => $districtName,
+                                    )                                   
+                             );
+    }
+    
+    
     /**
      * @Route("/national", name="national")
      */
     public function nationalAction(){
-        return $this->render('national/national.html.twig');
+        $connection = $this->get('database_connection');
+        
+        $sumquery = 'SELECT count(iddisability) FROM lwd 
+            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school';
+        
+        //disabilities in a Malawi
+        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone');
+
+        $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
+            FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
+            WHERE year = ? GROUP BY iddisability", array($lwdLatestYr['yr']));
+        
+        //schools in a zone
+        $schoolsInMalawi = $connection->fetchAll('select emiscode, idzone from school');
+        $dataConverter = $this->get('data_converter');
+        $numOfSchools = count($schoolsInMalawi);//get the number of schools		
+      
+        return $this->render('national/national.html.twig',
+                array('disabilities' => $disabilities,
+                    'numOfSchools' => $numOfSchools)
+                );
     }
     public function removeTrailingSlashAction(Request $request){
         $pathInfo = $request->getPathInfo();

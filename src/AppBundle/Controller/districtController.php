@@ -9,48 +9,41 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
-class ZoneController extends Controller{
+class DistrictController extends Controller{
     /**
-     *@Route("/zone/{idzone}", name="zone_main", requirements={"idzone":"\d+"})
+     *@Route("/district/{iddistrict}", name="district_main", requirements={"iddistrict":"\d+"})
      */
-    public function zoneMainAction($idzone, Request $request){
+    public function districtMainAction($iddistrict, Request $request){
 
         $connection = $this->get('database_connection');
-        $zone =  $connection->fetchAll('SELECT * FROM zone, district '
-                . 'WHERE iddistrict = district_iddistrict and idzone = ?',array($idzone));
-        
-        //obtain the Emiscodes for the schools in this zone
-        //$schools = array();
-        //$schools = $connection->fetchAll('SELECT emiscode from school '
-        //        . 'WHERE idzone = ?', array($idzone));
-        
-       
-        //$emisCode = $row['emiscode'];
+        $district =  $connection->fetchAll('SELECT * FROM district '
+                . 'WHERE iddistrict = ?',array($iddistrict));
+          
         $sumquery = 'SELECT count(iddisability) FROM lwd 
             NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-            WHERE idzone = ?';
-        //disabilities in a zone
+            WHERE iddistrict = ?';
+        //disabilities in a district
         $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
             FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-            WHERE idzone = ? AND year = ? GROUP BY iddisability", array($idzone,$idzone,date('Y')));
+            WHERE iddistrict = ? AND year = ? GROUP BY iddisability", array($iddistrict,$iddistrict,date('Y')));
         
-        //schools in a zone
-        $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);
+        //schools in a district
+        $schoolsInDistrict = $connection->fetchAll('select emiscode, iddistrict from school where iddistrict =?', [$iddistrict]);
         $dataConverter = $this->get('data_converter');
-        $numOfSchools = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools		
+        $numOfSchools = $dataConverter->countArray($schoolsInDistrict, 'iddistrict', $iddistrict);//get the number of schools		
         
         $session = $request->getSession();
         //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
-        $session->set('idzone', $idzone);
+        $session->set('iddistrict', $iddistrict);
         
         //keep the name of the selected zone in the session to access it from the school selection form
-        $session->set('zone_name', $zone[0]['zone_name']);
+        $session->set('district_name', $district[0]['district_name']);
         
         //keep zone information
-        $session->set('zoneInfo', $zone[0]);
+        $session->set('districtInfo', $district[0]);
 
-        return $this->render('zone/zone2.html.twig',
-                array('zone' => $zone[0],
+        return $this->render('district/district2.html.twig',
+                array('district' => $district[0],
                         'disabilities' => $disabilities,
                     'numOfSchools' => $numOfSchools)
                 );

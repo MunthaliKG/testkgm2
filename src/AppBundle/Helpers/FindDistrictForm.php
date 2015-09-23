@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /*This class creates the two form for selecting a school either by typing in an EMIS code
 or by selecting a district and then a school
 */
-class FindZoneForm{
+class FindDistrictForm{
 	protected $form1;
 	//protected $form2;
 	protected $formData;
@@ -18,8 +18,7 @@ class FindZoneForm{
 	protected $formFactory;
 	protected $requestStack;
 	protected $isValid = false;
-	protected $error = null;
-	protected $zoneId;
+	protected $error = null;	
         protected $districtId;
 
 	function __construct(EntityManager $em, FormFactoryInterface $ffi, RequestStack $rs){
@@ -35,8 +34,9 @@ class FindZoneForm{
 				getCurrentRequest()->
 				getSession()->
 				getFlashBag();
-        /*create the array to be used for storing the list of zones for the dynamically populated select element. 
+        /*create the array to be used for storing the list of schools for the dynamically populated select element. 
         (set to an empty array if not found in the session)  */
+        /*
         $zoneList = array();
         if($fBag->has('zoneList')){
             $zoneList = $fBag->get('zoneList');
@@ -44,13 +44,10 @@ class FindZoneForm{
                 $this->em->persist($zone);
             }
         }
-
-        $this->form1 = $this->formFactory->create(new \AppBundle\Form\Type\ZoneFinderType($zoneList), $defaultData, array(
+        */
+        $this->form1 = $this->formFactory->create(new \AppBundle\Form\Type\DistrictFinderType(), $defaultData, array(
         				'action' => $formAction));/*create a form using the
-        SchoolFinderType form class. This form enables to choose a school by selecting a district and a school*/
-       // $this->form1 = $this->formFactory->create(new EmisSchoolFinderType(), $defaultData, array(
-        //				'action' => $formAction));/*create a form using the 
-       // EmisSchoolFinderType form class (enables choosing a school by typing in an Emis Code)*/
+        DistrictFinderType form class.*/
 	}
 	function getForm1(){
 		return $this->form1;
@@ -67,20 +64,18 @@ class FindZoneForm{
 	function processForms(){
 		$this->form1->handleRequest($this->requestStack->getCurrentRequest());
 //		$this->form2->handleRequest($this->requestStack->getCurrentRequest());
-		$zone;
+		$district;
         if($this->form1->isValid()){/*also returns false if form2 was not submitted or contains invalid values*/
-			$this->formData = $this->form1->getData();           
-            $zone = $this->em->getRepository('AppBundle:Zone')->find($this->formData['zone']);
-            if($zone){
+            $this->formData = $this->form1->getData();           
+            $district = $this->em->getRepository('AppBundle:District')->find($this->formData['district']);
+            if($district){
                 $this->isValid = true;
 
-                $this->zoneId = $zone->getIdzone();
-                $this->districtId = $this->formData['district'];
-
-                //$this->schoolId = $school->getId();
+                $this->districtId = $district->getIddistrict();
+                $this->districtId = $this->formData['district'];                
 
             }else{
-                $this->error = "That zone does not exist";
+                $this->error = "That district does not exist";
             }  
          }
 	}
@@ -89,10 +84,7 @@ class FindZoneForm{
 	}
 	function getError(){
 		return $this->error;
-	}
-	function getZoneId(){
-		return $this->zoneId;
-	}
+	}	
         function getDistrictId(){
 		return $this->districtId;
 	}

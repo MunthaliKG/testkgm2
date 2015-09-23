@@ -1,0 +1,38 @@
+{% extends (isHtml)? 'national/reports/national_reports_basic.html.twig':'base.html.twig' %}
+
+{% block body %} 
+	{% if isHtml %}
+		{{ parent() }}
+	{% else %}
+		{{ block('reports_body') }}
+	{% endif %}
+	
+{% endblock %}
+{% block reports_body %}	
+    <h3><p class="text-center">Special Needs Education Management Information System Basic Report</p></h3>
+      <h4>Country Identification</h4>
+    <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+        <tr>
+            <th rowspan="4" width="20%" align="middle">Country Label</th>
+            <th align="center">Identifier</th>
+            <th align="center">Name</th>            
+            <th align="center">Number of Schools</th>
+        </tr>			        
+        <tr>
+            <td>1. Country</td>
+            <td>Malawi</td>            
+            <td align="center">{{ numOfSchools }}</td>
+        </tr>                    
+    </table>
+
+    {% if preliminary is defined %}
+        {% include 'national/reports/national_preliminary.html.twig' %}
+    {% endif %}
+    {% if specialNeeds is defined %}
+        {% include 'national/reports/national_special_needs.html.twig' %}
+    {% endif %}
+    {% if learningMaterials is defined %}
+        {% include 'national/reports/national_teaching_materials.html.twig' %}
+    {% endif %}
+    
+{% endblock %}

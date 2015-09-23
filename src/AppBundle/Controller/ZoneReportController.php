@@ -314,7 +314,9 @@ class ZoneReportController extends Controller{
 					return $response;
 					exit;
 				}
-			}else{
+			}
+                        /*
+                        else{
                             $xml = $this->renderView('zone/reports/aggregate_zone_report.xml.twig', $options);
                             $temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
                             file_put_contents($temporary_file_name, $xml);
@@ -336,7 +338,7 @@ class ZoneReportController extends Controller{
                             $response->headers->set('Content-Disposition', $dispositionHeader);
 
                             return $response; 
-                        }	
+                        }	*/
 			
 		}
 
