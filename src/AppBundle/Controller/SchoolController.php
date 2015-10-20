@@ -46,7 +46,6 @@ class SchoolController extends Controller{
             $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
                     FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
                     WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$emisCode,date('Y')));
-
             $session = $request->getSession();
             //keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
             $session->set('emiscode', $emisCode);

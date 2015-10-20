@@ -1,3 +1,29 @@
 {% extends 'admin/admin_main.html.twig' %}
 
 {% block system_settings %}active{% endblock %}
+
+{% block rightcolumn %}
+	<h3>System Settings Summary</h3>
+	<table border="0">
+		<tr>
+			<td><b>Number of schools: </b></td><td>{{ settingsSummary.numSchools }}</td>
+		</tr>
+		<tr>
+			<td><b>Number of zones: </b></td><td>{{ settingsSummary.numZones }}</td>
+		</tr>
+		<tr>
+			<td><b>Number of disabilities: </b></td><td>{{ settingsSummary.numDisabilities }}</td>
+		</tr>
+		<tr>
+			<td><b>Number of disability Categories: </b></td><td>{{ settingsSummary.disabilityCats }}</td>
+		</tr>
+	</table>
+{% endblock %}
+
+{% block vertnav %}
+
+	<li class="{% block admin_disabilities_menuitem %}{% endblock %}"><a href="{{path('admin_settings_disabilities')}}" class="text-center menu-itm">Edit disabilities</a></li>
+
+	<li class="{% block admin_schools_menuitem %}{% endblock %}"><a href="" class="text-center menu.itm">Edit schools</a></li>
+
+{% endblock %}

@@ -103,6 +103,7 @@ class UserController extends Controller{
 		$userArray = $connection->fetchAssoc('SELECT ufirst_name, ulast_name, roles, access_level, 
 		    access_domain, allowed_actions FROM fos_user WHERE username = ?', [$username]);
 
+		
 		//get the list of access domains to populate the select list
 		$accessDomains = array();
 		if($request->getSession()->getFlashBag()->has('access_domains')){

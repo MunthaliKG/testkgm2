@@ -49,6 +49,7 @@ $(document).ready(function(){
 			$('#adduser_access_level').val('4');
 			$('#adduser_access').val('4');
 			$('#adduser_allowed_actions').val('2');
+			$('#access_district_div').hide();
 			dependentFields.prop('disabled','disabled');
 		}
 		else{

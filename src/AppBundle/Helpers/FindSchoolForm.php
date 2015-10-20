@@ -67,23 +67,22 @@ class FindSchoolForm{
 		$this->form1->handleRequest($this->requestStack->getCurrentRequest());
 		$this->form2->handleRequest($this->requestStack->getCurrentRequest());
 		$school;
-        if($this->form2->isValid()){/*if form1 was not submitted or contains invalid values, this returns
+        if($this->form2->isValid()){/*if form2 was not submitted or contains invalid values, this returns
         false*/
+        	$this->isValid = true;
             $this->formData = $this->form2->getData();           
             $school = $this->em->getRepository('AppBundle:School')->find($this->formData['school']);
             if($school){
-            	$this->isValid = true;
                 $this->schoolId = $school->getEmiscode();
             }else{
                 $this->error = "That school does not exist";
             }             
          }
-         elseif($this->form1->isValid()){/*also returns false if form2 was not submitted or contains invalid values*/
+         elseif($this->form1->isValid()){/*also returns false if form1 was not submitted or contains invalid values*/
+         	$this->isValid = true;
 			$this->formData = $this->form1->getData();           
             $school = $this->em->getRepository('AppBundle:School')->find($this->formData['emiscode']);
             if($school){
-	         	$this->isValid = true;
-
                 $this->schoolId = $school->getEmiscode();
 
                 //$this->schoolId = $school->getId();

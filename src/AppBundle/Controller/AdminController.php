@@ -104,7 +104,21 @@ class AdminController extends Controller{
 	 *@Route("/admin/settings", name="admin_settings_main")
 	 */
 	public function adminSettingsMainAction(Request $request){
-		return $this->render('admin/settings/admin_settings_main.html.twig');
+		$connection = $this->get('database_connection');
+		$schools = $connection->fetchAll('SELECT emiscode FROM school');
+		$zones = $connection->fetchAll('SELECT idzone FROM zone');
+		$disabilities = $connection->fetchAll('SELECT iddisability FROM disability');
+		$categories = $connection->fetchAll('SELECT iddisability_category FROM disability_category');
+
+		$info = array();
+		$info['numDisabilities'] = count($disabilities);
+		$info['numSchools'] = count($schools);
+		$info['numZones'] = count($zones);
+		$info['disabilityCats'] = count($categories);
+		return $this->render('admin/settings/admin_settings_main.html.twig', array(
+			'settingsSummary' => $info
+			)
+		);
 	}
 }
 ?>

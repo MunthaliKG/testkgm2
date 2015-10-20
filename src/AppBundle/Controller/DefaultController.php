@@ -54,7 +54,11 @@ class DefaultController extends Controller
         if($session->has('emiscode')){
             return $this->redirectToRoute('school_main', array('emisCode'=>$session->get('emiscode')), 301);
         }
-        return $this->render('school/school.html.twig');
+        $error = null;
+        if($request->getSession()->getFlashBag()->has('formError')){
+            $error = $request->getSession()->getFlashBag()->get('formError');
+        }
+        return $this->render('school/school.html.twig', array('error'=>$error));
     }
     /**
      * @Route("/findSchoolForm", name="find_school_form")
@@ -66,7 +70,14 @@ class DefaultController extends Controller
         $schoolFinderForms->processForms();
         
         if($schoolFinderForms->areValid()){
-            return $this->redirectToRoute('school_main',array('emisCode'=>$schoolFinderForms->getSchoolId()), 301);
+            if($schoolFinderForms->getError() != null){
+                $this->addFlash('formError', $schoolFinderForms->getError());
+                return $this->redirectToRoute('school',array(), 301);
+            }
+            else{
+                return $this->redirectToRoute('school_main',array('emisCode'=>$schoolFinderForms->getSchoolId()), 301);
+            }
+            
         }
         $schoolName = "";
         if($request->getSession()->has('emiscode')){
@@ -96,7 +107,7 @@ class DefaultController extends Controller
         }
         return $this->render('zone/zone.html.twig');
     }
-    /**
+    /**12
      * @Route("/findZoneForm", name="find_zone_form")
      */
     public function zoneSelectFormAction(Request $request){
