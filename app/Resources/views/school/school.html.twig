@@ -19,7 +19,12 @@
             {% block resource1 %}{% endblock %}
             {% block material2 %}{% endblock %}
             {% block resource2 %}{% endblock %}
-            <br><br><h2 class="text-center"><small>School not chosen</small></h2>
+            <br><br>
+            {% if error is not null %}
+                <h2 class="text-center"><small>{{ error }}</small></h2>
+            {% else %}
+                <h2 class="text-center"><small>School not chosen</small></h2>
+            {% endif %}
         {% endblock %}
     </div>
 {% endblock %}

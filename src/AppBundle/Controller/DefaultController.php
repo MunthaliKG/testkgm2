@@ -41,10 +41,10 @@ class DefaultController extends Controller
         $session = $request->getSession();
         $session->remove('school_name');
         $session->remove('emis_code');
-
         $session->remove('schoolInfo'); 
         $session->invalidate();
-        return $this->render('school/school.html.twig');
+
+        return $this->redirectToRoute('school', array(), 301);
     }
     /**
      * @Route("/school", name="school")
@@ -58,7 +58,7 @@ class DefaultController extends Controller
         if($request->getSession()->getFlashBag()->has('formError')){
             $error = $request->getSession()->getFlashBag()->get('formError');
         }
-        return $this->render('school/school.html.twig', array('error'=>$error));
+        return $this->render('school/school.html.twig', array('error'=>$error[0]));
     }
     /**
      * @Route("/findSchoolForm", name="find_school_form")
@@ -72,7 +72,7 @@ class DefaultController extends Controller
         if($schoolFinderForms->areValid()){
             if($schoolFinderForms->getError() != null){
                 $this->addFlash('formError', $schoolFinderForms->getError());
-                return $this->redirectToRoute('school',array(), 301);
+                return $this->redirectToRoute('school');
             }
             else{
                 return $this->redirectToRoute('school_main',array('emisCode'=>$schoolFinderForms->getSchoolId()), 301);
