@@ -17,18 +17,18 @@
 	{% endfor %}
 	
 	<div class="col-sm-7 col-sm-offset-2">
-		<fieldset>
-			<legend><small>{{ mode }}</small></legend>
-			{{ form_start(form) }}
-			{{ form_errors(form) }}
-			{{ form_row(form.std) }}
-			{{ form_row(form.term) }}
-			{{ form_row(form.year) }}
-			{{ form_row(form.grade) }}
-			{{ form_row(form.teachercomment) }}
-			<p class="text-right">{{ form_widget(form.save, {'before_label':'<i class="fa fa-check"></i> '}) }}</p>
-			{{ form_end(form) }}
-		</fieldset>
+            <fieldset>
+                <legend><small>{{ mode }}</small></legend>
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.std) }}
+                {{ form_row(form.term) }}
+                {{ form_row(form.year) }}
+                {{ form_row(form.grade) }}
+                {{ form_row(form.teachercomment) }}
+                <p class="text-right">{{ form_widget(form.save, {'before_label':'<i class="fa fa-check"></i> '}) }}</p>
+                {{ form_end(form) }}
+            </fieldset>
 	</div>
 	
 {% endblock %}

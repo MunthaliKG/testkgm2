@@ -270,7 +270,7 @@ class ZoneReportController extends Controller{
                                 foreach ($dbNeeds as $key => $row) {
                                     $needs[$row['idneed']] = $row['needname'];
                                 }
-                                $available = array('Yes'=>'Yes','No'=>'No');
+                                $available = array('Else Where'=>'Else Where', 'Resource room'=>'Resource room');
                                 $teachingNeeds = array();
                                 $needsCount = $dataConverter->countArray($learnersNeeds, 'idzone', $idzone);
                                 
