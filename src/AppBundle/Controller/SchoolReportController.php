@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class SchoolReportController extends Controller{
 	/**
-	 *@Route("/school/{emisCode}/reports", name="school_reports", requirements={"emisCode":"\d+"})
+	 *@Route("/school/{emisCode}/reports/basic", name="school_reports", requirements={"emisCode":"\d+"})
 	 */
 	public function schoolReportMainAction($emisCode, Request $request){
 
@@ -234,6 +234,138 @@ class SchoolReportController extends Controller{
 		}
 
 		return $this->render('school/reports/reports_basic.html.twig', array('form' => $form->createView()));
+	}
+        
+        /**
+	 *@Route("/school/{emisCode}/reports/custom", name="school_custom_reports", requirements={"emisCode":"\d+"})
+	 */
+	public function schoolCustomReportAction($emisCode, Request $request){
+
+		//sub-reports to include in the report
+		$reports = [0=>"SN Learners' details",1=>"SN Teachers details"];
+		//available formats for the report
+		$formats = [
+			'html'=>'html', 
+			'pdf'=>'pdf', 
+			'excel'=>'excel'
+			];
+
+		//create the form for choosing which sub-form to include and the format of the fina report
+		$form = $this->createFormBuilder()
+			->add('reports','choice', array(
+				'label' => 'Include',
+				'expanded' => true,
+				'multiple' => true,
+				'choices'=> $reports,
+				'constraints' => array(new NotBlank(["message"=>"Please select atleast one option"])),
+				))
+			->add('format','choice', array(
+				'label' => 'Format',
+				'expanded' => true,
+				'multiple' => false,
+				'choices'=> $formats,
+				'data' => 0,
+				'constraints' => array(new NotBlank(["message"=>"Please select a format"])),
+				))
+			->add('produce','submit', array('label' => "Produce report"))
+			->getForm();
+
+		$form->handleRequest($request);
+                
+		if($form->isValid()){
+			$connection = $this->get('database_connection');
+			$formData = $form->getData();
+			$options = array(); //list of options to pass to the template
+			$school = $connection->fetchAssoc('SELECT emiscode,school_name,iddistrict,district_name,idzone,zone_name 
+				FROM school NATURAL JOIN district NATURAL JOIN zone WHERE emiscode = ?', [$emisCode]);
+                        
+			$options['school'] = $school;
+
+			$learners = array();
+			$dataConverter = $this->get('data_converter');
+			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
+
+                            //get the latest year from the lwd_belongs to school table
+                            $yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
+                                    WHERE emiscode = ?', [$emisCode]);
+                            
+                            /*SN learners' details section*/
+                            if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
+                                    $options['snLearners'] = true;
+                                    //get students enrolled this year
+                                    $enrolled = $connection->fetchAll('SELECT first_name, last_name, initials, home_address, sex, dob, 
+                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, income_level 
+                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school 
+                                        WHERE emiscode = ? AND `year` = ?', 
+                                            [$emisCode, $yearQuery['maxYear']]);				
+                                    $options['snLearners'] = $enrolled;    
+				}
+                            if(in_array(1, $formData['reports'])){//if the SN teachers' details option was checked
+                                    $options['snTeachers'] = true;
+                                    //get teachers this year
+                                    $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
+                                        sinitials, s_sex, s_dob, qualification, speciality, year_started, snt_type 
+                                        FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND `year` = ?', 
+                                            [$emisCode, $yearQuery['maxYear']]);				
+                                    $options['snTeachers'] = $employed;    
+				}
+			}			
+			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
+			$options['date'] = $productionDate;
+			if($formData['format'] == 'html' || $formData['format'] == 'pdf'){
+                            $isHtml = ($formData['format'] == 'html')? true: false;
+                            $options['isHtml'] = $isHtml;
+                            $html = $this->renderView('school/reports/aggregate_custom.html.twig', $options);
+                            if($isHtml){
+                                return new Response($html);
+                            }else{
+                                $mpdfService = $this->get('tfox.mpdfport');
+                                $arguments = ['outputFileName'=>'report.pdf', 'outputDest'=>"I"];
+                                $response = $mpdfService->generatePdfResponse($html, $arguments);
+                                $response->headers->set('Content-Disposition','inline; filename = '.$arguments['outputFileName']);
+                                $response->headers->set('Content-Transfer-Encoding','binary');
+                                $response->headers->set('Accept-Ranges','bytes');
+                                return $response;
+                                exit;
+                            }
+			}else{
+                            $dataConverter = $this->get('data_converter');
+                            $enrolled = $connection->fetchAll('SELECT first_name, last_name, initials, home_address, sex, dob, 
+                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, income_level 
+                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school 
+                                        WHERE emiscode = ? AND `year` = ?', 
+                                            [$emisCode, $yearQuery['maxYear']]);
+                            //$dataConverter->excelDownload($enrolled);
+                            //$dataConverter->countArrayMultipleBool($learners)
+			/*	
+                            $xml = $this->renderView('school/reports/aggregate_custom.xml.twig', $options);
+				$temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
+                                file_put_contents($temporary_file_name, $xml);
+
+                                $reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
+                                $excelSheet = $reader->load($temporary_file_name);
+                                $writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
+
+                                // create the response
+                                $response = $this->get('phpexcel')->createStreamedResponse($writer);
+                                // adding headers
+                                $dispositionHeader = $response->headers->makeDisposition(
+                                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                                    'stream-file.xlsx'
+                                );
+                                $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+                                $response->headers->set('Pragma', 'public');
+                                $response->headers->set('Cache-Control', 'maxage=1');
+                                $response->headers->set('Content-Disposition', $dispositionHeader);
+
+                                return $response;
+                         * 
+                         */
+                        } 		
+			
+		}
+
+		return $this->render('school/reports/reports_custom.html.twig', array('form' => $form->createView()));
 	}
 }
 ?>

@@ -2,6 +2,8 @@
 namespace AppBundle\Helpers;
 
 use Doctrine\DBAL\Connection;
+//use AppBundle\Helpers\HarImport;
+//require_once 'vendor/autoload.php';
 
 class DataConverter{
 	private $connection;
@@ -9,6 +11,24 @@ class DataConverter{
 	function __construct(Connection $connection){
 		$this->connection = $connection;
 	}
+        //export to excel and download
+        function excelDownload($db){
+            //EXCEL DOWNLOAD FILE
+	
+            include("/mysql_excel/mysql_excel.inc.php");
+
+            $month = date('n');
+            $year = date('Y');
+            $month_full = str_replace('','_', date('F Y')); 			
+
+            $date = date("d_M_Y");
+
+            $import=new \HarImport();
+            //$import->openDatabase("localhost","root","","snlis");
+
+            $import->ImportData($db,"snlis.xls",true); //To force to download
+	
+        }
 	//convert an array of need ids to a string of comma separated ids
 	function convertToCommaString($array, $removeDelimitingQuotes = false){
 		$escaped = array_map(array($this->connection, 'quote'), $array); //escape each element of the array

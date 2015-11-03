@@ -4,8 +4,8 @@
 
 {% block content %}
 	<ul class="nav nav-tabs">
-		<li class="{% block zone_basic_reports %}{% endblock %}"><a href="">Basic Reports</a></li>
-		<li class="{% block zone_custom_reports %}{% endblock %}"><a href="">Custom Reports</a></li>
+		<li class="{% block zone_basic_reports %}{% endblock %}"><a href="{{ path('zone_snl',{"idzone": idzone})}}">Basic Reports</a></li>
+		<li class="{% block zone_custom_reports %}{% endblock %}"><a href="{{ path('zone_custom_snl',{"idzone": idzone})}}">Custom Reports</a></li>
 	</ul>
 	{% block reports_body %}
 		

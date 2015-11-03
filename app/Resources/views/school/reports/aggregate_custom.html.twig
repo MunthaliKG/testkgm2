@@ -1,4 +1,4 @@
-{% extends (isHtml)? 'school/reports/reports_basic.html.twig':'base.html.twig' %}
+{% extends (isHtml)? 'school/reports/reports_custom.html.twig':'base.html.twig' %}
 
 
 {% block body %} 
@@ -10,7 +10,7 @@
 	
 {% endblock %}
 {% block reports_body %}	
-		<h3><p class="text-center">Special Needs Education Management Information System Basic Report</p></h3>
+		<h3><p class="text-center">Special Needs Education Management Information System Custom Report</p></h3>
 		<h4><p class="text-center">{{ " "|date() }}</p></h4>
 		
 		{# school identification section #}
@@ -37,11 +37,11 @@
 				<td>{{ school.district_name }}</td>
 				<td align="left">{{ school.iddistrict }}</td>
 			</tr>
-		</table>
-		{% if preliminary is defined %}
-			{% include 'school/reports/preliminary.html.twig' %}
+		</table>		
+                {% if snLearners is defined %}
+                    {% include 'school/reports/sn_learner.html.twig' %}
 		{% endif %}
-		{% if specialNeeds is defined %}
-			{% include 'school/reports/special_needs.html.twig' %}
-		{% endif %}          
+                {% if snTeachers is defined %}
+			{% include 'school/reports/sn_teachers.html.twig' %}
+		{% endif %}
 	{% endblock %}

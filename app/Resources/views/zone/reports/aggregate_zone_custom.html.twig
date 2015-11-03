@@ -1,0 +1,44 @@
+{% extends (isHtml)? 'zone/reports/zone_reports_custom.html.twig':'base.html.twig' %}
+
+{% block body %} 
+	{% if isHtml %}
+		{{ parent() }}
+	{% else %}
+		{{ block('reports_body') }}
+	{% endif %}
+	
+{% endblock %}
+{% block reports_body %}	
+    <h3><p class="text-center">Special Needs Education Management Information System Custom Report</p></h3>
+
+    {# Zone identification section #}
+    <h4>Zone Identification</h4>
+    <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+        <tr>
+            <th rowspan="4" width="20%" align="middle">Zone Id Label</th>
+            <th align="center">Identifier</th>
+            <th align="center">Name</th>
+            <th align="center">Numeric code</th>
+            <th align="center">Number of Schools</th>
+        </tr>			
+        <tr>
+            <td>1. Zone</td>
+            <td>{{ zone.zone_name }}</td>
+            <td align="center">{{ zone.idzone }}</td>
+            <td align="center">{{ numOfSchools }}</td>
+        </tr>
+        <tr>
+            <td>2. District</td>
+            <td>{{ zone.district_name }}</td>
+            <td align="center">{{ zone.iddistrict }}</td>
+            <th align="center"></th>
+        </tr>                    
+    </table>
+
+    {% if snLearners is defined %}
+        {% include 'zone/reports/zone_sn_learners.html.twig' %}
+    {% endif %}
+    {% if snTeachers is defined %}
+        {% include 'zone/reports/zone_sn_teachers.html.twig' %}
+    {% endif %}    
+{% endblock %}

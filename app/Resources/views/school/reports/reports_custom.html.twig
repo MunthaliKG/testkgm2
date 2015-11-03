@@ -1,9 +1,9 @@
 {% if form is defined %}
 	{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% endif %}
-{% extends 'zone/reports/zone_reports_main.html.twig' %}
+{% extends 'school/reports/reports_main.html.twig' %}
 
-{% block zone_basic_reports %} active {% endblock %} {# activate the tab for this page #}
+{% block custom_reports %} active {% endblock %} {# activate the tab for this page #}
 
 {% block reports_body %}
 	{{ form_start(form) }}
@@ -18,4 +18,3 @@
 	{{ parent() }}
 	<script type="text/javascript" src="{{ asset('assets/js/reports.js')}}"></script>
 {% endblock %}
-
