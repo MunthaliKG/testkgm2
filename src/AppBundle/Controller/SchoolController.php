@@ -627,7 +627,6 @@ class SchoolController extends Controller{
     public function editLearnerDisabilityAction(Request $request, $learnerId, $emisCode){
 
     	$forms = array(); //array to keep the forms: there could be more than one disability form for a learner
-    	$needForms = array(); //array to keep forms for the needs of each disability
     	$connection = $this->get('database_connection'); 
     	$disabilities = $connection->fetchAll("SELECT * FROM disability");
         $disabilityNames = array(); //will be used in the template to provide pagination for the disabilities
@@ -656,19 +655,20 @@ class SchoolController extends Controller{
 
     				$disability['identification_date'] = new \DateTime($disability['identification_date']);
     				$disability['iddisability_2'] = $disability['iddisability'];//set default data for the hidden field since the true iddisability will be disabled
-    				$forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels, $formCounter), $disability); 
-    				//get the needs for this disability
-    				$needsStmt->bindParam(1, $disability['iddisability']);
-    				$needsStmt->execute();
-    				$needs = $needsStmt->fetchAll();
-    				//get the needs that the learner has access to for this disability
-    				$needsRowsStmt->bindParam(1, $learnerId);
-    				$needsRowsStmt->bindParam(2, $disability['iddisability']);
-    				$needsRowsStmt->execute();
-    				$availableNeedsRows = $needsRowsStmt->fetchAll();
-    				//get the ids of all the available needs as a single array
-    				$availableNeeds = array_column($availableNeedsRows, 'idneed');
-    				$needForms[] = $this->createForm(new NeedsType($needs, $formCounter), ['needs'=>$availableNeeds, 'iddisability'=>$disability['iddisability']]);
+                    //get the needs for this disability
+                    $needsStmt->bindParam(1, $disability['iddisability']);
+                    $needsStmt->execute();
+                    $needs = $needsStmt->fetchAll();
+                    //get the needs that the learner has access to for this disability
+                    $needsRowsStmt->bindParam(1, $learnerId);
+                    $needsRowsStmt->bindParam(2, $disability['iddisability']);
+                    $needsRowsStmt->execute();
+                    $availableNeedsRows = $needsRowsStmt->fetchAll();
+                    //get the ids of all the available needs as a single array
+                    $availableNeeds = array_column($availableNeedsRows, 'idneed');
+                    $disability['needs'] = $availableNeeds;
+    				$forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels, $formCounter, $needs), $disability); 
+
     				$formCounter++;
     			}
     			$levelsStmt->closeCursor();
@@ -689,6 +689,9 @@ class SchoolController extends Controller{
 					);
 					if($form->get('remove')->isClicked()){//if the remove button was clicked for this record
 						$em->remove($lwdHasDisability);
+                        //delete needs records
+                        $connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
+                            AND idlwd = ?', array($formData['iddisability_2'], $learnerId));
 						$message = "Disability/Special need record removed";
 						$messageType = 'recordRemovedMessage';
 					}
@@ -696,8 +699,28 @@ class SchoolController extends Controller{
 						$lwdHasDisability->setIdentifiedBy($formData['identified_by']);
 			    		$lwdHasDisability->setIdentificationDate($formData['identification_date']);
 			    		$lwdHasDisability->setCaseDescription($formData['case_description']);
-			    		$lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
+                        if($formData['idlevel'] != null){
+			    		   $lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
+                        }
 			    		$em->persist($lwdHasDisability);
+                        $dataConverter = $this->get('data_converter');
+                        $selectedNeeds = $dataConverter->arrayRemoveQuotes($formData['needs']);                 
+                        $commaString = $dataConverter->convertToCommaString($selectedNeeds); /*convert array 
+                        of checked values to comma delimited string */
+                        $connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
+                            AND idlwd = ? AND idneed NOT IN (?)', array($formData['iddisability_2'], $learnerId, $commaString));/*delete all records in the db
+                        that are not checked on the form*/
+                        //write the records for needs available to this learner if the records do not already exist in the db
+                        $writeNeeds = $connection->prepare('INSERT IGNORE INTO lwd_has_disability_has_need SET idlwd = ?, 
+                            iddisability = ?, idneed = ?');
+                        $writeNeeds->bindParam(1, $learnerId);
+                        $writeNeeds->bindParam(2, $formData['iddisability_2']);
+                        //iterate over array of needs checked on the form and add each one to the database
+                        foreach($selectedNeeds as $selectedNeed){
+                            $writeNeeds->bindParam(3, $selectedNeed);
+                            $writeNeeds->execute();
+                        }
+                        $writeNeeds->closeCursor();
 			    		$message = "Disability/Special need record updated";
 			    		$messageType = $formCounter;
 					}
@@ -706,44 +729,18 @@ class SchoolController extends Controller{
 					$this->addFlash($messageType, $message);
 					return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
     			}
-    			$needForm = $needForms[$formCounter-1];
-    			$needForm->handleRequest($request);
-    			if($needForm->isValid()){
-    				$formData = $needForm->getData();
-    				$dataConverter = $this->get('data_converter');
-    				$selectedNeeds = $dataConverter->arrayRemoveQuotes($formData['needs']);    				
-    				$commaString = $dataConverter->convertToCommaString($selectedNeeds); /*convert array 
-    				of checked values to comma delimited string */
-    				$connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
-    					AND idlwd = ? AND idneed NOT IN (?)', array($formData['iddisability'], $learnerId, $commaString));/*delete all records in the db
-    				that are not checked on the form*/
-    				//write the records for needs available to this learner if the records do not already exist in the db
-    				$writeNeeds = $connection->prepare('INSERT IGNORE INTO lwd_has_disability_has_need SET idlwd = ?, 
-    					iddisability = ?, idneed = ?');
-    				$writeNeeds->bindParam(1, $learnerId);
-    				$writeNeeds->bindParam(2, $formData['iddisability']);
-    				//iterate over array of needs checked on the form and add each one to the database
-    				foreach($selectedNeeds as $selectedNeed){
-    					$writeNeeds->bindParam(3, $selectedNeed);
-    					$writeNeeds->execute();
-    				}
-    				$writeNeeds->closeCursor();
-    				$messageType = 'needs_'.$formCounter;
-    				$message = "Available needs for this learner have been updated";
-    				$this->addFlash($messageType, $message);
-					return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
-
-    			}
     			$formCounter++;
     		}
     	}
 
     	$levels2 = array();
+        $hasLevels = false;
     	if($this->get('session')->getFlashBag()->has('levels')){
+            $hasLevels = true;
     		$levels2 = $this->get('session')->getFlashBag()->get('levels');
     	}
         //the form for adding a new disability to this learner's profile
-    	$newForm = $this->createForm(new LearnerDisabilityType($disabilities, $levels2, "",false));
+    	$newForm = $this->createForm(new LearnerDisabilityType($disabilities, $levels2, "", array(), false));
 
     	$newForm->handleRequest($request);
     	if($newForm->isValid()){
@@ -756,14 +753,9 @@ class SchoolController extends Controller{
     		$lwdHasDisability->setIdentifiedBy($formData['identified_by']);
     		$lwdHasDisability->setIdentificationDate($formData['identification_date']);
     		$lwdHasDisability->setCaseDescription($formData['case_description']);
-    		if($this->get('session')->getFlashBag()->has('levels')){
-	    		$lwdHasDisability->setIdlevel($em->getReference('AppBundle:DisabilityHasLevel', [
-	    			'iddisability'=>$formData['iddisability'], 
-	    			'idlevel' => $formData['idlevel']
-	    			])
-	    		);
-	    	}
-    		
+    		if($hasLevels){
+	    		$lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
+	    	}   		
     		$em->persist($lwdHasDisability);
     		$em->flush();
 
@@ -776,11 +768,8 @@ class SchoolController extends Controller{
     	foreach($forms as &$form){
     		$form = $form->createView();
     	}
-    	foreach($needForms as &$needForm){
-    		$needForm = $needForm->createView();
-    	}
     	return $this->render('school/learners/edit_learner_disability.html.twig', array(
-    		'forms' => $forms, 'needForms'=>$needForms, 'newform' => $newForm->createView(), 
+    		'forms' => $forms, 'newform' => $newForm->createView(), 
             'disabilityNames' => $disabilityNames)
     	);
     } 

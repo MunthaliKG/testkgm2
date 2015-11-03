@@ -55,8 +55,8 @@ class DefaultController extends Controller
             return $this->redirectToRoute('school_main', array('emisCode'=>$session->get('emiscode')), 301);
         }
         $error = null;
-        if($request->getSession()->getFlashBag()->has('formError')){
-            $error = $request->getSession()->getFlashBag()->get('formError');
+        if($request->getSession()->getFlashBag()->has('errorMsg')){
+            $error = $request->getSession()->getFlashBag()->get('errorMsg');
         }
         return $this->render('school/school.html.twig', array('error'=>$error[0]));
     }
@@ -71,7 +71,7 @@ class DefaultController extends Controller
         
         if($schoolFinderForms->areValid()){
             if($schoolFinderForms->getError() != null){
-                $this->addFlash('formError', $schoolFinderForms->getError());
+                $this->addFlash('errorMsg', $schoolFinderForms->getError());
                 return $this->redirectToRoute('school');
             }
             else{

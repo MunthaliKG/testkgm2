@@ -4,9 +4,10 @@
 	{{parent()}}
 	<link href="{{asset('assets/css/school.css')}}" rel="stylesheet">
 {% endblock %}
-{% block vertnav %}
-    
+{% block vertnav %}  
+
 {%endblock%}
+{% block navzone %}active{% endblock %}  
 {% block rightcolumn %}
     {# include the form used for selecting a zone #}
     {{ render(controller('AppBundle:Default:zoneSelectForm')) }}

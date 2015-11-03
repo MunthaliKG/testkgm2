@@ -1,3 +1,10 @@
+check_school_access:
+    path: /buzzard/{emisCode}{url}
+    defaults: { _controller: AppBundle:Access:checkSchoolAccess }
+    requirements:
+            emisCode: \d+ 
+            url: /{0,1}.*
+    condition: "context.getParameter('emisCode') != 500885"
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation

@@ -1,9 +1,6 @@
 {% for form in forms %}
 		{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% endfor %}
-{% for form in needForms %}
-		{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-{% endfor %}
 {% form_theme newform 'bootstrap_3_horizontal_layout.html.twig' %}
 
 {% extends 'school/learners/learners_main.html.twig' %}
@@ -72,8 +69,8 @@
 								{% endfor %}
 							{% endif %}
 							<div class="row">
-								<div class="col-sm-8" style="border-right: lightgray 1px solid">
-									{{ form_start(form)}}
+								{{ form_start(form)}}
+								<div class="col-sm-8" style="border-right: lightgray 1px solid">			
 									{{ form_errors(form) }}
 									{{ form_row(form.iddisability, {'attr':{'disabled':'disabled'}}) }}
 									{{ form_row(form.iddisability_2) }}
@@ -89,20 +86,14 @@
 										</div>
 									</div>	
 
-									{{ form_end(form) }}
+									
 								</div>
-								{% set needForm = needForms[counter-1] %}
 								
 								<div class="col-sm-4">
 									<strong><u>Needs available to the student for this disability</u></strong>
-									{{ form_start(needForm) }}
-									{{ form_errors(needForm) }}
-									{{ form_widget(needForm.needs) }}
-									{{ form_widget(needForm.iddisability) }}
-									{{ form_widget(needForm.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
-									{{ form_end(needForm) }}
+									{{ form_widget(form.needs) }}
 								</div>
-								
+								{{ form_end(form) }}
 							</div>
 							
 							{% set counter = counter + 1 %}
@@ -168,8 +159,8 @@
 					{{ form_widget(newform.save, {'before_label':'<i class="fa fa-check"></i> '}) }}
 				</div>
 			</div>
+			{{ form_end(newform) }}
 		</div>
-		{{ form_end(newform) }}
 	</fieldset>
 {% endblock %}
 {% block stylesheets %}

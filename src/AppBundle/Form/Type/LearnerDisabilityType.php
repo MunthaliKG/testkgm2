@@ -14,14 +14,18 @@ class LearnerDisabilityType extends AbstractType
 	private $disabilities = array();
 	private $isDeletable;
 	private $name;
+	private $needs;
 
-	function __construct($disabilities, $levels = array(), $name = "", $isDeletable = true){
+	function __construct($disabilities, $levels = array(), $name = "", $needs = array(), $isDeletable = true){
 		//populate the disabilities array and the levels for the currently chosen disability
 		foreach($disabilities as $key => $disability){
 			$this->disabilities[$disability['iddisability']] = $disability['disability_name'];
 		}
 		foreach($levels as $key => $level){
 			$this->levels[$level['idlevel']] = $level['level_name'];
+		}
+		foreach($needs as $key => $need){
+			$this->needs[$need['idneed']] = $need['needname'];
 		}
 		$this->isDeletable = $isDeletable;
 		$this->name = $name;
@@ -65,16 +69,23 @@ class LearnerDisabilityType extends AbstractType
 		)
 		->add('identification_date','date', array(
 			'label' => 'Identified on',
-			'widget' => 'single_text',
-			'format' => 'dd-MM-yyyy',
+			'format' => 'yyyy-MM-dd',
 			'constraints' => array(new NotBlank()),
-			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
+			'attr' => array('data-date-format'=>'dd-mm-yyyy'),
 			)
 		)
 		->add('save','submit', array('label' => 'save'));
 
 		if($this->isDeletable){
-			$builder->add('remove','submit', array('label' => 'remove'));
+			$builder->add('remove','submit', array('label' => 'remove'))
+			->add('needs','choice',array(
+				'label'=>'',
+				'expanded' => true,
+				'multiple' => true,
+				'choices' => $this->needs,
+				'required' => true,
+				)
+			);
 		}
 	}
 	public function getName()
