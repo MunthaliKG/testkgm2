@@ -84,8 +84,8 @@ class TeacherType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			)
 		)
-		->add('next','submit', array(
-			'label' => 'next',
+		->add('save','submit', array(
+			'label' => 'save',
 			)
 		);
 	}

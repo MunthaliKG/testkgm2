@@ -22,6 +22,7 @@ class ResourceRoomType extends AbstractType
         $builder
         ->add('idneed_2','hidden')
         ->add('idneed','choice', array(
+               'placeholder' => 'Choose special need item',
                'label' => 'Special Needs Item',
                'choices' => $needs,                
                 'expanded' => false,
@@ -45,6 +46,7 @@ class ResourceRoomType extends AbstractType
                 )
         )
         ->add('state', 'choice', array(
+                'placeholder' => 'Status of need',
                 'label' => 'State',
                 'choices' => array('Good'=>'Good','Average'=>'Average','Bad'=>'Bad'),
                 'constraints' => array(new NotBlank()),
@@ -54,7 +56,7 @@ class ResourceRoomType extends AbstractType
         )
         ->add('available_in', 'choice', array(
                 'label' => 'Available in Resource Room:',
-                'choices' => array('No'=>'No','Yes'=>'Yes'),
+                'choices' => array('Else Where'=>'Else Where', 'Resource room'=>'Resource room'),
                 'expanded' => true,
                 'multiple' => false,)
         )

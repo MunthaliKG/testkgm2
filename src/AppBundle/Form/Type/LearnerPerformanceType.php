@@ -37,6 +37,7 @@ class LearnerPerformanceType extends AbstractType
 			'multiple' => false,)
 		)
 		->add('grade','choice', array(
+                    'placeholder' => 'Choose grade',
 			'choices' => array(
 				1 => '0-40',
 				2 => '41-50', 
