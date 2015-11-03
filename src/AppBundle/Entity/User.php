@@ -180,5 +180,60 @@ class User extends BaseUser
     {
         return $this->isActive;
     }
+    public function hasAccess($level, $id, $connection){
+
+        if($this->accessLevel == 4){
+            return true;
+        }
+        if($this->accessLevel < $level){
+            return false;
+        }
+        elseif($level == $this->accessLevel){/*if the access level of the user and the level of the entity 
+        for which the query is being made are the same*/
+            if($id == $this->accessDomain){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
+        $requestedLevel = "";//the level of the entity for which an access query is being made
+        $requestedLevelId = "";
+        switch($level){
+            case 1: $requestedLevel = 'school';
+                    $requestedLevelId = 'emiscode';
+                    break;
+            case 2: $requestedLevel = 'zone';
+                    $requestedLevelId = 'idzone';
+                    break;
+            case 3: $requestedLevel = 'district';
+                    $requestedLevelId = 'iddistrict';
+                    break;
+        }
+        $grantedLevel = "";//the level of access of the user
+        $grantedLevelId = "";
+        switch($this->accessLevel){
+            case 1: $grantedLevel = 'school';
+                    $grantedLevelId = 'emiscode';
+                    break;
+            case 2: $grantedLevel = 'zone';
+                    $grantedLevelId = 'idzone';
+                    break;
+            case 3: $grantedLevel = 'district';
+                    $grantedLevelId = 'iddistrict';
+                    break;
+        }
+
+        $result = $connection->fetchAll("SELECT $grantedLevelId FROM $requestedLevel NATURAL JOIN $grantedLevel 
+            WHERE $requestedLevelId = ? and $grantedLevelId = ?", [$id, $this->accessDomain]);
+        if(empty($result)){
+            return false;
+        }
+        else{
+            return true;
+        }
+
+    }
 
 }

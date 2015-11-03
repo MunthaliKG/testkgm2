@@ -4,13 +4,15 @@ $(document).ready(function(){
 	$('#schoolfinder_district').change(function(event){
 
 		var district = $(this).val();
-		//use ajax to auto-populate the school select list based on the selected district
-		$.ajax({
-			url: Routing.generate('school_ajax',{id: district})
-		})
-		.done(function (data) {
-            $('#schoolfinder_school').html(data);
-        })
+		if(district !== ""){
+			//use ajax to auto-populate the school select list based on the selected district
+			$.ajax({
+				url: Routing.generate('school_ajax',{id: district})
+			})
+			.done(function (data) {
+	            $('#schoolfinder_school').html(data);
+	        })
+		}
 	})
 
 	//submit the form if a school is selected
