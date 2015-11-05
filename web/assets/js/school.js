@@ -85,6 +85,6 @@ $(document).ready(function(){
 		}
 	});
 
-	$('[autofocus]:first').focus();
+	$('[autofocus]:enabled:not([readonly]):first').focus();
 
 });

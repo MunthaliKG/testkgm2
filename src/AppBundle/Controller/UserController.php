@@ -77,7 +77,7 @@ class UserController extends Controller{
 			}
 			
 			//set default password for the user
-			$plainPassword = $formData['ulast_name'].$formData['ufirst_name'].$formData['username'];
+			$plainPassword = $formData['last_name'].$formData['first_name'].$formData['username'];
 			$encoder = $this->container->get('security.password_encoder');
 			$encoded = $encoder->encodePassword($user, $plainPassword);
 			$user->setPassword($encoded);

@@ -22,4 +22,9 @@ $(document).ready(function(){
 		$('#showAddDisability').hide();
 	});
 
+	$('#hideAddDisability').click(function(e){
+		$('#addDisabilityForm').hide();
+		$('#showAddDisability').show();
+	});
+
 });
