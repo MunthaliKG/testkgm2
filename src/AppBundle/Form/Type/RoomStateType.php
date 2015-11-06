@@ -4,7 +4,6 @@ namespace AppBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Type;
 
 //this class build the form that is used to select a school using district name and school name
 class RoomStateType extends AbstractType
@@ -22,8 +21,8 @@ class RoomStateType extends AbstractType
 		->add('year', 'datetime', array(
 			'label' => 'Year',
 			'widget' => 'single_text',
-                        'format' => 'dd-MM-yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
+                        'format' => 'yyyy',
+			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
 			'constraints' => array(new NotBlank()),
 			)
 		)
@@ -45,6 +44,7 @@ class RoomStateType extends AbstractType
                 )
                 ->add('adaptive_chairs', 'integer', array(
 			'label' => 'Adaptive Chairs',
+                        'attr' => array('min'=>0),
 			'constraints' => array(new NotBlank()),		
 			)
                 )

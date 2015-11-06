@@ -3,6 +3,33 @@
 {% set teacher = app.request.attributes.get('_route_params')['teacherId'] %} {# get the material id from the Route #}
 
 {% block form_container %}
+    {% if app.session.flashBag.has('sntUpdated') %}       
+            {% for msg in app.session.flashBag.get('sntUpdated') %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+    {% endif %}
+    {% if app.session.flashBag.has('sntAdded') %}       
+            {% for msg in app.session.flashBag.get('sntAdded') %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+    {% endif %}
+    {% if app.session.flashBag.has('sntExists') %}       
+            {% for msg in app.session.flashBag.get('sntExists') %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+    {% endif %}
     {# put the different forms for adding teacher information in a carousel #}
     {{ form_start(form2) }}
     {{ form_errors(form2) }}

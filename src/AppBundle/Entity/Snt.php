@@ -83,18 +83,6 @@ class Snt
      */
     private $idsnt;
 
-   // /**
-    // * Set string
-     //*
-     //* @param string $idsnt
-     //* @return SNT
-     //*/
-    //public function setIdsnt($idsnt)
-    //{
-     //   $this->idsnt = $idsnt;
-
-//        return $this;
-  //  }
     /**
      * Set sfirstName
      *

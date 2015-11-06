@@ -13,6 +13,33 @@
 {% endblock %}
 {% block context_options %}{% endblock %}
 {% block form_container %}
+                        {% if app.session.flashBag.has('learnerExists') %}       
+                            {% for msg in app.session.flashBag.get('learnerExists') %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span></button>
+                                    {{ msg }}
+                                </div>
+                            {% endfor %}        
+                        {% endif %}
+                        {% if app.session.flashBag.has('lwdUpdated') %}       
+                            {% for msg in app.session.flashBag.get('lwdUpdated') %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span></button>
+                                    {{ msg }}
+                                </div>
+                            {% endfor %}        
+                        {% endif %}
+                        {% if app.session.flashBag.has('lwdAdded') %}       
+                            {% for msg in app.session.flashBag.get('lwdAdded') %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span></button>
+                                    {{ msg }}
+                                </div>
+                            {% endfor %}        
+                        {% endif %}
 			{# show new disability added flash message #}
 			{% set disabilityAddedMessage = app.session.flashbag.get('disabilityAddedMessage') %}
 			{% if disabilityAddedMessage is not empty %}

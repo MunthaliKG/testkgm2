@@ -2,10 +2,12 @@
 // src/AppBundle/Form/Type/SchoolFinderType.php
 namespace AppBundle\Controller;
 namespace AppBundle\Form\Type;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Range;
 
 
 //this class build the form that is used to select a teacher using district name and school name
@@ -37,14 +39,14 @@ class ResourceRoomType extends AbstractType
                 'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
                 )
         )
-        ->add('year_recorded', 'date', array(
+        ->add('year_recorded', 'datetime', array(
                 'label' => 'Year Recorded',
                 'widget' => 'single_text',
-                'format' => 'dd-MM-yyyy',
-                'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
+                'format' => 'yyyy',
+                'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
                 'constraints' => array(new NotBlank()),
                 )
-        )
+        )                
         ->add('state', 'choice', array(
                 'placeholder' => 'Status of need',
                 'label' => 'State',
@@ -55,15 +57,19 @@ class ResourceRoomType extends AbstractType
                 )
         )
         ->add('available_in', 'choice', array(
-                'label' => 'Available in Resource Room:',
-                'choices' => array('Else Where'=>'Else Where', 'Resource room'=>'Resource room'),
+                'label' => 'Available',
+                'choices' => array('Else Where'=>'Elsewhere', 'Resource room'=>'Resource room'),
                 'expanded' => true,
                 'multiple' => false,)
         )
         ->add('quantity', 'integer', array(
            'label' => 'Quantity',
-           'constraints' => array(new NotBlank()),)		
-           )
+           // 'attr' => array('min'=>1),
+           'constraints' => array(
+                new NotBlank(),
+                new Range(array('min'=> 1))
+            )		
+           ))
         ->add('save','submit', array(
 			'label' => 'save',
 			)
@@ -73,7 +79,7 @@ class ResourceRoomType extends AbstractType
     {
         return 'resourceRoom';
     }
-   
+ 
     /*public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(

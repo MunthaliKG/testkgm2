@@ -17,7 +17,7 @@
 		var $host = 'localhost';
 		var $user = 'root';
 		var $password = '';
-		var $database = 'snlis';
+		var $database = 'hhcms';
 		var $persistent = false;
         
         var $conn=NULL;
