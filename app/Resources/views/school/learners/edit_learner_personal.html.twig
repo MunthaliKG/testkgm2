@@ -8,7 +8,9 @@
 	{% endembed %}
 {% endblock %}
 {% block context_options %}
-			<a href="{{ path('learner_exit', {"emisCode":emisCode, "learnerId":learnerId }) }}" class="btn btn-sm">Learner exited school</a>
+	{% if learner != 'new' %}
+		<a href="{{ path('learner_exit', {"emisCode":emisCode, "learnerId":learnerId }) }}" class="btn btn-sm">Learner exited school</a>
+	{% endif %}	
 {% endblock %}
 {# Form for learner personal information and guardian information #}
 	{% block form_container %}
@@ -26,11 +28,10 @@
 		{{ form_errors(form1) }}
 		
 		<div class="row">
-
 			<div class="col-sm-6">
 				<fieldset class="fieldset">
 					<legend><small>Personal Information</small></legend>
-					{{ form_row(form1.idlwd, {'attr':{'readonly': readonly}}) }}			
+					{{ form_row(form1.idlwd, {'attr':{'readonly': readonly, 'autofocus':'true'}}) }}			
 					{{ form_row(form1.first_name, {'attr':{'autofocus':'true'}}) }}
 					{{ form_row(form1.last_name) }}
 					{{ form_row(form1.initials) }}

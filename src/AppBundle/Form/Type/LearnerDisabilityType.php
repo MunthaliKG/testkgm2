@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Range;
 
 //this class builds the form that is used to add/edit a learner's disability/special need
 class LearnerDisabilityType extends AbstractType
@@ -68,10 +69,18 @@ class LearnerDisabilityType extends AbstractType
 			)
 		)
 		->add('identification_date','date', array(
-			'label' => 'Identified on',
+			'label' => 'Identified on (yyyy-mm-dd)',
 			'format' => 'yyyy-MM-dd',
-			'constraints' => array(new NotBlank()),
-			'attr' => array('data-date-format'=>'dd-mm-yyyy'),
+			'years' => range(date('Y')-30, date('Y')),
+			'constraints' => array(new NotBlank(), new Range(array(
+				'min'=>'-30 years',
+				'max'=>'now', 
+				'maxMessage'=>'This date should be '.date('M j, Y').' or less'
+				))),
+			'attr' => array(
+				'data-date-format'=>'dd-mm-yyyy',
+				'max' => date('Y-m-d')
+				),
 			)
 		)
 		->add('save','submit', array('label' => 'save'));

@@ -130,9 +130,10 @@
 				{% endfor %}
 				</div>
 				{# <!-- Left and right controls --> #}
-				{% if counter > 2 %}
-					<div class="row disability-pager">
-						<div class="col-sm-12">
+				
+				<div class="row disability-pager">
+					<div class="col-sm-12">
+						{% if counter > 2 %}
 							<ul class="pager">
 								<li>
 									<a class="" href="#disabilityFormsCarousel" role="button" data-slide="prev">
@@ -160,11 +161,11 @@
 										<span class="fa fa-chevron-right" aria-hidden="true"></span>
 									</a>
 								</li>
-								<button id="showAddDisability" class="btn btn-sm pull-right"><i class="fa fa-plus"></i> Add Disability</button>
 							</ul>
-						</div>
+						{% endif %}
+						<button id="showAddDisability" class="btn btn-sm pull-right"><i class="fa fa-plus"></i> Add Disability</button>
 					</div>
-				{% endif %}	
+				</div>				
 			</div>
 	
 	<hr/>
@@ -182,7 +183,7 @@
 			<div class="form-group">
 				<div class="col-sm-5"></div>
 				<div class="col-sm-7">
-					<button id="hideAddDisability" class="btn btn-sm"><i class="fa fa-remove"></i> Cancel</button>
+					<button id="hideAddDisability" type="button" class="btn btn-sm"><i class="fa fa-remove"></i> Cancel</button>
 					{{ form_widget(newform.save, {'before_label':'<i class="fa fa-check"></i> '}) }}
 				</div>
 			</div>
