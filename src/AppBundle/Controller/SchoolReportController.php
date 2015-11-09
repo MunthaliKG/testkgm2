@@ -57,6 +57,11 @@ class SchoolReportController extends Controller{
 
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
+                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+				$sntLastYr = $sntLatestYr['yr'] - 1;
+                                $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+				$lwdLastYr = $lwdLatestYr['yr'] - 1;
+                                $options['chaka'] = $lwdLatestYr['yr'];
 			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
 
 				//get the latest year from the lwd_belongs to school table
@@ -109,6 +114,24 @@ class SchoolReportController extends Controller{
 				/*Summary of learners with special needs section*/
 				if(in_array(1, $formData['reports'])){//if the summary of learners with special needs option was checked
 					$options['specialNeeds'] = true;
+                                        $learnersTransOut = $connection->fetchall('select trans.* '
+                                        . 'from (SELECT lastYr.* '
+                                            . 'from (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ? and year = ?) as lastYr '
+                                            . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ? and year = ?) as thisYr '
+                                            . 'on (lastYr.idlwd = thisYr.idlwd) where thisYr.idlwd IS NULL) as trans '
+                                        . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in school_exit
+                                        . 'on (trans.idlwd = exits.idlwd) '
+                                        . 'where exits.idlwd IS NULL', [$emisCode, $lwdLastYr, $emisCode, $lwdLatestYr['yr'],$lwdLatestYr['yr']]);
+                                
+                                $learnersTransIn = $connection->fetchall('select trans.* '
+                                        . 'from (SELECT lastYr.* '
+                                            . 'from (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ? and year = ?) as lastYr '
+                                            . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ? and year = ?) as thisYr '
+                                            . 'on (lastYr.idlwd = thisYr.idlwd) where thisYr.idlwd IS NULL) as trans '
+                                        . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in school_exit
+                                        . 'on (trans.idlwd = exits.idlwd) '
+                                        . 'where exits.idlwd IS NULL', [$emisCode, $lwdLatestYr['yr'], $emisCode, $lwdLastYr, $lwdLatestYr['yr']]);
+                                
 					//get students enrolled this year
 					$enrolled = $connection->fetchAll('SELECT sex, year FROM lwd NATURAL JOIN lwd_belongs_to_school 
 						WHERE emiscode = ? GROUP BY idlwd HAVING COUNT(idlwd) = 1 AND `year` = ?', 
@@ -126,8 +149,18 @@ class SchoolReportController extends Controller{
 					$options['dropoutTotal'] = count($dropouts);
 					$options['dropoutBoys'] = $dataConverter->countArray($dropouts, 'sex', 'M');
 					$options['dropoutGirls'] = $options['dropoutTotal'] - $options['dropoutBoys'];
+                                        
+                                        //transfers out
+                                        $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
+                                        $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
+                                        $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
 
-					//get learners completed std 8
+                                        //transfer in
+                                        $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
+                                        $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
+                                        $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
+					
+                                        //get learners completed std 8
 					$completed = $dataConverter->selectFromArrayBool($exited, 'reason', '= "completed"');
 					$options['completedTotal'] = count($completed);
 					$options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');

@@ -1,0 +1,70 @@
+{% form_theme learnerFinderForm 'bootstrap_3_horizontal_layout.html.twig' %}
+{% extends 'district/district.html.twig' %}
+
+{% set iddistrict = app.request.attributes.get('_route_params')['iddistrict'] %} {# get the district id from the Route#}
+
+{% block vertnav %}
+    <li><a id="materials" district="{{ iddistrict }}" href="{{ path('district_snl',{"iddistrict": iddistrict,})}}" class="{% block district_snl %}{% endblock %}">District SNL reports</a></li>
+    <li><a href="#" class="{% block district_facility %}{% endblock %}"> District school facility reports </a></li>
+
+{%endblock%}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-1">                        
+        </div>
+        <div class="col-sm-11">
+                {#<h4><b>Transfer {{district.district_name}} | Distict number: {{ iddistrict }} | Number of Schools: {{ numOfSchools }}</b></h4>#}
+        </div>        			
+    </div>
+                {{ form_start(learnerFinderForm) }}
+            {{ form_errors(learnerFinderForm) }}
+
+            <div class="row">
+            <div class="col-sm-12">
+                <fieldset class="fieldset">
+                    <legend><small>Transfer Learner</small></legend>
+                    <div class="col-sm-5">      
+                        <fieldset>
+                    {{ form_row(learnerFinderForm.district) }}
+                    {#{{ form_widget(form1.light_note, {'label_attr':{'class':'sr-only'}} ) }}#}
+                    {{ form_row(learnerFinderForm.schoolTo) }}
+                        </fieldset>
+                        </div>
+                        <div class="col-sm-3">      
+                        <fieldset>
+                            {{ form_widget(learnerFinderForm.school) }} <br>
+                            {{ form_widget(learnerFinderForm.std) }}
+                            </fieldset>
+                        </div>
+                     
+                       
+                     <div class="col-sm-3">      
+                        <fieldset>
+                            {{ form_widget(learnerFinderForm.learner) }} <br>
+                            {{ form_widget(learnerFinderForm.year) }} 
+                            </fieldset>
+                        </div>                                        
+                 </fieldset>
+            </div>
+                <div class="col-sm-4">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                </div>
+                <div class="col-sm-4">
+                <p class="text-left">
+                       {{ form_widget(learnerFinderForm.save, {'attr':{'class':'btn btn-default'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
+                </p>
+                </div>
+            </div>
+            {{ form_end(learnerFinderForm) }}
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/datepicker/css/datepicker.css') }}">
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/datepicker/js/bootstrap-datepicker.js')}}"></script>
+{% endblock %}
