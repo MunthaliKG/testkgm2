@@ -59,7 +59,8 @@ class LearnerPersonalType extends AbstractType
 		->add('distance_to_school', 'integer', array(
 			'label' => 'Distance to school (Km)',
 			'constraints' => array(
-				new NotBlank(), 
+				new NotBlank(),
+                                new Range(array('min'=> 1)),
 				new Type(array('type'=>'integer','message'=>'Please enter a valid distance value'))
 				)
 			)

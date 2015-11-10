@@ -14,7 +14,15 @@
 {% endblock %}
 {# Form for learner personal information and guardian information #}
 	{% block form_container %}
-
+                {% if app.session.flashBag.has('learnerExists') %}       
+                            {% for msg in app.session.flashBag.get('learnerExists') %}
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span></button>
+                                    {{ msg }}
+                                </div>
+                            {% endfor %}        
+                        {% endif %}
 		{# render the learner personal information form #}
 		{{ form_start(form1) }}
 		{{ form_errors(form1) }}
@@ -29,8 +37,7 @@
 					{{ form_row(form1.initials) }}
 					{{ form_row(form1.sex, {'label_attr':{'class':'radio-inline'}}) }}
 					{{ form_row(form1.dob) }}
-					{{ form_row(form1.home_address) }}
-					<br><br>
+					{{ form_row(form1.home_address) }}					
 					{{ form_row(form1.distance_to_school) }}	
 					{{ form_row(form1.std) }}										
 				</fieldset>

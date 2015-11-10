@@ -14,7 +14,42 @@ $(document).ready(function(){
 	        })
 		}
 	})
+        
+        // listen for change of value in the district select list in district page
+	$('#lwdfinder_district').change(function(event){
 
+		var district = $(this).val();
+		if(district !== ""){
+			//use ajax to auto-populate the school select list based on the selected district
+			$.ajax({
+				url: Routing.generate('school_ajax',{id: district})
+			})
+			.done(function (data) {
+	            $('#lwdfinder_school').html(data);
+	        })
+		}
+	})
+        //---------------
+        // listen for change of value in the district select list in district page
+	$('#lwdfinder_school').change(function(event){
+
+		var school = $(this).val();
+		if(school !== ""){
+			//use ajax to auto-populate the learner select list based on the selected school
+			$.ajax({
+				url: Routing.generate('learner_ajax',{id: school})
+			})
+			.done(function (data) {
+	            $('#lwdfinder_learner').html(data);
+	        })
+		}
+	})
+        //submit the form if a learner is selected
+	$('#lwdfinder_learner').change(function(event){                
+		if($(this).val() !== "0"){
+			$('#findLearnerForm').submit();
+		}
+	});
 	//submit the form if a school is selected
 	$('#schoolfinder_school').change(function(event){
 
@@ -78,10 +113,17 @@ $(document).ready(function(){
     }
     
     $('#learner_exit_reason').change(function(event){
-		if($(this).val() === "other"){
-			$('#learner_exit_other_reason').prop('readonly','');
+        if($(this).val() === "other"){
+            $('#learner_exit_other_reason').prop('readonly','');
+        }else{
+            $('#learner_exit_other_reason').prop('readonly','readonly');
+        }
+    });
+    $('#customReport_standard').change(function(event){
+		if($(this).val() === "Std 1 TO..."){
+			$('#customReport_standard').prop('readonly','');
 		}else{
-			$('#learner_exit_other_reason').prop('readonly','readonly');
+			$('#customReport_standard').prop('readonly','readonly');
 		}
 	});
 

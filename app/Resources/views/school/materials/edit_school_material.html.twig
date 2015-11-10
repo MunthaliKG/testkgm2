@@ -7,6 +7,33 @@
     {{ parent() }}
 {% endblock %}
 {% block form_container %}
+    {% if app.session.flashBag.has('roomExists') %}       
+            {% for msg in app.session.flashBag.get('roomExists') %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+    {% endif %}
+    {% if app.session.flashBag.has('roomUpdated') %}       
+            {% for msg in app.session.flashBag.get('roomUpdated') %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+    {% endif %}
+    {% if app.session.flashBag.has('roomAdded') %}       
+            {% for msg in app.session.flashBag.get('roomAdded') %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+    {% endif %}
     {{ form_start(form1) }}
     {{ form_errors(form1) }}
     <div class="row">

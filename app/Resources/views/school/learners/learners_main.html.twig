@@ -24,13 +24,7 @@
 	<hr>
 	<div class="row">
 		<div class="col-sm-12">
-			<div class="row">
-				<div class="col-sm-12">
-					{% block context_options %}
-						<a href="{{ path('learner_transfer', {"emisCode":emisCode})}}" class="btn btn-sm">Add transfer from other school</a>
-					{% endblock %}
-				</div>
-			</div>
+			
 			
 			{% block form_container %}
 				{% set learnerExitMessage = app.session.flashbag.get('exitMessage') %}

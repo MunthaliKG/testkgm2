@@ -13,8 +13,14 @@
         </div>
         <div class="col-sm-11">
                 <h4><b>{{district.district_name}} | Distict number: {{ iddistrict }} | Number of Schools: {{ numOfSchools }}</b></h4>
-        </div>	
+        </div>        			
     </div>
+        <div class="row">
+        <div class="col-sm-5">
+            {% block context_options %}
+                <a href="{{ path('learner_transfer', {"iddistrict":iddistrict})}}" class="btn btn-sm">Add transfers from other schools</a>
+            {% endblock %}
+        </div></div>
     <hr>
     <div class="row">
         <div class="col-sm-1">                        

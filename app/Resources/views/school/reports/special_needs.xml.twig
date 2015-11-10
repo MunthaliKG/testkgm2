@@ -6,11 +6,15 @@
   </Row>
   <Row>
     <Cell ss:MergeRight="2" ss:StyleID="s3"><Data ss:Type="String">LWD Enrolled this year</Data></Cell>  
-    <Cell ss:MergeRight="2" ss:Index="4" ss:StyleID="s3"><Data ss:Type="String">Transfers to other schools</Data></Cell>
+    <Cell ss:MergeRight="2" ss:Index="4" ss:StyleID="s3"><Data ss:Type="String">Transfers in</Data></Cell>
+    <Cell ss:MergeRight="2" ss:Index="4" ss:StyleID="s3"><Data ss:Type="String">Transfers out</Data></Cell>
     <Cell ss:MergeRight="2" ss:Index="7" ss:StyleID="s3"><Data ss:Type="String">Dropouts</Data></Cell>
-    <Cell ss:MergeRight="2" ss:Index="10" ss:StyleID="s3"><Data ss:Type="String">LWD who completed Std 8</Data></Cell>
+    <Cell ss:MergeRight="2" ss:Index="10" ss:StyleID="s3"><Data ss:Type="String">Completed Std 8</Data></Cell>
   </Row>
   <Row>
+    <Cell><Data ss:Type="String">Boys</Data></Cell>
+    <Cell><Data ss:Type="String">Girls</Data></Cell>
+    <Cell><Data ss:Type="String">Total</Data></Cell>
     <Cell><Data ss:Type="String">Boys</Data></Cell>
     <Cell><Data ss:Type="String">Girls</Data></Cell>
     <Cell><Data ss:Type="String">Total</Data></Cell>
@@ -28,12 +32,19 @@
   <Cell><Data ss:Type="Number">{{ enrolledBoys }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ enrolledGirls }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ enrolledTotal }}</Data></Cell>
-
-  <Cell><Data ss:Type="Number">20</Data></Cell><Cell><Data ss:Type="Number">20</Data></Cell><Cell><Data ss:Type="Number">data</Data></Cell>
+ 
+  <Cell><Data ss:Type="Number">{{ numBoysTRin }}</Data></Cell>
+  <Cell><Data ss:Type="Number">{{ numGirlsTRin }}</Data></Cell>
+  <Cell><Data ss:Type="Number">{{ totalTransferIn }}</Data></Cell>
+  
+  <Cell><Data ss:Type="Number">{{ numBoysTRout }}</Data></Cell>
+  <Cell><Data ss:Type="Number">{{ numGirlsTRout }}</Data></Cell>
+  <Cell><Data ss:Type="Number">{{ totalTransferOut }}</Data></Cell>
 
   <Cell><Data ss:Type="Number">{{ dropoutBoys }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ dropoutGirls }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ dropoutTotal }}</Data></Cell>
+  
   <Cell><Data ss:Type="Number">{{ completedBoys }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ completedGirls }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ completedTotal }}</Data></Cell>

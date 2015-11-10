@@ -23,8 +23,10 @@ class DefaultController extends Controller
      */
     public function listSchoolsAction(Request $request){//this method will only be called through ajax
         $id = $request->query->get('id');
+        $connection = $this->get('database_connection');
         $schools = $this->getDoctrine()->getRepository('AppBundle:School')->findByIddistrict($id);
-
+        //$schools = $connection->fetchAll("SELECT DISTINCT emiscode, school_name 
+            //FROM school WHERE iddistrict = ?", array($id));
         /*add the list of schools to the session
         The reason we want to do this is because select lists populated using ajax always cause $form->isValid()
          to return false. Therefore, we need to change the 'choices' attribute of this element in the SchoolFinderType
@@ -140,7 +142,7 @@ class DefaultController extends Controller
         $learnerFinderForms->processForms();
         
         if($learnerFinderForms->areValid()){
-            return $this->redirectToRoute('zone_main',array('idzone'=>$learnerFinderForms->getZoneId()), 301);
+            return $this->redirectToRoute('district_transfer',array('iddistrict'=>$session->get('iddistrict'),'learnerId'=>$learnerFinderForms->getLearnerId()), 301);
         }
         $learnerName = "";
         if($request->getSession()->has('idzone')){
@@ -174,7 +176,12 @@ class DefaultController extends Controller
      */
     public function listLearnersAction(Request $request){//this method will only be called through ajax
         $emis = $request->query->get('id');
-        $learners = $this->getDoctrine()->getRepository('AppBundle:LwdBelongsToSchool')->findBy(array('emiscode'=>$emis));
+        $connection = $this->get('database_connection');
+    	//$lwd = $connection->fetchAll("SELECT first_name, last_name FROM lwd 
+    	//				WHERE idlwd = ?", array($learners.idlwd));
+        $learners = $connection->fetchAll("SELECT DISTINCT idlwd, first_name, last_name 
+            FROM lwd NATURAL JOIN lwd_belongs_to_school WHERE emiscode = ?", array($emis));
+        //$this->getDoctrine()->getRepository('AppBundle:LwdBelongsToSchool')->findBy(array('emiscode'=>$emis));
 
         /*add the list of schools to the session
         The reason we want to do this is because select lists populated using ajax always cause $form->isValid()
@@ -182,11 +189,7 @@ class DefaultController extends Controller
          form class to include the new list.
         since we are using a FlashBag, this session variable will be cleared after the next request
         */
-        $this->get('session')->getFlashBag()->set('learnerList', $learners);
-        $connection = $this->get('database_connection');
-    	$lwd = $connection->fetchAll("SELECT first_name, last_name FROM lwd 
-    					WHERE idlwd = ?", array($learners.idlwd));
-        
+        $this->get('session')->getFlashBag()->set('learnerList', $learners);                
         return $this->render('school/learners/learnerlist.html.twig', array('learners'=>$learners));
     }
     /**

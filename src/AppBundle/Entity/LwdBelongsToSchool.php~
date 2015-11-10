@@ -115,32 +115,4 @@ class LwdBelongsToSchool
     {
         return $this->idlwd;
     }
-    /**
-     * @var boolean
-     */
-    private $std;
-
-
-    /**
-     * Set std
-     *
-     * @param boolean $std
-     * @return LwdBelongsToSchool
-     */
-    public function setStd($std)
-    {
-        $this->std = $std;
-
-        return $this;
-    }
-
-    /**
-     * Get std
-     *
-     * @return boolean 
-     */
-    public function getStd()
-    {
-        return $this->std;
-    }
 }

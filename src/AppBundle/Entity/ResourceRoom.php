@@ -26,8 +26,10 @@ class ResourceRoom
      */
     private $state;
     /**
-     * @var \DateTime
-     *
+     * @var string
+     * 
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")     
      * @ORM\Column(name="year_recorded", type="year", nullable=false)
      */
     
@@ -64,10 +66,11 @@ class ResourceRoom
      */
     private $available_in;
 
- /**
+     /**
      * @var integer
      *
      * @ORM\Column(name="quantity", type="integer", nullable=false)
+     * 
      */
     private $quantity;
     /**

@@ -43,7 +43,7 @@ class LearnerExitType extends AbstractType
 
                 if($data['reason'] == 'other'){
                 	$form->add('other_reason', 'textarea', array(
-                		'label' => 'Other',
+                		'label' => 'Other Reason',
                 		'constraints' => array(new NotBlank(array('message'=>'You are required to fill this field if you select "Other" from above'))),
                 		'required' => false,
                 		)

@@ -67,20 +67,20 @@ class TeacherType extends AbstractType
 			'expanded' => true,
 			'multiple' => true,)
 		)
-		->add('year_started', 'date', array(
+		->add('year_started', 'datetime', array(
 			'label' => 'Year Started Teaching',
 			'widget' => 'single_text',
-			'format' => 'dd-MM-yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
+			'format' => 'yyyy',
+			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
 			'constraints' => array(new NotBlank()),
 			)
 		)
                 //This is for school_has_snt table
-                ->add('year', 'date', array(
+                ->add('year', 'datetime', array(
 			'label' => 'Current working year at School',
 			'widget' => 'single_text',
-			'format' => 'dd-MM-yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
+			'format' => 'yyyy',
+			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
 			'constraints' => array(new NotBlank()),
 			)
 		)

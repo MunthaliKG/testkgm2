@@ -5,12 +5,13 @@
 <table class="{% if isHtml %} table table-condensed {% else %} pdf {% endif %}" {% if not isHtml %} border="1" {% endif %}>
 	<tr>
 		<th colspan="3">LWD Enrolled this Year</th>
-		<th colspan="3">Transfers to Other Schools</th>
+		<th colspan="3">Transfers in</th>
+                <th colspan="3">Transfers out</th>
 		<th colspan="3">Dropouts</th>
-		<th colspan="3">LWD Who Completed Std 8</th>
+		<th colspan="3">Completed Std 8</th>
 	</tr>
 	<tr>
-		{% for i in 0..3 %}
+		{% for i in 0..4 %}
 			<td>Boys</td><td>Girls</td><td>Total</td>
 		{% endfor %}
 	</tr>
@@ -19,8 +20,14 @@
 		<td>{{ enrolledBoys }}</td>
 		<td>{{ enrolledGirls }}</td>
 		<td>{{ enrolledTotal }}</td>
-        
-		<td></td><td></td><td></td>
+                {#Transfers in#}
+		<td>{{ numBoysTRin }}</td>
+                <td>{{ numGirlsTRin }}</td>
+                <td>{{ totalTransferIn }}</td>
+                {#Transfers out#}
+                <td>{{ numBoysTRout }}</td>
+                <td>{{ numGirlsTRout }}</td>
+                <td>{{ totalTransferOut }}</td>
 		{# dropouts #}
 		<td>{{ dropoutBoys }}</td>
 		<td>{{ dropoutGirls }}</td>

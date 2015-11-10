@@ -80,7 +80,7 @@ class RoomState
     /**
      * @var string
      *
-     * @ORM\Column(name="acces_note", type="string", length=100, nullable=true)
+     * @ORM\Column(name="access_note", type="string", length=100, nullable=true)
      */
     private $accessNote;
 
@@ -234,7 +234,6 @@ class RoomState
     {
         return $this->enoughVentilation;
     }
-
     /**
      * Set otherObservations
      *
