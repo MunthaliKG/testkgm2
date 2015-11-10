@@ -270,6 +270,7 @@ class SchoolController extends Controller{
         public function editMaterialAction(Request $request, $materialId, $emisCode){
             $connection = $this->get('database_connection');
             $defaultData = array();
+            echo $materialId;
             if($materialId != 'new'){/*if we are not adding a new material, fill the form fields with
             	the data of the selected learner.*/
             	$materials = $connection->fetchAll('SELECT * FROM room_state
@@ -347,7 +348,7 @@ class SchoolController extends Controller{
                 
                 $roomState = $this->getDoctrine()->getRepository('AppBundle:RoomState')
                         ->findOneBy(array('idRoom'=>$formData['room_id'],'emiscode'=>$emisCode));
-                if (($roomState) && ($materialId != 'new')){
+                //if (($roomState) && ($materialId != 'new')){
                     //if object already exists but is being edited ie not new
                     $em->persist($material);
                     $em->flush();
@@ -358,10 +359,10 @@ class SchoolController extends Controller{
                         $request->getSession()->getFlashBag()
                             ->add('roomAdded', 'Room with id ('.$formData['room_id'].') added successfully');
                     }
-                }else {
-                    $request->getSession()->getFlashBag()
-                            ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');                    
-                }            
+                //}else {
+                    // $request->getSession()->getFlashBag()
+                    //         ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');                    
+                //}            
                
                 //reproduce new entered details for validation
                 if($materialId == 'new'){
