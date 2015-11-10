@@ -620,7 +620,7 @@ class SchoolController extends Controller{
                 //check if learnerId already exists and handle the error
                 $lwdId = $this->getDoctrine()->getRepository('AppBundle:Lwd')
                         ->findOneBy(array('idlwd'=>$formData['idlwd']));
-                if (($lwdId) && ($learnerId != 'new')){
+                //if (($lwdId) && ($learnerId != 'new')){
                     //if object already exists but is being edited ie not new
                     //write the objects to the database
                     $em = $this->getDoctrine()->getManager();
@@ -644,10 +644,10 @@ class SchoolController extends Controller{
                             ->add('lwdAdded', 'LWD with id ('.$formData['idlwd'].') added successfully');
                     }
                     return $this->redirectToRoute('edit_learner_disability',['emisCode'=>$emisCode, 'learnerId'=>$id_lwd], 301);
-                }else {
+               // }else {
                     $request->getSession()->getFlashBag()
                             ->add('learnerExists', 'LWD with id ('.$formData['idlwd'].') already exists');                    
-                } 
+                //} 
       	}
       	//if this is a new learner being added, we want to make the id field uneditable
       	if($learnerId != 'new'){
