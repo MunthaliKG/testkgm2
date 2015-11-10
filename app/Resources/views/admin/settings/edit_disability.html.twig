@@ -1,0 +1,56 @@
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% extends 'admin/settings/admin_disabilities.html.twig' %}
+
+{% block form_container %}
+	<div class="row"><div class="col-sm-12">
+		{% set disabilityModifiedMessage = app.session.flashbag.get('disabilityModifiedMessage') %}
+		{% if disabilityModifiedMessage is not empty %}
+			{% for message in disabilityModifiedMessage %}
+				<div class="alert alert-success alert-dismissible" role="alert">
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					{{ message }}
+				</div>
+			{% endfor %}
+		{% endif %}	
+		</div>	
+	</div>
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-sm-6">
+			{{ form_errors(form)}}
+			{{ form_row(form.iddisability) }}
+			{{ form_row(form.disability_name)}}
+			{{ form_row(form.iddisability_category)}}
+			{{ form_row(form.teacher_speciality_required)}}
+			{{ form_row(form.general_category)}}
+			{{ form_row(form.disability_description)}}
+			{{ form_row(form.levels)}}
+		</div>
+		<div class="col-sm-6">
+			<p><b>Needs</b></p>
+			<div class="row">
+				{% set counter = 1 %}
+				{% set column = 1 %}
+				<div class="col-sm-4">
+					{% for need in form.needs %}
+						{{ form_widget(need)}}
+						{% if counter == 11 and column != 3 %}
+							</div><div class="col-sm-4" style="border-left: black 1px solid">
+							{% set counter = 1 %}
+							{% set column = column + 1 %}
+						{% else %}
+							{% set counter = counter + 1 %}
+						{% endif %}
+					{% endfor %}
+				</div>
+			</div>
+			{{ form_widget(form.needs,{'label_attr':{'class':'checkbox-inline'}})}}
+		</div>
+	</div><hr>
+	<div class="row">
+		<div class="col-sm-12">
+			{{ form_widget(form.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
+		</div>
+	</div><br>
+	{{ form_end(form)}}
+{% endblock %}

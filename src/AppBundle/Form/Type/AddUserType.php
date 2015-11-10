@@ -99,13 +99,20 @@ class AddUserType extends AbstractType
 			if (!$user) {
 				return;
 			}
-			//check whether the role is super administrator and removed access level, access domain
-			//and allowed actions fields
-			if ($user['roles'] == 'ROLE_SUPER_ADMIN') {
-				$form->remove('access_level');
+			
+			//remove different fields based on the value of other fields
+			if($user['roles'] == 'ROLE_SUPER_ADMIN' || $user['access_level'] == '4'){
 				$form->remove('access_domain');
+			}
+
+			if($user['roles'] == 'ROLE_SUPER_ADMIN' || $user['roles'] == 'ROLE_ADMIN'){
 				$form->remove('allowed_actions');
-			} 
+			}
+
+			if($user['roles'] == 'ROLE_SUPER_ADMIN'){
+				$form->remove('access_level');
+			}
+			
 		});
 	}
 	public function getName()
