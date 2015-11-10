@@ -347,7 +347,7 @@ class SchoolController extends Controller{
                 
                 $roomState = $this->getDoctrine()->getRepository('AppBundle:RoomState')
                         ->findOneBy(array('idRoom'=>$formData['room_id'],'emiscode'=>$emisCode));
-                if (($roomState) && ($materialId != 'new')){
+                //if (($roomState) && ($materialId != 'new')){
                     //if object already exists but is being edited ie not new
                     $em->persist($material);
                     $em->flush();
@@ -358,10 +358,10 @@ class SchoolController extends Controller{
                         $request->getSession()->getFlashBag()
                             ->add('roomAdded', 'Room with id ('.$formData['room_id'].') added successfully');
                     }
-                }else {
-                    $request->getSession()->getFlashBag()
-                            ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');                    
-                }            
+                //}else {
+                //    $request->getSession()->getFlashBag()
+                //            ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');                    
+                //}            
                
                 //reproduce new entered details for validation
                 if($materialId == 'new'){
