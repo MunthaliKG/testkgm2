@@ -2,6 +2,37 @@
 
 {% block admin_disabilities_menuitem %}active{% endblock %}
 
+{% set disabilityId = app.request.get('disabilityId') %}
+
 {% block rightcolumn %}
-	
+	<br>
+	<div class="row">
+		<div class="col-sm-4">
+			{# embed the controller that returns the form for selecting existing disabilities #}
+			{{ render(controller('AppBundle:Settings:findDisabilityForm',{"disabilityId":disabilityId})) }}
+		</div>
+		<div class="col-sm-8">
+			<p class="text-right"><a href="{{ path('edit_disability',{"disabilityId": "new"}) }}" class="btn btn-sm" id="add_disability"><i class="fa fa-plus fa-lg"></i> Add Disability</a></p>
+		</div>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-sm-12">
+		{% block form_container %}
+			{% set disabilityModifiedMessage = app.session.flashbag.get('disabilityModifiedMessage') %}
+			{% if disabilityModifiedMessage is not empty %}
+				{% for message in disabilityModifiedMessage %}
+					<div class="alert alert-success alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endblock %}
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+	<script src="{{ asset('assets/js/admin_disability.js') }}"></script>
 {% endblock %}

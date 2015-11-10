@@ -70,6 +70,7 @@ class LearnerDisabilityType extends AbstractType
 		)
 		->add('identification_date','date', array(
 			'label' => 'Identified on (yyyy-mm-dd)',
+			'widget' => 'single_text',
 			'format' => 'yyyy-MM-dd',
 			'years' => range(date('Y')-30, date('Y')),
 			'constraints' => array(new NotBlank(), new Range(array(
@@ -78,7 +79,8 @@ class LearnerDisabilityType extends AbstractType
 				'maxMessage'=>'This date should be '.date('M j, Y').' or less'
 				))),
 			'attr' => array(
-				'data-date-format'=>'dd-mm-yyyy',
+				'class'=>'datepicker',
+				'data-date-format'=>'yyyy-mm-dd',
 				'max' => date('Y-m-d')
 				),
 			)

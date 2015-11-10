@@ -7,7 +7,7 @@
 	<div class="col-sm-6 col-sm-offset-3">
 		{{ form_start(form) }}
 			<fieldset>
-				<legend class="text-center"><small>Add User</small></legend>
+				<legend class="text-center"><small>{% if edit is defined %}Edit{% else %}Add{% endif %} User</small></legend>
 				{{ form_errors(form) }}
 				{{ form_row(form.first_name) }}
 				{{ form_row(form.last_name) }}

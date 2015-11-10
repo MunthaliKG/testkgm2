@@ -35,6 +35,8 @@ class AdminController extends Controller{
 				$formData = $form->getData();
 				if($formData['show_disabled'] != null){
 					$session->set('show_disabled_filter', 1);
+				}else{
+					$session->remove('show_disabled_filter');
 				}
 				if(($firstName = $formData['first_name']) != null){
 					$session->set('fname_filter', $firstName);
@@ -51,9 +53,10 @@ class AdminController extends Controller{
 
 		//build the where clause
 		$needsAnd = false;
-		if($session->has('show_disabled_filter')){
+		if(!$session->has('show_disabled_filter')){
 			$needsAnd = true;
 			$whereClause .= " WHERE enabled = 1";
+		}else{
 			$defaultData['show_disabled'] = array(1);
 		}
 		if($session->has('fname_filter')){

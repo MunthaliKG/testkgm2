@@ -1,7 +1,7 @@
 $(document).ready(function(){
-	if($('#adduser_roles').val() === 'ROLE_SUPER_ADMIN'){
-		$('#adduser_access_level, #adduser_access_domain, #adduser_allowed_actions').prop('disabled','disabled');
-	}
+	$('#access_district_div').hide();
+	toggleUserRole($('#adduser_roles'), true);
+	toggleAccessLevel($('#adduser_access_level'));
 	
 	$('#access_district').change(function(event){
 		var accessDistrict = $(this).val();
@@ -17,44 +17,66 @@ $(document).ready(function(){
 	            $('#adduser_access_domain').html(data);
 	        })
 		}
+		$('#adduser_access_domain').prop('disabled','');
 		
 	});
-
-	$('#access_district_div').hide();
 	
 	$('#adduser_access_level').change(function(event){
-		var level = $(this).val();
-		if(level !== '3' && level !== '4' && level !== ''){
-			$('#access_district_div').show();
-		}
-		else{
-			$('#access_district_div').hide();
-			if(level === '3'){
-				var accessDistrict = $(this).val();
-				/*use ajax to populate the select list with districts*/
-				$.ajax({
-					url: Routing.generate('populate_access_domain', {level: 3, district: 0})
-				})
-				.done(function(data) {
-					$('#adduser_access_domain').html(data);
-				})
-			}
-		}
+		toggleAccessLevel($(this));
 	});
 
 	$('#adduser_roles').change(function(event){
-		var role = $(this).val();
-		var dependentFields = $('#adduser_access_level, #adduser_access_domain, #adduser_allowed_actions');
-		if(role === 'ROLE_SUPER_ADMIN'){
-			$('#adduser_access_level').val('4');
-			$('#adduser_access').val('4');
-			$('#adduser_allowed_actions').val('2');
-			$('#access_district_div').hide();
-			dependentFields.prop('disabled','disabled');
-		}
-		else{
-			dependentFields.val('');
-			dependentFields.prop('disabled','');
-		}
+		toggleUserRole($(this));
 	});
 });
+function toggleUserRole(object, pageLoad){
+	pageLoad = (pageLoad === undefined)? false: pageLoad;
+	var role = object.val();
+	var dependentFields = $('#adduser_access_level, #adduser_access_domain');
+	if(role === 'ROLE_SUPER_ADMIN' || role === 'ROLE_ADMIN'){
+		$('#adduser_allowed_actions').val('2');
+		$('#adduser_allowed_actions').prop('disabled','disabled');
+
+		if(role === 'ROLE_SUPER_ADMIN'){
+			$('#adduser_access_level').val('4');
+			$('#adduser_access_domain').val('');
+			$('#access_district_div').hide();
+			dependentFields.prop('disabled','disabled');
+		}else{
+			if(pageLoad !== true)//if this function has not been called while the page is loading
+				$('#adduser_access_level').val('');
+			dependentFields.prop('disabled','');
+		}
+	}
+	else{
+		dependentFields.val('');
+		$('#adduser_allowed_actions').val('');
+		$('#adduser_allowed_actions').prop('disabled','');
+		dependentFields.prop('disabled','');
+	}
+}
+function toggleAccessLevel(object){
+	var level = object.val();
+	if(level !== '3' && level !== '4' && level !== ''){
+		$('#access_district_div').show();
+		$('#access_district').val('');
+		$('#adduser_access_domain').prop('disabled','disabled');
+	}
+	else{
+		$('#access_district_div').hide();
+		if(level === '3'){
+			/*use ajax to populate the select list with districts*/
+			$.ajax({
+				url: Routing.generate('populate_access_domain', {level: 3, district: 0})
+			})
+			.done(function(data) {
+				$('#adduser_access_domain').html(data);
+			})
+		}
+		if(level === '4'){
+			$('#adduser_access_domain').prop('disabled','disabled');
+		}else{
+			$('#adduser_access_domain').prop('disabled','');
+		}
+	}
+}

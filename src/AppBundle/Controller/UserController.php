@@ -65,15 +65,22 @@ class UserController extends Controller{
 			}
 			$user->setRoles(array($formData['roles']));
 
-			if($formData['roles'] != 'ROLE_SUPER_ADMIN'){
-				$user->setAccessLevel($formData['access_level']);
+			if($formData['roles'] == 'ROLE_SUPER_ADMIN' || $formData['access_level'] == '4'){
+				$user->setAccessDomain(0);
+			}else{
 				$user->setAccessDomain($formData['access_domain']);
+			}
+
+			if($formData['roles'] == 'ROLE_SUPER_ADMIN' || $formData['roles'] == 'ROLE_ADMIN'){
+				$user->setAllowedActions('2');
+			}else{
 				$user->setAllowedActions($formData['allowed_actions']);
 			}
-			else{
-				$user->setAccessLevel(4);
-				$user->setAccessDomain(0);
-				$user->setAllowedActions(2);
+
+			if($formData['roles'] == 'ROLE_SUPER_ADMIN'){
+				$user->setAccessLevel('4');
+			}else{
+				$user->setAccessLevel($formData['access_level']);
 			}
 			
 			//set default password for the user
@@ -150,17 +157,28 @@ class UserController extends Controller{
 			if($user){
 				$user->setFirstName($formData['first_name']);
 				$user->setLastName($formData['last_name']);
+
+				if($formData['roles'] == 'ROLE_USER'){
+					$formData['roles'] = '';
+				}
 				$user->setRoles(array($formData['roles']));
 
-				if($formData['roles'] != 'ROLE_SUPER_ADMIN'){
-					$user->setAccessLevel($formData['access_level']);
+				if($formData['roles'] == 'ROLE_SUPER_ADMIN' || $formData['access_level'] == '4'){
+					$user->setAccessDomain(0);
+				}else{
 					$user->setAccessDomain($formData['access_domain']);
+				}
+
+				if($formData['roles'] == 'ROLE_SUPER_ADMIN' || $formData['roles'] == 'ROLE_ADMIN'){
+					$user->setAllowedActions('2');
+				}else{
 					$user->setAllowedActions($formData['allowed_actions']);
 				}
-				else{
-					$user->setAccessLevel(4);
-					$user->setAccessDomain(0);
-					$user->setAllowedActions(2);
+
+				if($formData['roles'] == 'ROLE_SUPER_ADMIN'){
+					$user->setAccessLevel('4');
+				}else{
+					$user->setAccessLevel($formData['access_level']);
 				}
 
 				$um->updateUser($user);
@@ -172,7 +190,8 @@ class UserController extends Controller{
 		
 		return $this->render('admin/usermanagement/add_user.html.twig', array(
 			'form' => $form->createView(),
-			'districts' => $districts
+			'districts' => $districts,
+			'edit' => true
 			)
 		);
 	}

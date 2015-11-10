@@ -30,9 +30,9 @@ class User extends BaseUser
      */
     private $lastName;
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="access_level", type="integer", nullable=false)
+     * @ORM\Column(name="access_level", type="string", nullable=false)
      */
     private $accessLevel;
     /**
@@ -42,9 +42,9 @@ class User extends BaseUser
      */
     private $accessDomain;
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="allowed_actions", type="integer", nullable=false)
+     * @ORM\Column(name="allowed_actions", type="string", nullable=false)
      */
     private $allowedActions;
     /**
