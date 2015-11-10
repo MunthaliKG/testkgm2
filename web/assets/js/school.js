@@ -113,10 +113,17 @@ $(document).ready(function(){
     }
     
     $('#learner_exit_reason').change(function(event){
-		if($(this).val() === "other"){
-			$('#learner_exit_other_reason').prop('readonly','');
+        if($(this).val() === "other"){
+            $('#learner_exit_other_reason').prop('readonly','');
+        }else{
+            $('#learner_exit_other_reason').prop('readonly','readonly');
+        }
+    });
+    $('#customReport_standard').change(function(event){
+		if($(this).val() === "Std 1 TO..."){
+			$('#customReport_standard').prop('readonly','');
 		}else{
-			$('#learner_exit_other_reason').prop('readonly','readonly');
+			$('#customReport_standard').prop('readonly','readonly');
 		}
 	});
 

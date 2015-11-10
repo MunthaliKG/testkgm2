@@ -280,7 +280,7 @@ class SchoolReportController extends Controller{
 
 		$form->handleRequest($request);
                
-                $formData = $form->getData();
+                //$formData = $form->getData();
                 
 		if($form->isValid()){
 			$connection = $this->get('database_connection');

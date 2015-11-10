@@ -77,7 +77,7 @@ class DistrictController extends Controller{
         }
         $schools = array();
         foreach ($schoolList as $school) {
-            $schools[$school['emiscode']] = $learner['school_name'];
+            $schools[$school['emiscode']] = $school['school_name'];
         }
 
         $schoolsTo = $connection->fetchAll('SELECT emiscode, school_name '
@@ -88,7 +88,7 @@ class DistrictController extends Controller{
             $schoolsToChoices[$row['emiscode']] = $row['school_name'];
         }
         
-        $form1 = $this->createForm(new \AppBundle\Form\Type\LwdFinderType($schools,$learners, $schoolsToChoices));
+        $form1 = $this->createForm(new \AppBundle\Form\Type\LwdFinderType($schools,$learners,$schoolsToChoices));
         $form1->handleRequest($request);      
         if($form1->isValid()){                       
             $formData = $form1->getData();
