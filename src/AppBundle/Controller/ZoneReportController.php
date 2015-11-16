@@ -65,13 +65,13 @@ class ZoneReportController extends Controller{
 			//$options['school'] = $school;
                         $dataConverter = $this->get('data_converter');
                         $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
-				$sntLastYr = $sntLatestYr['yr'] - 1;
-                                $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
-				$lwdLastYr = $lwdLatestYr['yr'] - 1;
-                                $options['chaka'] = $lwdLatestYr['yr'];
-                                //schools in a zone
-                                $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);                               
-                                $options['numOfSchools'] = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools		
+                        $sntLastYr = $sntLatestYr['yr'] - 1;
+                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
+                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
+                        $options['chaka'] = $lwdLatestYr['yr'];
+                        //schools in a zone
+                        $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);                               
+                        $options['numOfSchools'] = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools		
         
 			/*Preliminary counts section*/
 			$learners = array();
@@ -79,9 +79,6 @@ class ZoneReportController extends Controller{
 			if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
 				$options['preliminary'] = true;
 
-                                
-                                
-                                
                                 //learner preliminary counts                                
                                 
 				$learnersLatestYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
@@ -105,8 +102,7 @@ class ZoneReportController extends Controller{
                                 //total enrolments
 				$options['totalEnrolled'] = $options['numBoys'] + $options['numGirls'];
                                 $options['totalEnrolledLastYear'] = $options['numBoysLY'] + $options['numGirlsLY'];
-                                
-                                                          
+                        
                                 //snt preliminary counts
 				$teachers = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $sntLatestYr['yr']]);
                                 
@@ -270,7 +266,7 @@ class ZoneReportController extends Controller{
                                 foreach ($dbNeeds as $key => $row) {
                                     $needs[$row['idneed']] = $row['needname'];
                                 }
-                                $available = array('Else Where'=>'Else Where', 'Resource room'=>'Resource room');
+                                $available = array('With Learner'=> 'With Learner', 'Resource room'=>'Resource room', 'Else Where'=>'Other');
                                 $teachingNeeds = array();
                                 $needsCount = $dataConverter->countArray($learnersNeeds, 'idzone', $idzone);
                                 
@@ -295,7 +291,6 @@ class ZoneReportController extends Controller{
                                 $options['teachingNeeds'] = $teachingNeeds;
                         }
                         /*End of Teaching and learning materials*/
-                        //exit;
 			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
 			if($formData['format'] == 'html' || $formData['format'] == 'pdf'){

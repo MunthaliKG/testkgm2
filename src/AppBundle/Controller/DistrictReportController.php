@@ -256,7 +256,7 @@ class DistrictReportController extends Controller{
                             foreach ($dbNeeds as $key => $row) {
                                 $needs[$row['idneed']] = $row['needname'];
                             }
-                            $available = array('Else Where'=>'Else Where', 'Resource room'=>'Resource room');
+                            $available = array('With Learner'=> 'With Learner', 'Resource room'=>'Resource room', 'Else Where'=>'Other');
                             $teachingNeeds = array();
                             $needsCount = $dataConverter->countArray($learnersNeeds, 'iddistrict', $iddistrict);
 

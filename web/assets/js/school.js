@@ -128,5 +128,4 @@ $(document).ready(function(){
 	});
 
 	$('[autofocus]:enabled:not([readonly]):first').focus();
-
 });

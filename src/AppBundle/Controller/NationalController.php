@@ -254,7 +254,7 @@ class NationalController extends Controller{
                             foreach ($dbNeeds as $key => $row) {
                                 $needs[$row['idneed']] = $row['needname'];
                             }
-                            $available = array('Yes'=>'Yes','No'=>'No');
+                            $available = array('With Learner'=> 'With Learner', 'Resource room'=>'Resource room', 'Else Where'=>'Other');
                             $teachingNeeds = array();
                             $needsCount = count($learnersNeeds);
 
@@ -299,30 +299,7 @@ class NationalController extends Controller{
                                     exit;
                             }
                     }
-                    /*
-                    else{
-                        $xml = $this->renderView('zone/reports/aggregate_zone_report.xml.twig', $options);
-                        $temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
-                        file_put_contents($temporary_file_name, $xml);
-
-                        $reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
-                        $excelSheet = $reader->load($temporary_file_name);
-                        $writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
-
-                        // create the response
-                        $response = $this->get('phpexcel')->createStreamedResponse($writer);
-                        // adding headers
-                        $dispositionHeader = $response->headers->makeDisposition(
-                            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                            'stream-file.xlsx'
-                        );
-                        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-                        $response->headers->set('Pragma', 'public');
-                        $response->headers->set('Cache-Control', 'maxage=1');
-                        $response->headers->set('Content-Disposition', $dispositionHeader);
-
-                        return $response; 
-                    }	*/
+                
 
             }
 

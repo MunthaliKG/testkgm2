@@ -58,7 +58,7 @@ class ResourceRoomType extends AbstractType
         )
         ->add('available_in', 'choice', array(
                 'label' => 'Available',
-                'choices' => array('Else Where'=>'Elsewhere', 'Resource room'=>'Resource room'),
+                'choices' => array('With Learner'=> 'With Learner', 'Resource room'=>'Resource room', 'Else Where'=>'Other'),
                 'expanded' => true,
                 'multiple' => false,)
         )

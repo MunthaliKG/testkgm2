@@ -4,7 +4,6 @@ namespace AppBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\Type;
 
 //this class build the form that is used to select a teacher using district name and school name
 class TeacherType extends AbstractType
@@ -42,16 +41,17 @@ class TeacherType extends AbstractType
 		)
 		->add('s_sex', 'choice', array(
 			'label' => 'Sex',
-			'choices' => array('M'=>'M','F'=>'F'),
+                        'placeholder' => '--Gender/Sex--',
+			'choices' => array('M'=>'Male','F'=>'Female'),
                         'constraints' => array(new NotBlank()),
-			'expanded' => true,
+			'expanded' => false,
 			'multiple' => false,
 			)
 		)
 		->add('qualification', 'choice', array(
 			'label' => 'Qualification',
                         'placeholder' => '--Qualification--',
-			'choices' => array('diploma'=>'diploma', 'degree'=>'degree'),
+			'choices' => array('msce'=>'MSCE','certificate'=>'Certificate','diploma'=>'Diploma', 'degree'=>'Degree'),
 			'expanded' => false,
 			'multiple' => false,)
 		)
@@ -63,9 +63,10 @@ class TeacherType extends AbstractType
 		)
 		->add('speciality', 'choice', array(
 			'label' => 'Speciality',
-			'choices' => array('HI'=>'HI', 'VI'=>'VI', 'LD'=>'LD'),
-			'expanded' => true,
-			'multiple' => true,)
+                        'placeholder' => '--SNT Speciality--',
+			'choices' => array('HI'=>'Hearing Impairment', 'VI'=>'Visual Impairment', 'LD'=>'Learning Difficulty', 'DB'=>'Deaf/Blind'),
+			'expanded' => false,
+			'multiple' => false,)
 		)
 		->add('year_started', 'datetime', array(
 			'label' => 'Year Started Teaching',
@@ -84,14 +85,39 @@ class TeacherType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			)
 		)
+                ->add('other_specialities', 'choice', array(
+			'label' => 'Other Specialities',
+			'choices' => array('HI'=>'Hearing Impairment', 'VI'=>'Visual Impairment', 'LD'=>'Learning Difficulty', 'DB'=>'Deaf/Blind'),
+			'expanded' => true,
+			'multiple' => true,
+                        'required' => false,)
+                )
 		->add('save','submit', array(
 			'label' => 'save',
 			)
-		);
+		)
+//                        ->addEventListener(
+//                    FormEvents::PRE_SUBMIT,
+//                    function (FormEvent $event){
+//                        $form = $event->getForm();
+//                        $data = $event->getData();
+//
+//                        if($data['speciality'] == 'VI'){
+//                            $form->add('other_specialities', 'choice', array(
+//                                'label' => 'Other Specialities',
+//                                'choices' => array('HI'=>'Hearing Impairment', 'LD'=>'Learning Difficulty', 'DB'=>'Deaf/Blind'),
+//                                'expanded' => true,
+//                                'multiple' => true,
+//                                'required' => false,)
+//                            );
+//                        }
+//                    }
+//                )
+                    ;
 	}
 	public function getName()
 	{
 		return 'teacher';
 	}
 }
-?>
+

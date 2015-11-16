@@ -229,21 +229,30 @@ class SchoolController extends Controller{
                 $need->setAvailableInRc($formData['available_in']);
                 $need->setQuantity($formData['quantity']);
                 
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($need);
-      		$em->flush();                             
-                    
-                $needname = $connection->fetchAll('SELECT needname FROM need where idneed = ?)', array($formData['idneed']))[0];  
-                //reproduce new entered details for validation and pass appropriate messages of acknowledgement
-                if($needId == 'new'){
-                    $request->getSession()->getFlashBag()
-                            ->add('resourceAdded', 'Special need item ('.$formData['idneed'].': '.$needname.') added successfully');                    
-                    return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$id_need], 301);
-                }else {
-                    $request->getSession()->getFlashBag()
-                            ->add('resourceUpdated', 'Special need item ('.$formData['idneed'].': '.$needname.') updated successfully');
-                    return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$formData['idneed_2']], 301);
+                $resource = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')
+                        ->findOneBy(array('idneed'=>$formData['idneed'],'emiscode'=>$emisCode));
+                if ((!$resource) || ($resource && ($needId != 'new'))){
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($need);
+                    $em->flush();                                                   
+                    //reproduce new entered details for validation and pass appropriate messages of acknowledgement
+                    if($needId == 'new'){
+                        $needname = $connection->fetchAll('SELECT needname FROM need where idneed = ?', array($formData['idneed']));
+                        $request->getSession()->getFlashBag()
+                                ->add('resourceAdded', 'Education support item ('.$formData['idneed'].': '.$needname[0]['needname'].') added successfully');                    
+                        return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$id_need], 301);
+                    }else {
+                        $needname = $connection->fetchAll('SELECT needname FROM need where idneed = ?', array($formData['idneed_2']));
+                        $request->getSession()->getFlashBag()
+                                ->add('resourceUpdated', 'Education support item ('.$formData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
+                        return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$formData['idneed_2']], 301);
+                    }
                 }
+//                else {
+//                    $request->getSession()->getFlashBag()
+//                                ->add('resourceExists', 'Special need item ('.$formData['idneed'].') already exists');
+//                        return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>'new'], 301);                    
+//                }
             }
             //if this is a not new need being added, we want to make the id field uneditable
       	if($needId != 'new'){
@@ -348,7 +357,7 @@ class SchoolController extends Controller{
                 
                 $roomState = $this->getDoctrine()->getRepository('AppBundle:RoomState')
                         ->findOneBy(array('idRoom'=>$formData['room_id'],'emiscode'=>$emisCode));
-                //if (($roomState) && ($materialId != 'new')){
+                if ((!$roomState) || ($roomState && ($materialId != 'new'))){
                     //if object already exists but is being edited ie not new
                     $em->persist($material);
                     $em->flush();
@@ -359,17 +368,17 @@ class SchoolController extends Controller{
                         $request->getSession()->getFlashBag()
                             ->add('roomAdded', 'Room with id ('.$formData['room_id'].') added successfully');
                     }
-                //}else {
-
-                //    $request->getSession()->getFlashBag()
-                //            ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');                    
-
-                //}            
+                    return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>$id_room], 301);
+                }else {
+                    $request->getSession()->getFlashBag()
+                           ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');
+                    return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>'new'], 301);
+                }            
                
                 //reproduce new entered details for validation
-                if($materialId == 'new'){
-                    return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>$id_room], 301);
-                }
+//                if($materialId == 'new'){
+//                    
+//                }
             }
             //if this is a new learner being added, we want to make the id field uneditable
       	if($materialId != 'new'){
@@ -480,8 +489,10 @@ class SchoolController extends Controller{
       		a DateTime object*/
 
             $defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
-            $defaultData['speciality'] = explode(',',$defaultData['speciality']);/*convert the SET value of MySQL to corresponding array in Php
-      		to enable correct rendering of choices in the form*/
+            
+            /*convert the SET value of MySQL to corresponding array in Php
+            to enable correct rendering of choices in the form*/          
+            $defaultData['other_specialities'] = explode(',',$defaultData['other_specialities']);
       	}
         
       	$form2=  $this->createForm(new TeacherType(), $defaultData);
@@ -511,14 +522,22 @@ class SchoolController extends Controller{
             $teacher->setSinitials($formData['sinitials']);
             $teacher->setQualification($formData['qualification']);
             $teacher->setSpeciality($formData['speciality']);
+            
+            //check not to duplicate the speciailities in other
+            for ($i = 0; $i < count($formData['other_specialities']); ++$i) {
+                if ($formData['other_specialities'][$i] == $formData['speciality']) {
+                    unset($formData['other_specialities'][$i]);
+                }
+            }
+            array_values($formData['other_specialities']);
+            //--end
+            
+            $teacher->setOtherSpecialities($formData['other_specialities']);
             $teacher->setYearStarted($formData['year_started']->format('Y'));
             
             $snt = $this->getDoctrine()->getRepository('AppBundle:Snt')
                         ->findOneBy(array('employmentNumber'=>$formData['employment_number']));
-            if ((!$snt) || ($snt && ($teacherId != 'new'))){
-                //&& ($teacherId != 'new')){
-                //echo 'If';
-                //exit;
+            if ((!$snt) || ($snt && ($teacherId != 'new'))){                
                     //if object already exists but is being edited ie not new                    
                 $em = $this->getDoctrine()->getManager();
 
@@ -563,7 +582,7 @@ class SchoolController extends Controller{
         	'form2'=>$form2->createView(),
         	'readonly'=> $readOnly));        
     }
-    
+        
     /**
      * @Route("/school/{emisCode}/learners/{learnerId}/personal", name="edit_learner_personal", requirements ={"learnerId":"new|\d+"})
      */
@@ -623,6 +642,8 @@ class SchoolController extends Controller{
                 //check if learnerId already exists and handle the error
                 $lwdId = $this->getDoctrine()->getRepository('AppBundle:Lwd')
                         ->findOneBy(array('idlwd'=>$formData['idlwd']));
+                
+                if ((!$lwdId) || ($lwdId && ($learnerId != 'new'))){
                 //if (($lwdId) && ($learnerId != 'new')){
                     //if object already exists but is being edited ie not new
                     //write the objects to the database
@@ -647,16 +668,17 @@ class SchoolController extends Controller{
                             ->add('lwdAdded', 'LWD with id ('.$formData['idlwd'].') added successfully');
                     }
                     return $this->redirectToRoute('edit_learner_disability',['emisCode'=>$emisCode, 'learnerId'=>$id_lwd], 301);
-               // }else {
+                }else {//Lwd already exists in DB
                     $request->getSession()->getFlashBag()
-                            ->add('learnerExists', 'LWD with id ('.$formData['idlwd'].') already exists');                    
-                //} 
+                            ->add('lwdExists', 'LWD with id ('.$formData['idlwd'].') already exists');
+                    return $this->redirectToRoute('edit_learner_personal',['emisCode'=>$emisCode, 'learnerId'=>'new'], 301);
+                } 
       	}
       	//if this is a new learner being added, we want to make the id field uneditable
       	if($learnerId != 'new'){
-      		$readOnly = true;
+            $readOnly = true;
       	}else{
-      		$readOnly = false;
+            $readOnly = false;
       	}
       	
       	return $this->render('school/learners/edit_learner_personal.html.twig', array(
@@ -797,13 +819,22 @@ class SchoolController extends Controller{
     		$lwdHasDisability->setCaseDescription($formData['case_description']);
     		if($hasLevels){
 	    		$lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
-	    	}   		
-    		$em->persist($lwdHasDisability);
-    		$em->flush();
+	    	} 
 
-    		$message = "New disability/special need record added for student ".$learnerId;
-    		$this->addFlash('disabilityAddedMessage', $message);
-    		return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+                //check if disability already exists in db
+                $lwdDisability = $this->getDoctrine()->getRepository('AppBundle:LwdHasDisability')
+                        ->findOneBy(array('idlwd'=>$learnerId,'iddisability'=>$formData['iddisability']));
+                if (!$lwdDisability){//if disability does not exist
+                    $em->persist($lwdHasDisability);
+                    $em->flush();
+
+                    $message = "New disability/special need record added for learner ".$learnerId;
+                    $this->addFlash('disabilityAddedMessage', $message);                    
+                } else {
+                    $message = "Disability/special need record already exists for learner ".$learnerId;
+                    $this->addFlash('disabilityExists', $message);
+                }
+                return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
     	}
 
     	//create a view of each of the forms

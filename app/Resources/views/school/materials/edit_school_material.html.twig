@@ -49,15 +49,7 @@
                     {{ form_row(form1.room_type) }}                    
                 </fieldset>
             </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <fieldset class="fieldset">                    		                    
-                    {{ form_row(form1.other_observations) }}
-                </fieldset>
-            </div>
-    </div>
-                
+    </div>                    
     <div class="row">
         <div class="col-sm-6">      
                 <fieldset>
@@ -77,6 +69,13 @@
                 </fieldset>
          
         </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <fieldset class="fieldset">                    		                    
+                    {{ form_row(form1.other_observations) }}
+                </fieldset>
+            </div>
     </div>
     <p class="text-right">
         {{ form_widget(form1.save, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}

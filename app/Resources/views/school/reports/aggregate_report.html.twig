@@ -43,5 +43,8 @@
 		{% endif %}
 		{% if specialNeeds is defined %}
 			{% include 'school/reports/special_needs.html.twig' %}
-		{% endif %}          
+		{% endif %} 
+                 {% if learningMaterials is defined %}
+                    {% include 'school/reports/teaching_materials.html.twig' %}
+                {% endif %}
 	{% endblock %}

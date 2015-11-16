@@ -63,7 +63,7 @@ class Snt
     /**
      * @var string
      *
-     * @ORM\Column(name="speciality", type="string", nullable=true)
+     * @ORM\Column(name="speciality", type="simple_array", nullable=true)
      */
     private $speciality;
     /**
@@ -308,7 +308,7 @@ class Snt
     /**
      * Set otherSpecialities
      *
-     * @param \SimpleArray $otherSpecialities
+     * @param string $otherSpecialities
      * @return Snt
      */
     public function setOtherSpecialities($otherSpecialities)
@@ -321,7 +321,7 @@ class Snt
     /**
      * Get otherSpecialities
      *
-     * @return \SimpleArray
+     * @return string 
      */
     public function getOtherSpecialties()
     {

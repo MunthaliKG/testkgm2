@@ -1,19 +1,19 @@
 <h4>
-       Teaching And Learning Needs/Resources - ({{ chaka }})
+       Education Support Available for Learners with Disabilities/Special Needs - ({{ chaka }})
    </h4>
-        <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
+         <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
             <tr>
                 <td align="center"><b>Item</b></td>
-                <td align="center"><b>Else where</b></td>
+                <td align="center"><b>With Learner</b></td>
                 <td align="center"><b>Resource Room</b></td>
+                <td align="center"><b>Other</b></td>
             </tr>
             {% for need,needs in teachingNeeds %}        
                 <tr>
                     <td align="center">{{ need }} </td>
-
-                    
-<td align="center">{{ needs['Else Where'] }}</td><td align="center">{{ needs['Resource room'] }}</td>                
-
+                    <td align="center">{{ needs['With Learner'] }}</td>
+                    <td align="center">{{ needs['Resource room'] }}</td>
+                    <td align="center">{{ needs['Other'] }}</td>
                 </tr>
             {% endfor %}
         </table>

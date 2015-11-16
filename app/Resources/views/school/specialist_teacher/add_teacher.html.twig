@@ -50,6 +50,7 @@
                     {{ form_row(form2.s_sex) }}
                     {{ form_row(form2.qualification) }}
                     {{ form_row(form2.speciality) }}
+                    {{ form_row(form2.other_specialities, {'attr':{'readonly':'readonly'}}) }}
                     {{ form_row(form2.year_started) }}
                 </fieldset>
             </div>
@@ -84,4 +85,6 @@
 {% block javascripts %}
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('assets/datepicker/js/bootstrap-datepicker.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/bootstrap-confirmation.min.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/enable-confirmation.js')}}"></script>
 {% endblock %}
