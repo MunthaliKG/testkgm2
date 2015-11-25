@@ -625,7 +625,6 @@ class SchoolController extends Controller{
       		$guardian->setGaddress($formData['gaddress']);
       		$guardian->setGdob($formData['gdob']);
       		$guardian->setOccupation($formData['occupation']);
-      		$guardian->setIncomeLevel($formData['income_level']);
       		$guardian->setDistrict($formData['district']);  
       		//set the fields for learner
       		$learner->setFirstName($formData['first_name']);

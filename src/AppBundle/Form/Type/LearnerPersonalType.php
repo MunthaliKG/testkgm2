@@ -5,6 +5,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Range;
 
 //this class builds the form that is used to add/edit a learner's personal details
@@ -16,8 +17,12 @@ class LearnerPersonalType extends AbstractType
 		//add the form fields
 		$builder
 		->add('idlwd','text', array(
-			'label' => 'Learner Id',
-			'constraints' => array(new NotBlank()),
+				'label' => 'Learner Identification Number',
+				'constraints' => array(new NotBlank(), new Regex(array(
+					'pattern'=>'#\d{16}#',
+					'message'=>'This field must be a 16 digit number'
+					)),
+				)
 			)
 		)
 		->add('first_name','text', array(
@@ -112,14 +117,6 @@ class LearnerPersonalType extends AbstractType
 		->add('occupation','text', array(
 			'label' => 'Occupation',
 			'constraints' => array(new NotBlank()),
-			)
-		)
-                ->add('income_level', 'choice', array(
-			'label' => 'Income level',
-			'choices' => array('low'=>'low','medium'=>'medium','high'=>'high'),
-			'constraints' => array(new NotBlank()),
-			'expanded' => true,
-			'multiple' => false,
 			)
 		)
 		->add('district','text', array(
