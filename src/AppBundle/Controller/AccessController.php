@@ -12,27 +12,25 @@
 		
 		public function checkSchoolAccessAction($emisCode, Request $request){
 
-			//$language = new ExpressionLanguage();
-			//echo 'reached'; exit;
 			$user = $this->get('security.token_storage')->getToken()->getUser();
 			$connection = $this->get('database_connection');
-			$session = $request->getSession();
-
+			$session = $this->getRequest()->getSession();
+			//echo $request->attributes->get('emisCode'); exit;
 			if($user->hasAccess(1,$emisCode, $connection)){ /*check if this user has access to
 				the 'school' with the emis code '$emisCode'*/
-				// if($session->has('school_access')){
-				// 	$schoolAccess = $session->get('school_access');
-				// }
-				// $schoolAccess[] = $emisCode;
-				// $session->set('school_access', $schoolAccess)
-				$this->addFlash('accessed', true);
-				$session->set('school_access', $emisCode);
+				$schoolAccess = array();
+				if($session->has('school_access')){
+					$schoolAccess = $session->get('school_access');
+				}
+				$schoolAccess[] = $emisCode;
+				$session->set('school_access', $schoolAccess);
+				$this->addFlash('accessed', 'true');
+				//echo print_r($session->getFlashBag()->get('accessed'));exit;
 
 				$session->remove('school_name');
 		        $session->remove('emis_code');
 		        $session->remove('schoolInfo'); 
-		        $session->invalidate();
-				$session->save();
+
 				// $router = $this->get('router');
 				// $result = $router->match('/school/500595');
 				// echo print_r($result);exit;

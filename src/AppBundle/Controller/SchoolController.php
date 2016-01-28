@@ -630,7 +630,6 @@ class SchoolController extends Controller{
       		$learner->setFirstName($formData['first_name']);
       		$learner->setLastName($formData['last_name']);
       		$learner->setSex($formData['sex']);
-      		$learner->setInitials($formData['initials']);
       		$learner->setHomeaddress($formData['home_address']);
       		$learner->setFirstName($formData['first_name']);
       		$learner->setDob($formData['dob']);

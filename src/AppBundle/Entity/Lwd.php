@@ -13,9 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Lwd
 {
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="distance_to_school", type="integer", nullable=true)
+     * @ORM\Column(name="distance_to_school", type="string", nullable=true)
      */
     private $distanceToSchool;
 
@@ -32,13 +32,6 @@ class Lwd
      * @ORM\Column(name="last_name", type="string", length=25, nullable=false)
      */
     private $lastName;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="initials", type="string", length=8, nullable=true)
-     */
-    private $initials;
 
     /**
      * @var string
@@ -92,7 +85,7 @@ class Lwd
     /**
      * Set idlwd
      *
-     * @param integer $idlwddistanceToSchool
+     * @param integer $idlwd
      * @return Lwd
      */
     public function setIdlwd($idlwd)
@@ -105,7 +98,7 @@ class Lwd
     /**
      * Set distanceToSchool
      *
-     * @param integer $distanceToSchool
+     * @param string $distanceToSchool
      * @return Lwd
      */
     public function setDistanceToSchool($distanceToSchool)
@@ -118,7 +111,7 @@ class Lwd
     /**
      * Get distanceToSchool
      *
-     * @return integer 
+     * @return string 
      */
     public function getDistanceToSchool()
     {
@@ -169,29 +162,6 @@ class Lwd
     public function getLastName()
     {
         return $this->lastName;
-    }
-
-    /**
-     * Set initials
-     *
-     * @param string $initials
-     * @return Lwd
-     */
-    public function setInitials($initials)
-    {
-        $this->initials = $initials;
-
-        return $this;
-    }
-
-    /**
-     * Get initials
-     *
-     * @return string 
-     */
-    public function getInitials()
-    {
-        return $this->initials;
     }
 
     /**

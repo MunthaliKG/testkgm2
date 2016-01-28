@@ -26,18 +26,13 @@ class LearnerPersonalType extends AbstractType
 			)
 		)
 		->add('first_name','text', array(
-			'label' => 'First name',
+			'label' => 'First name(s)',
 			'constraints' => array(new NotBlank()),
 			)
 		)
 		->add('last_name', 'text', array(
 			'label' => 'Last name',
 			'constraints' => array(new NotBlank()),
-			)
-		)
-		->add('initials', 'text', array(
-			'label' => 'Initials',
-			'required' => false,
 			)
 		)
 		->add('home_address', 'textarea', array(
@@ -61,13 +56,10 @@ class LearnerPersonalType extends AbstractType
 			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
 			)
 		)
-		->add('distance_to_school', 'integer', array(
+		->add('distance_to_school', 'choice', array(
 			'label' => 'Distance to school (Km)',
-			'constraints' => array(
-				new NotBlank(),
-                                new Range(array('min'=> 1)),
-				new Type(array('type'=>'integer','message'=>'Please enter a valid distance value'))
-				)
+			'choices' => array('<5'=>'Less than 5km', '1-5'=>'between 1 and 5km', '>5'=>'More than 5km'),
+			'constraints' => array(new NotBlank()),
 			)
 		)
 		->add('std', 'integer', array(
