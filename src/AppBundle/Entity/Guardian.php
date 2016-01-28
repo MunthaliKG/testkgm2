@@ -57,13 +57,6 @@ class Guardian
     /**
      * @var string
      *
-     * @ORM\Column(name="income_level", type="string", nullable=true)
-     */
-    private $incomeLevel;
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="district", type="string", length=11, nullable=false)
      */
     private $district;
@@ -215,29 +208,6 @@ class Guardian
     public function getOccupation()
     {
         return $this->occupation;
-    }
-
-    /**
-     * Set incomeLevel
-     *
-     * @param string $incomeLevel
-     * @return Guardian
-     */
-    public function setIncomeLevel($incomeLevel)
-    {
-        $this->incomeLevel = $incomeLevel;
-
-        return $this;
-    }
-
-    /**
-     * Get incomeLevel
-     *
-     * @return string 
-     */
-    public function getIncomeLevel()
-    {
-        return $this->incomeLevel;
     }
 
     /**

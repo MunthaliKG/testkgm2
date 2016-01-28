@@ -48,3 +48,16 @@ services:
         class: AppBundle\Form\Type\ChangePasswordFormType
         tags:
             - { name: form.type, alias: app_user_change_password }
+    router.request_context:
+        class: AppBundle\Helpers\RequestContext
+        public: false
+        arguments:
+                - "%router.request_context.base_url%"
+                - "GET"
+                - "%router.request_context.host%"
+                - "%router.request_context.scheme%"
+                - "%request_listener.http_port%"
+                - "%request_listener.https_port%"
+                - "/"
+                - ""
+                - "@request_stack"

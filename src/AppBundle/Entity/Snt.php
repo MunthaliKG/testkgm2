@@ -34,12 +34,6 @@ class Snt
     private $employmentNumber;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="sinitials", type="string", length=25, nullable=false)
-     */
-    private $sinitials;
-    /**
      * @var \DateTime
      *
      * @ORM\Column(name="s_dob", type="date", nullable=false)
@@ -154,29 +148,6 @@ class Snt
     public function getSlastName()
     {
         return $this->slastName;
-    }
-
-    /**
-     * Set sinitials
-     *
-     * @param string $sinitials
-     * @return Snt
-     */
-    public function setSinitials($sinitials)
-    {
-        $this->sinitials = $sinitials;
-
-        return $this;
-    }
-
-    /**
-     * Get sinitials
-     *
-     * @return string 
-     */
-    public function getSinitials()
-    {
-        return $this->sinitials;
     }
 
     /**
