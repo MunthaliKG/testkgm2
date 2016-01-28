@@ -10,21 +10,21 @@
 	{{ form_start(form) }}
 	{{ form_errors(form) }}
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
                 
                 <legend align="centre"><small>Special Needs Learners</small></legend>
                 <fieldset class="fieldset">                    		
-                    {{ form_row(form.reports) }}                 
+                    {{ form_row(form.enrollments) }}                 
                 </fieldset>
             </div>
-            <div class="col-sm-6">
+           {# <div class="col-sm-6">
                 <legend><small>Special Needs Teachers</small></legend>
                 <fieldset class="fieldset">                    		
                     {{ form_row(form.standard) }}
-                    {#{{ form_row(form.standard2) }}#}
+                    {#{{ form_row(form.standard2) }}
                     {{ form_row(form.stdrange) }} 
                 </fieldset>
-            </div>
+            </div>#}
         </div>
         <div class="row">
             <div class="col-sm-12">

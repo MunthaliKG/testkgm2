@@ -37,11 +37,20 @@
 				<td>{{ school.district_name }}</td>
 				<td align="left">{{ school.iddistrict }}</td>
 			</tr>
-		</table>		
-                {% if snLearners is defined %}
+		</table>
+                {% if lwdBCG is defined %}
+                    {% include 'school/reports/learners_class_sex.html.twig' %}
+		{% endif %}
+                {% if lwdBIG is defined %}
+                    {% include 'school/reports/learners_category_sex.html.twig' %}
+		{% endif %}
+                {% if lwdBDG is defined %}
+                    {% include 'school/reports/learners_disability_sex.html.twig' %}
+		{% endif %}
+                {#{% if snLearners is defined %}
                     {% include 'school/reports/sn_learner.html.twig' %}
 		{% endif %}
                 {% if snTeachers is defined %}
 			{% include 'school/reports/sn_teachers.html.twig' %}
-		{% endif %}
+		{% endif %}#}
 	{% endblock %}

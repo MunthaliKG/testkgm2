@@ -1,0 +1,37 @@
+<br>
+<p><b>LEARNER ENROLLMENT BY CLASS AND SEX</b></p>
+
+<table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
+    <tr>
+        <td align="center" rowspan="2" valign="middle"><b>Sex</b></td>
+        <td align="center" colspan="8"><b>STANDARDS</b></td>
+        <td align="center"><b></b></td>
+    </tr>
+    <tr>
+        <td align="center"><b>1</b></td> <td align="center"><b>2</b></td>
+        <td align="center"><b>3</b></td> <td align="center"><b>4</b></td>
+        <td align="center"><b>5</b></td> <td align="center"><b>6</b></td>
+        <td align="center"><b>7</b></td> <td align="center"><b>8</b></td>
+        <td align="center"><b>Total</b></td>
+    </tr>
+    {% for gender,genders in learnersBCG %}        
+    <tr>
+        <td align="center">{{ gender }} </td>
+        {% for std,stds in genders %}            
+            <td align="center">{{ stds }}</td>           
+            {% if loop.last %}
+                <td align="center">{{ learnersBG[gender] }} </td>
+            {% endif %}
+        {% endfor %}            
+    </tr>
+    {% if loop.last %}
+        <tr>
+            <td align="center"> <b>Total</b> </td>
+            {% for std,stds in learnersBC %}
+                <td align="center">{{ stds }}</td>
+            {% endfor %}
+            <td align="center"> <b>{{ learnersBCGT }}</b> </td>
+        </tr>
+    {% endif%}
+    {% endfor %}
+</table>

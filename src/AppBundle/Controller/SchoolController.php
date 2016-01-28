@@ -239,20 +239,15 @@ class SchoolController extends Controller{
                     if($needId == 'new'){
                         $needname = $connection->fetchAll('SELECT needname FROM need where idneed = ?', array($formData['idneed']));
                         $request->getSession()->getFlashBag()
-                                ->add('resourceAdded', 'Education support item ('.$formData['idneed'].': '.$needname[0]['needname'].') added successfully');                    
+                            ->add('resourceAdded', 'Education support item ('.$formData['idneed'].': '.$needname[0]['needname'].') added successfully');                    
                         return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$id_need], 301);
                     }else {
                         $needname = $connection->fetchAll('SELECT needname FROM need where idneed = ?', array($formData['idneed_2']));
                         $request->getSession()->getFlashBag()
-                                ->add('resourceUpdated', 'Education support item ('.$formData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
+                            ->add('resourceUpdated', 'Education support item ('.$formData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
                         return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$formData['idneed_2']], 301);
                     }
                 }
-//                else {
-//                    $request->getSession()->getFlashBag()
-//                                ->add('resourceExists', 'Special need item ('.$formData['idneed'].') already exists');
-//                        return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>'new'], 301);                    
-//                }
             }
             //if this is a not new need being added, we want to make the id field uneditable
       	if($needId != 'new'){

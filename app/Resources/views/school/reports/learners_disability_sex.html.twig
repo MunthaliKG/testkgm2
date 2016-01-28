@@ -1,0 +1,36 @@
+<br>
+<p><b>LEARNER ENROLLMENT BY DISABILITY AND SEX</b></p>
+
+<table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
+    <tr>
+        <td align="center" rowspan="2" valign="middle"><b>Disability</b></td>
+        <td align="center" colspan="2"><b>Gender</b></td>
+        <td align="center"><b></b></td>
+        
+    </tr>
+    <tr>
+        <td align="center"><b>M</b></td>
+        <td align="center"><b>F</b></td>
+        <td align="center"><b>Total</b></td>
+    </tr>
+    {% for disability,disabilities in learnersBDG %}        
+    <tr>
+        <td align="center">{{ disability }} </td>
+        {% for gender,genders in disabilities %}            
+            <td align="center">{{ disabilities[gender] }}</td>           
+            {% if loop.last %}
+                <td align="center">{{ learnersBD[disability] }} </td>
+            {% endif %}
+        {% endfor %}            
+    </tr>
+    {% if loop.last %}
+        <tr>
+            <td align="center"> <b>Total</b> </td>
+            {% for std,stds in learnersBS2 %}
+                <td align="center">{{ stds }}</td>
+            {% endfor %}
+            <td align="center"> <b>{{ learnersBDGT }}</b> </td>
+        </tr>
+    {% endif%}
+    {% endfor %}
+</table>

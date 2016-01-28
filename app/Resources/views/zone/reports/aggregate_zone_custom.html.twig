@@ -40,5 +40,14 @@
     {% endif %}
     {% if snTeachers is defined %}
         {% include 'zone/reports/zone_sn_teachers.html.twig' %}
-    {% endif %}    
+    {% endif %}
+    {% if lwdBCG is defined %}
+        {% include 'school/reports/learners_class_sex.html.twig' %}
+    {% endif %}
+    {% if lwdBIG is defined %}
+        {% include 'school/reports/learners_category_sex.html.twig' %}
+    {% endif %}
+    {% if lwdBDG is defined %}
+        {% include 'school/reports/learners_disability_sex.html.twig' %}
+    {% endif %}
 {% endblock %}
