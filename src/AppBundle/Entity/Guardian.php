@@ -15,7 +15,7 @@ class Guardian
     /**
      * @var string
      *
-     * @ORM\Column(name="gfirst_name", type="string", length=25, nullable=false)
+     * @ORM\Column(name="gfirst_name", type="string", length=50, nullable=false)
      */
     private $gfirstName;
 
@@ -25,13 +25,6 @@ class Guardian
      * @ORM\Column(name="glast_name", type="string", length=25, nullable=false)
      */
     private $glastName;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="gdob", type="date", nullable=false)
-     */
-    private $gdob;
 
     /**
      * @var string
@@ -60,6 +53,13 @@ class Guardian
      * @ORM\Column(name="district", type="string", length=11, nullable=false)
      */
     private $district;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="household_type", type="string", nullable=true)
+     */
+    private $householdType;
 
     /**
      * @var integer
@@ -116,29 +116,6 @@ class Guardian
     public function getGlastName()
     {
         return $this->glastName;
-    }
-
-    /**
-     * Set gdob
-     *
-     * @param \DateTime $gdob
-     * @return Guardian
-     */
-    public function setGdob($gdob)
-    {
-        $this->gdob = $gdob;
-
-        return $this;
-    }
-
-    /**
-     * Get gdob
-     *
-     * @return \DateTime 
-     */
-    public function getGdob()
-    {
-        return $this->gdob;
     }
 
     /**
@@ -231,6 +208,29 @@ class Guardian
     public function getDistrict()
     {
         return $this->district;
+    }
+
+    /**
+     * Set householdType
+     *
+     * @param string $householdType
+     * @return Guardian
+     */
+    public function setHouseholdType($householdType)
+    {
+        $this->householdType = $householdType;
+
+        return $this;
+    }
+
+    /**
+     * Get householdType
+     *
+     * @return string 
+     */
+    public function getHouseholdType()
+    {
+        return $this->householdType;
     }
 
     /**

@@ -13,6 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
 class RoomState
 {
     /**
+     * @var year
+     *
+     * @ORM\Column(name="year", type="year", nullable=false)
+     */
+    private $year;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="enough_light", type="string", nullable=false)
@@ -27,9 +34,9 @@ class RoomState
     private $enoughSpace;
 
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="adaptive_chairs", type="integer", nullable=false)
+     * @ORM\Column(name="adaptive_chairs", type="string", nullable=false)
      */
     private $adaptiveChairs;
 
@@ -39,12 +46,6 @@ class RoomState
      * @ORM\Column(name="access", type="string", nullable=false)
      */
     private $access;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="room_type", type="string", nullable=false)
-     */
-    private $room_type;
 
     /**
      * @var string
@@ -56,55 +57,18 @@ class RoomState
     /**
      * @var string
      *
-     * @ORM\Column(name="other_observations", type="string", length=100, nullable=true)
+     * @ORM\Column(name="room_type", type="string", nullable=false)
      */
-    private $otherObservations;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="space_note", type="string", length=100, nullable=true)
-     */
-    private $spaceNote;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="light_note", type="string", length=100, nullable=true)
-     */
-    private $lightNote;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="ventilation_note", type="string", length=100, nullable=true)
-     */
-    private $ventilationNote;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="access_note", type="string", length=100, nullable=true)
-     */
-    private $accessNote;
+    private $roomType;
 
     /**
-     * @var text
-     *
-     * @ORM\Column(name="updates", type="text")
-     */
-    private $updates;
-    /**
      * @var string
      *
-     * @ORM\Column(name="room_id", type="string", length=2)
+     * @ORM\Column(name="room_id", type="string", length=3)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $idRoom;
-
-     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="year", type="year", nullable=false)
-     */
-    private $year_started;
+    private $roomId;
 
     /**
      * @var \AppBundle\Entity\School
@@ -119,6 +83,29 @@ class RoomState
     private $emiscode;
 
 
+
+    /**
+     * Set year
+     *
+     * @param year $year
+     * @return RoomState
+     */
+    public function setYear($year)
+    {
+        $this->year = $year;
+
+        return $this;
+    }
+
+    /**
+     * Get year
+     *
+     * @return year 
+     */
+    public function getYear()
+    {
+        return $this->year;
+    }
 
     /**
      * Set enoughLight
@@ -169,7 +156,7 @@ class RoomState
     /**
      * Set adaptiveChairs
      *
-     * @param integer $adaptiveChairs
+     * @param string $adaptiveChairs
      * @return RoomState
      */
     public function setAdaptiveChairs($adaptiveChairs)
@@ -182,7 +169,7 @@ class RoomState
     /**
      * Get adaptiveChairs
      *
-     * @return integer 
+     * @return string 
      */
     public function getAdaptiveChairs()
     {
@@ -190,26 +177,26 @@ class RoomState
     }
 
     /**
-     * Set room_type
+     * Set access
      *
-     * @param string $room_type
+     * @param string $access
      * @return RoomState
      */
-    public function setRoomType($room_type)
+    public function setAccess($access)
     {
-        $this->room_type = $room_type;
+        $this->access = $access;
 
         return $this;
     }
 
     /**
-     * Get room_type
+     * Get access
      *
      * @return string 
      */
-    public function getRoomType()
+    public function getAccess()
     {
-        return $this->room_type;
+        return $this->access;
     }
 
     /**
@@ -234,95 +221,51 @@ class RoomState
     {
         return $this->enoughVentilation;
     }
+
     /**
-     * Set otherObservations
+     * Set roomType
      *
-     * @param string $otherObservations
+     * @param string $roomType
      * @return RoomState
      */
-    public function setOtherObservations($otherObservations)
+    public function setRoomType($roomType)
     {
-        $this->otherObservations = $otherObservations;
+        $this->roomType = $roomType;
 
         return $this;
     }
 
     /**
-     * Get otherObservations
+     * Get roomType
      *
      * @return string 
      */
-    public function getOtherObservations()
+    public function getRoomType()
     {
-        return $this->otherObservations;
-    }
-    
-    /**
-     * Set updates
-     *
-     * @param text $updates
-     * @return RoomState
-     */
-    public function setUpdates($updates)
-    {
-        $this->updates = $updates;
-
-        return $this;
-    }
-    /**
-     * Get updates
-     *
-     * @return text
-     */
-    public function getUpdates()
-    {
-        return $this->updates;
+        return $this->roomType;
     }
 
     /**
-     * Set idRoom
+     * Set roomId
      *
-     * @param string $idRoom
+     * @param string $roomId
      * @return RoomState
      */
-    public function setIdRoom($idRoom)
+    public function setRoomId($roomId)
     {
-        $this->idRoom = $idRoom;
+        $this->roomId = $roomId;
 
         return $this;
     }
 
     /**
-     * Get idRoom
+     * Get roomId
      *
      * @return string 
      */
-    public function getIdRoom()
+    public function getRoomId()
     {
-        return $this->idRoom;
-    }
-    
-    /**
-     * Set year_started
-     *
-     * @param \DateTime $year_started
-     * @return RoomState
-     */
-    public function setYearStarted($year_started)
-    {
-        $this->year_started = $year_started;
-
-        return $this;
-    }
-
-    /**
-     * Get year_started
-     *
-     * @return \DateTime 
-     */
-    public function getYear()
-    {
-        return $this->year_started;
+        return $this->roomId;
     }
 
     /**
@@ -331,7 +274,7 @@ class RoomState
      * @param \AppBundle\Entity\School $emiscode
      * @return RoomState
      */
-    public function setEmiscode($emiscode)
+    public function setEmiscode(\AppBundle\Entity\School $emiscode)
     {
         $this->emiscode = $emiscode;
 
@@ -346,117 +289,5 @@ class RoomState
     public function getEmiscode()
     {
         return $this->emiscode;
-    }
-    /**
-     * Set access
-     *
-     * @param string $access
-     * @return RoomState
-     */
-    public function setAccess($access)
-    {
-        $this->access = $access;
-
-        return $this;
-    }
-    
-    /**
-     * Set accessNote
-     *
-     * @param string $accessNote
-     * @return RoomState
-     */
-    public function setAccessNote($accessNote)
-    {
-        $this->accessNote = $accessNote;
-
-        return $this;
-    }
-
-    /**
-     * Get accessNote
-     *
-     * @return string 
-     */
-    public function getAccessNote()
-    {
-        return $this->accessNote;
-    }
-    
-    /**
-     * Set lightNote
-     *
-     * @param string $lightNote
-     * @return RoomState
-     */
-    public function setLightNote($lightNote)
-    {
-        $this->lightNote = $lightNote;
-
-        return $this;
-    }
-
-    /**
-     * Get lightNote
-     *
-     * @return string 
-     */
-    public function getLightNote()
-    {
-        return $this->lightNote;
-    }
-    
-     /**
-     * Set spaceNote
-     *
-     * @param string $spaceNote
-     * @return RoomState
-     */
-    public function setSpaceNote($spaceNote)
-    {
-        $this->spaceNote = $spaceNote;
-
-        return $this;
-    }
-
-    /**
-     * Get spaceNote
-     *
-     * @return string 
-     */
-    public function getSpaceNote()
-    {
-        return $this->spaceNote;
-    }
-    /**
-     * Set ventilationNote
-     *
-     * @param string $ventilationNote
-     * @return RoomState
-     */
-    public function setVentilationNote($ventilationNote)
-    {
-        $this->ventilationNote = $ventilationNote;
-
-        return $this;
-    }
-
-    /**
-     * Get ventilationNote
-     *
-     * @return string 
-     */
-    public function getVentilationNote()
-    {
-        return $this->ventilationNote;
-    }
-    /**
-     * Get access
-     *
-     * @return string 
-     */
-    public function getAccess()
-    {
-        return $this->access;
     }
 }

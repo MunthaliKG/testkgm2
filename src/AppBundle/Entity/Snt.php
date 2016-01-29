@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Snt
  *
- * @ORM\Table(name="snt")
+ * @ORM\Table(name="snt", uniqueConstraints={@ORM\UniqueConstraint(name="employment_number_UNIQUE", columns={"employment_number"})})
  * @ORM\Entity
  */
 class Snt
@@ -15,7 +15,7 @@ class Snt
     /**
      * @var string
      *
-     * @ORM\Column(name="sfirst_name", type="string", length=25, nullable=false)
+     * @ORM\Column(name="sfirst_name", type="string", length=50, nullable=false)
      */
     private $sfirstName;
 
@@ -25,20 +25,6 @@ class Snt
      * @ORM\Column(name="slast_name", type="string", length=25, nullable=false)
      */
     private $slastName;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="employment_number", type="string", length=10, nullable=false)
-     */
-    private $employmentNumber;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="s_dob", type="date", nullable=false)
-     */
-    private $s_dob;
 
     /**
      * @var string
@@ -47,33 +33,56 @@ class Snt
      */
     private $sSex;
 
-     /**
+    /**
      * @var string
      *
-     * @ORM\Column(name="qualification", type="string", nullable=true)
+     * @ORM\Column(name="qualification", type="string", nullable=false)
      */
     private $qualification;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="speciality", type="string", nullable=true)
+     * @ORM\Column(name="speciality", type="string", nullable=false)
      */
     private $speciality;
+
     /**
-     * @var string
-     * @ORM\Column(name="other_specialities", type="simple_array", nullable=true)
-     */
-    private $otherSpecialities;
-    
-    /**
-     * @var \DateTime
+     * @var year
      *
      * @ORM\Column(name="year_started", type="year", nullable=false)
      */
     private $yearStarted;
 
-     /**
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="employment_number", type="string", length=20, nullable=false)
+     */
+    private $employmentNumber;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="s_dob", type="date", nullable=false)
+     */
+    private $sDob;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="teacher_type", type="string", nullable=false)
+     */
+    private $teacherType;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="cpd_training", type="string", nullable=true)
+     */
+    private $cpdTraining;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="idsnt", type="integer")
@@ -81,6 +90,8 @@ class Snt
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $idsnt;
+
+
 
     /**
      * Set sfirstName
@@ -103,28 +114,6 @@ class Snt
     public function getSfirstName()
     {
         return $this->sfirstName;
-    }
-    /**
-     * Set employmentNumber
-     *
-     * @param string $employmentNumber
-     * @return Snt
-     */
-    public function setEmploymentNumber($employmentNumber)
-    {
-        $this->employmentNumber = $employmentNumber;
-
-        return $this;
-    }
-
-    /**
-     * Get employmentNumber
-     *
-     * @return string 
-     */
-    public function getEmploymentNumber()
-    {
-        return $this->employmentNumber;
     }
 
     /**
@@ -162,28 +151,7 @@ class Snt
 
         return $this;
     }
-    /**
-     * Set s_dob
-     *
-     * @param \DateTime $s_dob
-     * @return Snt
-     */
-    public function setSdob($s_dob)
-    {
-        $this->s_dob = $s_dob;
 
-        return $this;
-    }
-
-    /**
-     * Get s_dob
-     *
-     * @return \DateTime 
-     */
-    public function getSdob()
-    {
-        return $this->s_dob;
-    }
     /**
      * Get sSex
      *
@@ -193,6 +161,7 @@ class Snt
     {
         return $this->sSex;
     }
+
     /**
      * Set qualification
      *
@@ -242,7 +211,7 @@ class Snt
     /**
      * Set yearStarted
      *
-     * @param \DateTime $yearStarted
+     * @param year $yearStarted
      * @return Snt
      */
     public function setYearStarted($yearStarted)
@@ -255,11 +224,103 @@ class Snt
     /**
      * Get yearStarted
      *
-     * @return \DateTime 
+     * @return year 
      */
     public function getYearStarted()
     {
         return $this->yearStarted;
+    }
+
+    /**
+     * Set employmentNumber
+     *
+     * @param string $employmentNumber
+     * @return Snt
+     */
+    public function setEmploymentNumber($employmentNumber)
+    {
+        $this->employmentNumber = $employmentNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get employmentNumber
+     *
+     * @return string 
+     */
+    public function getEmploymentNumber()
+    {
+        return $this->employmentNumber;
+    }
+
+    /**
+     * Set sDob
+     *
+     * @param \DateTime $sDob
+     * @return Snt
+     */
+    public function setSDob($sDob)
+    {
+        $this->sDob = $sDob;
+
+        return $this;
+    }
+
+    /**
+     * Get sDob
+     *
+     * @return \DateTime 
+     */
+    public function getSDob()
+    {
+        return $this->sDob;
+    }
+
+    /**
+     * Set teacherType
+     *
+     * @param string $teacherType
+     * @return Snt
+     */
+    public function setTeacherType($teacherType)
+    {
+        $this->teacherType = $teacherType;
+
+        return $this;
+    }
+
+    /**
+     * Get teacherType
+     *
+     * @return string 
+     */
+    public function getTeacherType()
+    {
+        return $this->teacherType;
+    }
+
+    /**
+     * Set cpdTraining
+     *
+     * @param string $cpdTraining
+     * @return Snt
+     */
+    public function setCpdTraining($cpdTraining)
+    {
+        $this->cpdTraining = $cpdTraining;
+
+        return $this;
+    }
+
+    /**
+     * Get cpdTraining
+     *
+     * @return string 
+     */
+    public function getCpdTraining()
+    {
+        return $this->cpdTraining;
     }
 
     /**
@@ -270,32 +331,5 @@ class Snt
     public function getIdsnt()
     {
         return $this->idsnt;
-    }
-    /**
-     * @var \DateTime
-     */
-    private $sDob;
-
-    /**
-     * Set otherSpecialities
-     *
-     * @param \SimpleArray $otherSpecialities
-     * @return Snt
-     */
-    public function setOtherSpecialities($otherSpecialities)
-    {
-        $this->otherSpecialities = $otherSpecialities;
-
-        return $this;
-    }
-    
-    /**
-     * Get otherSpecialities
-     *
-     * @return \SimpleArray
-     */
-    public function getOtherSpecialties()
-    {
-        return $this->otherSpecialities;
     }
 }
