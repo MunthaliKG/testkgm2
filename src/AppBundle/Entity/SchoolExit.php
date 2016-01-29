@@ -15,7 +15,7 @@ class SchoolExit
     /**
      * @var simplearray
      *
-     * @ORM\Column(name="reason", type="string", nullable=false)
+     * @ORM\Column(name="reason", type="simplearray", nullable=false)
      */
     private $reason;
 
@@ -27,6 +27,13 @@ class SchoolExit
     private $otherReason;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date_of_exit", type="date", nullable=true)
+     */
+    private $dateOfExit;
+
+    /**
      * @var year
      *
      * @ORM\Column(name="year", type="year")
@@ -34,18 +41,6 @@ class SchoolExit
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $year;
-
-    /**
-     * @var \AppBundle\Entity\Lwd
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
-     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Lwd")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idlwd", referencedColumnName="idlwd")
-     * })
-     */
-    private $idlwd;
 
     /**
      * @var \AppBundle\Entity\School
@@ -59,15 +54,27 @@ class SchoolExit
      */
     private $emiscode;
 
+    /**
+     * @var \AppBundle\Entity\Lwd
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\OneToOne(targetEntity="AppBundle\Entity\Lwd")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="idlwd", referencedColumnName="idlwd")
+     * })
+     */
+    private $idlwd;
+
 
 
     /**
      * Set reason
      *
-     * @param string $reason
+     * @param \simplearray $reason
      * @return SchoolExit
      */
-    public function setReason($reason)
+    public function setReason(\simplearray $reason)
     {
         $this->reason = $reason;
 
@@ -108,6 +115,29 @@ class SchoolExit
     }
 
     /**
+     * Set dateOfExit
+     *
+     * @param \DateTime $dateOfExit
+     * @return SchoolExit
+     */
+    public function setDateOfExit($dateOfExit)
+    {
+        $this->dateOfExit = $dateOfExit;
+
+        return $this;
+    }
+
+    /**
+     * Get dateOfExit
+     *
+     * @return \DateTime 
+     */
+    public function getDateOfExit()
+    {
+        return $this->dateOfExit;
+    }
+
+    /**
      * Set year
      *
      * @param year $year
@@ -131,29 +161,6 @@ class SchoolExit
     }
 
     /**
-     * Set idlwd
-     *
-     * @param \AppBundle\Entity\Lwd $idlwd
-     * @return SchoolExit
-     */
-    public function setIdlwd(\AppBundle\Entity\Lwd $idlwd)
-    {
-        $this->idlwd = $idlwd;
-
-        return $this;
-    }
-
-    /**
-     * Get idlwd
-     *
-     * @return \AppBundle\Entity\Lwd 
-     */
-    public function getIdlwd()
-    {
-        return $this->idlwd;
-    }
-
-    /**
      * Set emiscode
      *
      * @param \AppBundle\Entity\School $emiscode
@@ -174,5 +181,28 @@ class SchoolExit
     public function getEmiscode()
     {
         return $this->emiscode;
+    }
+
+    /**
+     * Set idlwd
+     *
+     * @param \AppBundle\Entity\Lwd $idlwd
+     * @return SchoolExit
+     */
+    public function setIdlwd(\AppBundle\Entity\Lwd $idlwd)
+    {
+        $this->idlwd = $idlwd;
+
+        return $this;
+    }
+
+    /**
+     * Get idlwd
+     *
+     * @return \AppBundle\Entity\Lwd 
+     */
+    public function getIdlwd()
+    {
+        return $this->idlwd;
     }
 }

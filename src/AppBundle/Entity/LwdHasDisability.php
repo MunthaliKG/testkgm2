@@ -13,41 +13,6 @@ use Doctrine\ORM\Mapping as ORM;
 class LwdHasDisability
 {
     /**
-     * @var string
-     *
-     * @ORM\Column(name="assessed_by", type="string", nullable=true)
-     */
-    private $assessedBy;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date_assessed", type="date", nullable=true)
-     */
-    private $dateAssessed;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="identified_by", type="string", nullable=false)
-     */
-    private $identifiedBy;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="identification_date", type="date", nullable=false)
-     */
-    private $identificationDate;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="case_description", type="string", length=150, nullable=true)
-     */
-    private $caseDescription;
-
-    /**
      * @var \AppBundle\Entity\Disability
      *
      * @ORM\Id
@@ -72,11 +37,12 @@ class LwdHasDisability
     private $idlwd;
 
     /**
-     * @var \AppBundle\Entity\Level
+     * @var \AppBundle\Entity\DisabilityHasLevel
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Level")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\DisabilityHasLevel")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="idlevel", referencedColumnName="idlevel", nullable=true)
+     *   @ORM\JoinColumn(name="idlevel", referencedColumnName="idlevel"),
+     *   @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
      * })
      */
     private $idlevel;
@@ -105,121 +71,6 @@ class LwdHasDisability
         $this->idneed = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-
-    /**
-     * Set assessedBy
-     *
-     * @param string $assessedBy
-     * @return LwdHasDisability
-     */
-    public function setAssessedBy($assessedBy)
-    {
-        $this->assessedBy = $assessedBy;
-
-        return $this;
-    }
-
-    /**
-     * Get assessedBy
-     *
-     * @return string 
-     */
-    public function getAssessedBy()
-    {
-        return $this->assessedBy;
-    }
-
-    /**
-     * Set dateAssessed
-     *
-     * @param \DateTime $dateAssessed
-     * @return LwdHasDisability
-     */
-    public function setDateAssessed($dateAssessed)
-    {
-        $this->dateAssessed = $dateAssessed;
-
-        return $this;
-    }
-
-    /**
-     * Get dateAssessed
-     *
-     * @return \DateTime 
-     */
-    public function getDateAssessed()
-    {
-        return $this->dateAssessed;
-    }
-
-    /**
-     * Set identifiedBy
-     *
-     * @param string $identifiedBy
-     * @return LwdHasDisability
-     */
-    public function setIdentifiedBy($identifiedBy)
-    {
-        $this->identifiedBy = $identifiedBy;
-
-        return $this;
-    }
-
-    /**
-     * Get identifiedBy
-     *
-     * @return string 
-     */
-    public function getIdentifiedBy()
-    {
-        return $this->identifiedBy;
-    }
-
-    /**
-     * Set identificationDate
-     *
-     * @param \DateTime $identificationDate
-     * @return LwdHasDisability
-     */
-    public function setIdentificationDate($identificationDate)
-    {
-        $this->identificationDate = $identificationDate;
-
-        return $this;
-    }
-
-    /**
-     * Get identificationDate
-     *
-     * @return \DateTime 
-     */
-    public function getIdentificationDate()
-    {
-        return $this->identificationDate;
-    }
-
-    /**
-     * Set caseDescription
-     *
-     * @param string $caseDescription
-     * @return LwdHasDisability
-     */
-    public function setCaseDescription($caseDescription)
-    {
-        $this->caseDescription = $caseDescription;
-
-        return $this;
-    }
-
-    /**
-     * Get caseDescription
-     *
-     * @return string 
-     */
-    public function getCaseDescription()
-    {
-        return $this->caseDescription;
-    }
 
     /**
      * Set iddisability
@@ -270,10 +121,10 @@ class LwdHasDisability
     /**
      * Set idlevel
      *
-     * @param \AppBundle\Entity\Level $idlevel
+     * @param \AppBundle\Entity\DisabilityHasLevel $idlevel
      * @return LwdHasDisability
      */
-    public function setIdlevel(\AppBundle\Entity\Level $idlevel = null)
+    public function setIdlevel(\AppBundle\Entity\DisabilityHasLevel $idlevel = null)
     {
         $this->idlevel = $idlevel;
 

@@ -15,14 +15,7 @@ class Lwd
     /**
      * @var string
      *
-     * @ORM\Column(name="distance_to_school", type="string", nullable=true)
-     */
-    private $distanceToSchool;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="first_name", type="string", length=25, nullable=false)
+     * @ORM\Column(name="first_name", type="string", length=50, nullable=false)
      */
     private $firstName;
 
@@ -62,11 +55,18 @@ class Lwd
     private $guardianRelationship;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="non_relative", type="string", length=25, nullable=true)
+     */
+    private $nonRelative;
+
+    /**
      * @var integer
      *
-     * @ORM\Column(name="idlwd", type="integer")
+     * @ORM\Column(name="idlwd", type="bigint")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $idlwd;
 
@@ -81,42 +81,6 @@ class Lwd
     private $idguardian;
 
 
-
-    /**
-     * Set idlwd
-     *
-     * @param integer $idlwd
-     * @return Lwd
-     */
-    public function setIdlwd($idlwd)
-    {
-        $this->idlwd = $idlwd;
-
-        return $this;
-    }
-
-    /**
-     * Set distanceToSchool
-     *
-     * @param string $distanceToSchool
-     * @return Lwd
-     */
-    public function setDistanceToSchool($distanceToSchool)
-    {
-        $this->distanceToSchool = $distanceToSchool;
-
-        return $this;
-    }
-
-    /**
-     * Get distanceToSchool
-     *
-     * @return string 
-     */
-    public function getDistanceToSchool()
-    {
-        return $this->distanceToSchool;
-    }
 
     /**
      * Set firstName
@@ -254,6 +218,29 @@ class Lwd
     public function getGuardianRelationship()
     {
         return $this->guardianRelationship;
+    }
+
+    /**
+     * Set nonRelative
+     *
+     * @param string $nonRelative
+     * @return Lwd
+     */
+    public function setNonRelative($nonRelative)
+    {
+        $this->nonRelative = $nonRelative;
+
+        return $this;
+    }
+
+    /**
+     * Get nonRelative
+     *
+     * @return string 
+     */
+    public function getNonRelative()
+    {
+        return $this->nonRelative;
     }
 
     /**

@@ -13,9 +13,37 @@ use Doctrine\ORM\Mapping as ORM;
 class LwdBelongsToSchool
 {
     /**
-     * @var \DateTime
+     * @var boolean
      *
-     * @ORM\Column(name="year", type="date")
+     * @ORM\Column(name="std", type="boolean", nullable=false)
+     */
+    private $std;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="distance_to_school", type="string", nullable=false)
+     */
+    private $distanceToSchool;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="means_to_school", type="string", nullable=false)
+     */
+    private $meansToSchool;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="other_means", type="string", length=25, nullable=true)
+     */
+    private $otherMeans;
+
+    /**
+     * @var year
+     *
+     * @ORM\Column(name="year", type="year")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
@@ -48,9 +76,101 @@ class LwdBelongsToSchool
 
 
     /**
+     * Set std
+     *
+     * @param boolean $std
+     * @return LwdBelongsToSchool
+     */
+    public function setStd($std)
+    {
+        $this->std = $std;
+
+        return $this;
+    }
+
+    /**
+     * Get std
+     *
+     * @return boolean 
+     */
+    public function getStd()
+    {
+        return $this->std;
+    }
+
+    /**
+     * Set distanceToSchool
+     *
+     * @param string $distanceToSchool
+     * @return LwdBelongsToSchool
+     */
+    public function setDistanceToSchool($distanceToSchool)
+    {
+        $this->distanceToSchool = $distanceToSchool;
+
+        return $this;
+    }
+
+    /**
+     * Get distanceToSchool
+     *
+     * @return string 
+     */
+    public function getDistanceToSchool()
+    {
+        return $this->distanceToSchool;
+    }
+
+    /**
+     * Set meansToSchool
+     *
+     * @param string $meansToSchool
+     * @return LwdBelongsToSchool
+     */
+    public function setMeansToSchool($meansToSchool)
+    {
+        $this->meansToSchool = $meansToSchool;
+
+        return $this;
+    }
+
+    /**
+     * Get meansToSchool
+     *
+     * @return string 
+     */
+    public function getMeansToSchool()
+    {
+        return $this->meansToSchool;
+    }
+
+    /**
+     * Set otherMeans
+     *
+     * @param string $otherMeans
+     * @return LwdBelongsToSchool
+     */
+    public function setOtherMeans($otherMeans)
+    {
+        $this->otherMeans = $otherMeans;
+
+        return $this;
+    }
+
+    /**
+     * Get otherMeans
+     *
+     * @return string 
+     */
+    public function getOtherMeans()
+    {
+        return $this->otherMeans;
+    }
+
+    /**
      * Set year
      *
-     * @param \DateTime $year
+     * @param year $year
      * @return LwdBelongsToSchool
      */
     public function setYear($year)
@@ -63,7 +183,7 @@ class LwdBelongsToSchool
     /**
      * Get year
      *
-     * @return \DateTime 
+     * @return year 
      */
     public function getYear()
     {
@@ -114,33 +234,5 @@ class LwdBelongsToSchool
     public function getIdlwd()
     {
         return $this->idlwd;
-    }
-    /**
-     * @var boolean
-     */
-    private $std;
-
-
-    /**
-     * Set std
-     *
-     * @param boolean $std
-     * @return LwdBelongsToSchool
-     */
-    public function setStd($std)
-    {
-        $this->std = $std;
-
-        return $this;
-    }
-
-    /**
-     * Get std
-     *
-     * @return boolean 
-     */
-    public function getStd()
-    {
-        return $this->std;
     }
 }

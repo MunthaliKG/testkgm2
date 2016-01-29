@@ -20,13 +20,6 @@ class DisabilityCategory
     private $categoryName;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="category_description", type="string", length=50, nullable=true)
-     */
-    private $categoryDescription;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="iddisability_category", type="integer")
@@ -58,29 +51,6 @@ class DisabilityCategory
     public function getCategoryName()
     {
         return $this->categoryName;
-    }
-
-    /**
-     * Set categoryDescription
-     *
-     * @param string $categoryDescription
-     * @return DisabilityCategory
-     */
-    public function setCategoryDescription($categoryDescription)
-    {
-        $this->categoryDescription = $categoryDescription;
-
-        return $this;
-    }
-
-    /**
-     * Get categoryDescription
-     *
-     * @return string 
-     */
-    public function getCategoryDescription()
-    {
-        return $this->categoryDescription;
     }
 
     /**

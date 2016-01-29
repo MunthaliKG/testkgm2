@@ -13,7 +13,21 @@ use Doctrine\ORM\Mapping as ORM;
 class SchoolHasSnt
 {
     /**
-     * @var \DateTime
+     * @var string
+     *
+     * @ORM\Column(name="snt_type", type="string", nullable=false)
+     */
+    private $sntType;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="no_of_visits", type="integer", nullable=true)
+     */
+    private $noOfVisits;
+
+    /**
+     * @var year
      *
      * @ORM\Column(name="year", type="year")
      * @ORM\Id
@@ -32,13 +46,7 @@ class SchoolHasSnt
      * })
      */
     private $idsnt;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="snt_type", type="string", nullable=true)
-     */
-    private $snt_type;
-    
+
     /**
      * @var \AppBundle\Entity\School
      *
@@ -54,9 +62,55 @@ class SchoolHasSnt
 
 
     /**
+     * Set sntType
+     *
+     * @param string $sntType
+     * @return SchoolHasSnt
+     */
+    public function setSntType($sntType)
+    {
+        $this->sntType = $sntType;
+
+        return $this;
+    }
+
+    /**
+     * Get sntType
+     *
+     * @return string 
+     */
+    public function getSntType()
+    {
+        return $this->sntType;
+    }
+
+    /**
+     * Set noOfVisits
+     *
+     * @param integer $noOfVisits
+     * @return SchoolHasSnt
+     */
+    public function setNoOfVisits($noOfVisits)
+    {
+        $this->noOfVisits = $noOfVisits;
+
+        return $this;
+    }
+
+    /**
+     * Get noOfVisits
+     *
+     * @return integer 
+     */
+    public function getNoOfVisits()
+    {
+        return $this->noOfVisits;
+    }
+
+    /**
      * Set year
      *
-     * @param \DateTime $year
+     * @param year $year
      * @return SchoolHasSnt
      */
     public function setYear($year)
@@ -69,7 +123,7 @@ class SchoolHasSnt
     /**
      * Get year
      *
-     * @return \DateTime 
+     * @return year 
      */
     public function getYear()
     {
@@ -80,7 +134,7 @@ class SchoolHasSnt
      * Set idsnt
      *
      * @param \AppBundle\Entity\Snt $idsnt
-     * @return Snt
+     * @return SchoolHasSnt
      */
     public function setIdsnt(\AppBundle\Entity\Snt $idsnt)
     {
@@ -120,27 +174,5 @@ class SchoolHasSnt
     public function getEmiscode()
     {
         return $this->emiscode;
-    }
-     /**
-     * Set snt_type
-     *
-     * @param string $snt_type
-     * @return SchoolHasSnt
-     */
-    public function setSntType($snt_type)
-    {
-        $this->snt_type = $snt_type;
-
-        return $this;
-    }
-
-    /**
-     * Get snt_type
-     *
-     * @return string 
-     */
-    public function getSntType()
-    {
-        return $this->snt_type;
     }
 }
