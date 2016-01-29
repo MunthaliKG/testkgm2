@@ -12,13 +12,13 @@
     
     {% for teacher, teachers in snTeachers %}        
     <tr>
-        <td align="center">{{ teachers.sfirst_name}} {{teachers.sinitials}} {{ teachers.slast_name }}</td>
+        <td align="center">{{ teachers.sfirst_name}} {{ teachers.slast_name }}</td>
         <td align="center">{{ teachers.s_sex }}</td>
         <td align="center">{{ teachers.s_dob }}</td>
         <td align="center">{{ teachers.qualification }}</td>      
         <td align="center">{{ teachers.speciality }}</td>
         <td align="center">{{ teachers.year_started}}</td>
-        <td align="center">{{ teachers.snt_type }}</td>            
+        <td align="center">{{ teachers.teacher_type }}</td>            
     </tr>
     {% endfor %}
     <tr>

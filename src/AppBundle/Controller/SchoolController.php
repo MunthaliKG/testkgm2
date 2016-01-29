@@ -487,7 +487,7 @@ class SchoolController extends Controller{
             
             /*convert the SET value of MySQL to corresponding array in Php
             to enable correct rendering of choices in the form*/          
-            $defaultData['other_specialities'] = explode(',',$defaultData['other_specialities']);
+            //$defaultData['other_specialities'] = explode(',',$defaultData['other_specialities']);
       	}
         
       	$form2=  $this->createForm(new TeacherType(), $defaultData);
@@ -514,20 +514,22 @@ class SchoolController extends Controller{
             $teacher->setSLastName($formData['slast_name']);
             $teacher->setSdob($formData['s_dob']);
             $teacher->setSSex($formData['s_sex']);
-            $teacher->setSinitials($formData['sinitials']);
+            //$teacher->setSinitials($formData['sinitials']);
             $teacher->setQualification($formData['qualification']);
             $teacher->setSpeciality($formData['speciality']);
             
             //check not to duplicate the speciailities in other
+            /*
             for ($i = 0; $i < count($formData['other_specialities']); ++$i) {
                 if ($formData['other_specialities'][$i] == $formData['speciality']) {
                     unset($formData['other_specialities'][$i]);
                 }
             }
-            array_values($formData['other_specialities']);
+            array_values($formData['other_specialities']);            
+             */
             //--end
             
-            $teacher->setOtherSpecialities($formData['other_specialities']);
+            //$teacher->setOtherSpecialities($formData['other_specialities']);
             $teacher->setYearStarted($formData['year_started']->format('Y'));
             
             $snt = $this->getDoctrine()->getRepository('AppBundle:Snt')

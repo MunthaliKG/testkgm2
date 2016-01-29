@@ -17,7 +17,7 @@ class ZoneReportController extends Controller{
 	public function zoneReportMainAction($idzone, Request $request){
 
 		//sub-reports to include in the report
-		$reports = [0=>"Preliminary counts",1=>"Summary of learners with special needs",2=>"Teaching and learning materials"];
+		$reports = [0=>"Preliminary counts",1=>"Summary of learners with special needs"];
 		//available formats for the report
 		$formats = [
 			'html'=>'html', 
@@ -134,7 +134,7 @@ class ZoneReportController extends Controller{
                                 $options['rmEnoughLight'] = $dataConverter->countArray($rooms, 'enough_light', 'Yes');
                                 $options['rmEnoughSpace'] = $dataConverter->countArray($rooms, 'enough_space', 'Yes');
                                 $options['rmEnoughVent'] = $dataConverter->countArray($rooms, 'enough_ventilation', 'Yes');
-                                $options['rmAdaptiveChairs'] = $dataConverter->countArrayBool($rooms, 'adaptive_chairs', '>0');
+                                $options['rmAdaptiveChairs'] = $dataConverter->countArray($rooms, 'adaptive_chairs', 'Yes');
                                 $options['rmAccessible'] = $dataConverter->countArray($rooms, 'access', 'Yes');
                                 $options['rmTemporary'] = $dataConverter->countArray($rooms, 'room_type', 'Temporary');
                                 $options['rmPermanent'] = $options['rmTotal'] - $options['rmTemporary'];			
@@ -255,6 +255,7 @@ class ZoneReportController extends Controller{
                         /*End of Summary of learners with special needs*/
                         
                         /*Start of Teaching and learning materials*/
+                        /*
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                             $options['learningMaterials'] = true;
                             //learners needs by resource room or not - STARTS HERE
@@ -279,7 +280,8 @@ class ZoneReportController extends Controller{
                                 }
                                 
                                 //loop through the selection list summing the quantity value for each need and where it is found (resource room or not)
-                                for ($x = 0; $x <= $needsCount-1; $x++){
+                                /*
+                                 * for ($x = 0; $x <= $needsCount-1; $x++){
                                     foreach ($needs as $needkey => $need) {
                                         foreach ($available as $key => $avail) {                                            
                                             if (($learnersNeeds[$x]['needname'] == $need) && ($learnersNeeds[$x]['available_in'] == $avail)){                                                                                               
@@ -288,9 +290,11 @@ class ZoneReportController extends Controller{
                                         }
                                     }
                                 }
+                                 
                                 //learners needs by resource room or not - ENDS HERE
                                 $options['teachingNeeds'] = $teachingNeeds;
                         }
+                        */
                         /*End of Teaching and learning materials*/
 			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
@@ -409,8 +413,8 @@ class ZoneReportController extends Controller{
                             if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
                                     $options['snLearners'] = true;
                                     //get students enrolled this year
-                                    $enrolled = $connection->fetchAll('SELECT first_name, last_name, initials, home_address, sex, dob, 
-                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, income_level 
+                                    $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, 
+                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, household_type 
                                         FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
                                         WHERE idzone = ? AND `year` = ?', 
                                             [$idzone, $yearQuery['yr']]);				
@@ -420,7 +424,7 @@ class ZoneReportController extends Controller{
                                     $options['snTeachers'] = true;
                                     //get teachers this year
                                     $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
-                                        sinitials, s_sex, s_dob, qualification, speciality, year_started, snt_type 
+                                        s_sex, s_dob, qualification, speciality, year_started, teacher_type 
                                         FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school
                                         WHERE idzone = ? AND `year` = ?', 
                                             [$idzone, $yearQuery['yr']]);				
