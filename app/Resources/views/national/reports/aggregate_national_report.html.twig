@@ -25,14 +25,14 @@
         </tr>                    
     </table>
 
-    {% if preliminary is defined %}
-        {% include 'national/reports/national_preliminary.html.twig' %}
+   {% if preliminary is defined %}
+        {% include 'zone/reports/zone_preliminary.html.twig' %}
     {% endif %}
     {% if specialNeeds is defined %}
-        {% include 'national/reports/national_special_needs.html.twig' %}
+        {% include 'zone/reports/zone_special_needs.html.twig' %}
     {% endif %}
     {% if learningMaterials is defined %}
-        {% include 'national/reports/national_teaching_materials.html.twig' %}
+        {% include 'zone/reports/zone_teaching_materials.html.twig' %}
     {% endif %}
     
 {% endblock %}

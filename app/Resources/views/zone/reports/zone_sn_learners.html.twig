@@ -9,12 +9,12 @@
         <td align="center"><b>Guardian</b></td>
         <td align="center"><b>Sex of Guardian</b></td>
         <td align="center"><b>Occupation of Guardian</b></td>
-        <td align="center"><b>Income Level of Guardian</b></td>           
+        <td align="center"><b>Household type of Guardian</b></td>           
     </tr>
     
     {% for learner, learners in snLearners %}        
     <tr>
-        <td align="center">{{ learners.first_name}} {{learners.initials}} {{ learners.last_name}}</td>
+        <td align="center">{{ learners.first_name}} {{ learners.last_name}}</td>
         <td align="center">{{ learners.home_address}}</td>
         <td align="center">{{ learners.sex}}</td>
         <td align="center">{{ learners.dob}}</td>
@@ -22,7 +22,7 @@
         <td align="center">{{ learners.gfirst_name}} {{ learners.glast_name}}</td>
         <td align="center">{{ learners.gsex}}</td>
         <td align="center">{{ learners.occupation}}</td>
-        <td align="center">{{ learners.income_level}}</td>            
+        <td align="center">{{ learners.household_type}}</td>            
     </tr>
     {% endfor %}
     <tr>

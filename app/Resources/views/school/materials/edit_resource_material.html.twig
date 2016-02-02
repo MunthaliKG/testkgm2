@@ -2,7 +2,7 @@
 {% extends 'school/materials/resources_main.html.twig' %}
 
 {#{% set material = app.request.attributes.get('_route_params')['materialId'] %}#} {# get the material id from the Route #}
-{% set need = app.request.attributes.get('_route_params')['needId'] %} {# get the need id from the Route #}
+{% set needId = app.request.attributes.get('_route_params')['needId'] %} {# get the need id from the Route #}
 
 {% block material_form_nav %}
     {{ parent() }}
@@ -31,15 +31,21 @@
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
         <div class="item active">
+            {% if (needId != "new") and not(app.session.flashBag.has('resourceUpdated')) and not(app.session.flashBag.has('resourceAdded')) %}
+                        <div class="alert alert-success alert-dismissible" role="alert">                    
+                            <p align="center"><b>{{ itemBeingEdited }}</b></p>
+                        </div>                
+            {% endif%}
             {{ form_start(form1) }}
             {{ form_errors(form1) }}
             {{ form_row(form1.idneed, {'attr':{'disabled': disabled }}) }}
-             {{ form_row(form1.idneed_2) }}
-            {{ form_row(form1.date_procured) }}
-            {{ form_row(form1.year_recorded) }}
-            {{ form_row(form1.state) }}
-            {{ form_row(form1.available_in) }}
-            {{ form_row(form1.quantity) }}
+            {{ form_row(form1.idneed_2, {'attr':{'disabled': disabled }}) }}
+            {{ form_row(form1.quantity_required) }}
+            {{ form_row(form1.quantity_available) }}
+            {{ form_row(form1.quantity_in_use) }}
+            {{ form_row(form1.year_recorded) }}            
+            {{ form_row(form1.available) }}
+            {{ form_row(form1.provided_by) }}            
             <p class="text-right">
                 {{ form_widget(form1.save, {'attr':{'class':'btn btn-default','data-slide':'next'},'after_label':' <i class="fa fa-chevron-right"></i>'}) }}
             </p>

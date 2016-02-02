@@ -6,16 +6,16 @@
 {% block basic_reports %} active {% endblock %} {# activate the tab for this page #}
 
 {% block reports_body %}
-	{{ form_start(form) }}
-	{{ form_errors(form) }}
-	{{ form_row(form.reports) }}
-	{{ form_row(form.format )}}
-	{{ form_row(form.produce, {'before_label':'<i class="fa fa-table"></i> '})}}
-	{{ form_end(form) }}
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.reports) }}
+    {{ form_row(form.enrollments) }}
+    {{ form_row(form.format )}}	
+    {{ form_row(form.produce, {'before_label':'<i class="fa fa-table"></i> '})}}
+    {{ form_end(form) }}    
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
 	<script type="text/javascript" src="{{ asset('assets/js/reports.js')}}"></script>
 {% endblock %}
-

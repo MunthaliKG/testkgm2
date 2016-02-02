@@ -12,19 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ResourceRoom
 {    
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="date_procured", type="date", nullable=false)
-     */
-      
-    private $date_procured;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="state", type="string", nullable=true)
-     */
-    private $state;
+    
     /**
      * @var string
      * 
@@ -62,23 +50,39 @@ class ResourceRoom
      /**
      * @var string
      *
-     * @ORM\Column(name="available_in", type="string", nullable=false)
+     * @ORM\Column(name="provided_by", type="string", nullable=false)
      */
-    private $available_in;
+    private $provided_by;
 
      /**
      * @var integer
      *
-     * @ORM\Column(name="quantity", type="integer", nullable=false)
+     * @ORM\Column(name="quantity_available", type="integer", nullable=false)
      * 
      */
-    private $quantity;
+    private $quantity_available;
     /**
-     * @var text
+     * @var integer
      *
-     * @ORM\Column(name="updates", type="text")
+     * @ORM\Column(name="quantity_in_use", type="integer", nullable=false)
+     * 
      */
-    private $updates;
+    private $quantity_in_use;
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="quantity_required", type="integer", nullable=false)
+     * 
+     */
+    private $quantity_required;
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="available", type="integer", nullable=false)
+     * 
+     */
+    private $available;
+   
     /**
      * Set year_recorded
      *
@@ -92,27 +96,7 @@ class ResourceRoom
         return $this;
     }
 
-    /**
-     * Get date_procured
-     *
-     * @return \DateTime 
-     */
-    public function getDateProcured()
-    {
-        return $this->date_procured;
-    }
-    /**
-     * Set date_procured
-     *
-     * @param \DateTime $date_procured
-     * @return ResourceRoom
-     */
-    public function setDateProcured($date_procured)
-    {
-        $this->date_procured = $date_procured;
-
-        return $this;
-    }
+    
 
     /**
      * Get year_recorded
@@ -171,26 +155,26 @@ class ResourceRoom
     }
     
      /**
-     * Set available_in
+     * Set provided_by
      *
-     * @param string $available_in
+     * @param string $provided_by
      * @return ResourceRoom
      */
-    public function setAvailableInRc($available_in)
+    public function setProvidedBy($provided_by)
     {
-        $this->available_in = $available_in;
+        $this->provided_by = $provided_by;
 
         return $this;
     }
 
     /**
-     * Get available_in
+     * Get provided_by
      *
      * @return string 
      */
-    public function getAvailableInRc()
+    public function getProvidedBy()
     {
-        return $this->available_in;
+        return $this->provided_by;
     }
     /**
      * Set quantity
@@ -214,47 +198,97 @@ class ResourceRoom
     {
         return $this->quantity;
     }
-     /**
-     * Set state
-     *
-     * @param string $state
-     * @return Snt
-     */
-    public function setState($state)
-    {
-        $this->state = $state;
-
-        return $this;
-    }
-
+    
     /**
-     * Get state
+     * Set quantity_in_use
      *
-     * @return string 
-     */
-    public function getState()
-    {
-        return $this->state;
-    }
-     /**
-     * Set updates
-     *
-     * @param text $updates
+     * @param integer $quantity_in_use
      * @return ResourceRoom
      */
-    public function setUpdates($updates)
+    public function setQuantityInUse($quantity_in_use)
     {
-        $this->updates = $updates;
+        $this->quantity_in_use = $quantity_in_use;
 
         return $this;
     }
+
     /**
-     * Get updates
+     * Get quantity_in_use
      *
-     * @return text
+     * @return integer 
      */
-    public function getUpdates()
+    public function getQuantityInUse()
     {
-        return $this->updates;
+        return $this->quantity_in_use;
+    }
+    //
+     /**
+     * Set quantity_available
+     *
+     * @param integer $quantity_available
+     * @return ResourceRoom
+     */
+    public function setQuantityAvailable($quantity_available)
+    {
+        $this->quantity_available = $quantity_available;
+
+        return $this;
+    }
+
+    /**
+     * Get quantity_available
+     *
+     * @return integer 
+     */
+    public function getQuantityAvailable()
+    {
+        return $this->quantity_available;
+    }
+    
+    //
+     /**
+     * Set quantity_required
+     *
+     * @param integer $quantity_required
+     * @return ResourceRoom
+     */
+    public function setQuantityRequired($quantity_required)
+    {
+        $this->quantity_required = $quantity_required;
+
+        return $this;
+    }
+
+    /**
+     * Get quantity_required
+     *
+     * @return integer 
+     */
+    public function getQuantityRequired()
+    {
+        return $this->quantity_required;
+    }
+    
+        /**
+     * Set available
+     *
+     * @param integer $available
+     * @return ResourceRoom
+     */
+    public function setAvailable($avalaible)
+    {
+        $this->avalaible = $avalaible;
+
+        return $this;
+    }
+
+    /**
+     * Get avalaible
+     *
+     * @return integer 
+     */
+    public function getAvailable()
+    {
+        return $this->avalaible;
     }
 }

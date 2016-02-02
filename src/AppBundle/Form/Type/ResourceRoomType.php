@@ -24,52 +24,48 @@ class ResourceRoomType extends AbstractType
         $builder
         ->add('idneed_2','hidden')
         ->add('idneed','choice', array(
-               'placeholder' => 'Choose special need item',
-               'label' => 'Special Needs Item',
-               'choices' => $needs,                
-                'expanded' => false,
-                'multiple' => false,
-                )
-        )
-        ->add('date_procured','date', array(
-                'label' => 'Date Procured',
-                'widget' => 'single_text',
-                'format' => 'dd-MM-yyyy',
-                'constraints' => array(new NotBlank()),
-                'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
-                )
-        )
+           'placeholder' => 'Choose special need item',
+           'label' => 'Special Needs Item',
+           'choices' => $needs,                
+            'expanded' => false,
+            'multiple' => false,
+            )) 
         ->add('year_recorded', 'datetime', array(
                 'label' => 'Year Recorded',
                 'widget' => 'single_text',
                 'format' => 'yyyy',
                 'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
                 'constraints' => array(new NotBlank()),
-                )
-        )                
-        ->add('state', 'choice', array(
-                'placeholder' => 'Status of need',
-                'label' => 'State',
-                'choices' => array('Good'=>'Good','Average'=>'Average','Bad'=>'Bad'),
-                'constraints' => array(new NotBlank()),
-                'expanded' => false,
-                'multiple' => false,
-                )
-        )
-        ->add('available_in', 'choice', array(
-                'label' => 'Available',
-                'choices' => array('With Learner'=> 'With Learner', 'Resource room'=>'Resource room', 'Else Where'=>'Other'),
-                'expanded' => true,
-                'multiple' => false,)
-        )
-        ->add('quantity', 'integer', array(
-           'label' => 'Quantity',
-           // 'attr' => array('min'=>1),
+                ))                
+        ->add('quantity_available', 'integer', array(
+           'label' => 'Quantity Available',
            'constraints' => array(
                 new NotBlank(),
                 new Range(array('min'=> 1))
-            )		
+            )))
+        ->add('quantity_in_use', 'integer', array(
+           'label' => 'Quantity In Use',
+           'constraints' => array(
+                new NotBlank(),
+                new Range(array('min'=> 1))
+            )))
+        ->add('quantity_required', 'integer', array(
+           'label' => 'Quantity Required',
+           'constraints' => array(
+                new NotBlank(),
+                new Range(array('min'=> 1))
+            )		))
+        ->add('available', 'choice', array(
+           'label' => 'Available',
+           'choices' => array('No'=>'No','Yes'=>'Yes'),
+			'constraints' => array(new NotBlank()),
+			'expanded' => false,
+			'multiple' => false,		
            ))
+        ->add('provided_by','text', array(
+            'label' => 'Provided By',
+            'constraints' => array(new NotBlank()),
+            ))
         ->add('save','submit', array(
 			'label' => 'save',
 			)
@@ -79,13 +75,6 @@ class ResourceRoomType extends AbstractType
     {
         return 'resourceRoom';
     }
- 
-    /*public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Need',
-        ));
-    }*/
 
 }
 ?>
