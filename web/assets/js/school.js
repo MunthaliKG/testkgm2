@@ -56,7 +56,7 @@ $(document).ready(function(){
 		if($(this).val() !== "0"){
 			$('#findByName').submit();
 		}
-	});
+	});                       
 
 	$('#form_learner').change(function(event){
 		if($(this).val() !== ""){
@@ -125,6 +125,44 @@ $(document).ready(function(){
 		}else{
 			$('#customReport_standard').prop('readonly','readonly');
 		}
+	});
+        
+        //listen for change in the teacher type field
+        $('#teacher_teacher_type_0').change(function(event){//SNT option selected
+
+		if($(this).val() == "snt"){
+                    //alert('SNT selected');
+                    $('#teacher_snt_type').prop('disabled','');
+                    //$('#teacher_no_of_visits').prop('disabled','');
+                    $('#teacher_speciality').prop('disabled','');
+                    //$('#teacher_cpd_training').prop('disabled','disabled');
+                     document.getElementById('teacher_snt_type').style.display = 'block';
+                     //document.getElementById('teacher_no_of_visits').style.display = 'block';
+                     document.getElementById('teacher_speciality').style.display = 'block';
+                     document.getElementById('teacher_cpd_training').style.display = 'none';
+                   
+		}
+	});
+         $('#teacher_teacher_type_1').change(function(event){ //regular option selected
+
+		if($(this).val() == "regular"){
+                    $('#teacher_cpd_training').prop('disabled','');
+                    //$('#teacher_snt_type').prop('disabled','disabled');
+                    //$('#teacher_no_of_visits').prop('disabled','disabled');
+                    document.getElementById('teacher_snt_type').style.display = 'none';
+                    document.getElementById('teacher_no_of_visits').style.display = 'none';
+                    document.getElementById('teacher_speciality').style.display = 'none';
+                    document.getElementById('teacher_cpd_training').style.display = 'block';
+		}
+	});
+        $('#teacher_snt_type').change(function(event){ //check snt type
+
+		if($(this).val() == "Itinerant"){                    
+                    $('#teacher_no_of_visits').prop('disabled','');                    
+                    document.getElementById('teacher_no_of_visits').style.display = 'block';                    
+		}else {
+                    document.getElementById('teacher_no_of_visits').style.display = 'none';
+                }
 	});
 
 	$('[autofocus]:enabled:not([readonly]):first').focus();

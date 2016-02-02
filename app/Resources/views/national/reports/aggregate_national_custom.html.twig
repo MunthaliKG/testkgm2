@@ -24,15 +24,20 @@
             <td align="center">{{ numOfSchools }}</td>
         </tr>                    
     </table>
-
-   {% if preliminary is defined %}
-        {% include 'zone/reports/zone_preliminary.html.twig' %}
+ {% if snLearners is defined %}
+        {% include 'zone/reports/zone_sn_learners.html.twig' %}
     {% endif %}
-    {% if specialNeeds is defined %}
-        {% include 'zone/reports/zone_special_needs.html.twig' %}
+    {% if snTeachers is defined %}
+        {% include 'zone/reports/zone_sn_teachers.html.twig' %}
     {% endif %}
-    {% if learningMaterials is defined %}
-        {% include 'zone/reports/zone_teaching_materials.html.twig' %}
+    {% if lwdBCG is defined %}
+        {% include 'school/reports/learners_class_sex.html.twig' %}
+    {% endif %}
+    {% if lwdBIG is defined %}
+        {% include 'school/reports/learners_category_sex.html.twig' %}
+    {% endif %}
+    {% if lwdBDG is defined %}
+        {% include 'school/reports/learners_disability_sex.html.twig' %}
     {% endif %}
     
 {% endblock %}

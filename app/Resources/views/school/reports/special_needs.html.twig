@@ -38,7 +38,33 @@
 		<td>{{ completedTotal }}</td>
 	</tr>
 </table><br>
-
+<i>Dropouts and completed by disability category and gender</i>
+<table class="{% if isHtml %} table table-condensed {% else %} pdf {% endif %}" {% if not isHtml %} border="1" {% endif %}>	        
+        
+        
+        <tr>
+            <th></th>
+            {% for dropOrComplete,counts in categoryCounts[dOrCsKey] %}
+                <th colspan="3">{{ dropOrComplete }}</th>                
+            {% endfor %}
+	</tr>
+	<tr>
+            <td>Category Name</td>
+            {% for i in 0..1 %}
+                <td>Boys</td><td>Girls</td><td>Total</td>
+            {% endfor %}
+	</tr>
+        {% for category, dOrCs in categoryCounts %}
+            <tr>
+                <td>{{ category }}</td>
+                {% for dOrCs,gender in dOrCs %}                
+                    <td>{{ gender['M'] }}</td>
+                    <td>{{ gender['F'] }}</td>
+                    <td>{{ gender['F'] + gender['M'] }}</td>                            
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table><br>
 <i>Learners with disability by Standard, Sex and Age (age at the beginning of the school year)</i>
 <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
     <tr>

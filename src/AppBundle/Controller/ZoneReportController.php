@@ -17,7 +17,7 @@ class ZoneReportController extends Controller{
 	public function zoneReportMainAction($idzone, Request $request){
 
 		//sub-reports to include in the report
-		$reports = [0=>"Preliminary counts",1=>"Summary of learners with special needs"];
+		$reports = [0=>"Preliminary counts",1=>"Summary of learners with special needs",2=>"Teaching and learning materials"];
 		//available formats for the report
 		$formats = [
 			'html'=>'html', 
@@ -54,15 +54,9 @@ class ZoneReportController extends Controller{
                         
                         $zone =  $connection->fetchAll('SELECT idzone, zone_name, iddistrict, district_name FROM zone, district '
                             . 'WHERE iddistrict = district_iddistrict and idzone = ?', [$idzone]);
-                        //echo $idzone;
-                        //exit;
+                      
                         $options['zone'] = $zone[0];
-                        //$options['zoneName'] = $zone[0]['zone_name'];
-                        //$options['districtId'] = $zone['iddistrcit'];
-                        //$options['districtName'] = $zone['district_name'];
-			//$school = $connection->fetchAssoc('SELECT emiscode,school_name,iddistrict,district_name,idzone,zone_name 
-			//	FROM school NATURAL JOIN district NATURAL JOIN zone WHERE emiscode = ?', [$emisCode]);
-
+                       
 			//$options['school'] = $school;
                         $dataConverter = $this->get('data_converter');
                         $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
@@ -85,10 +79,7 @@ class ZoneReportController extends Controller{
 				$learnersLatestYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
                                         . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
                                         . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLatestYr['yr']]);
-                               
-                                
-                                //$options['learnersBy'] = $learnersBy;
-                                //$options['teachingNeeds'] = $teachingNeeds;
+                                                           
                                 $learnersLastYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
                                         . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
                                         . 'NATURAL JOIN zone WHERE idzone = ? and year = ?', [$idzone, $lwdLastYr]);
@@ -255,47 +246,20 @@ class ZoneReportController extends Controller{
                         /*End of Summary of learners with special needs*/
                         
                         /*Start of Teaching and learning materials*/
-                        /*
+                      /*Start of Teaching and learning materials*/
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                             $options['learningMaterials'] = true;
-                            //learners needs by resource room or not - STARTS HERE
-                                $learnersNeeds = $connection->fetchAll('SELECT idzone,needname, school_has_need.* '
-                                        . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN zone NATURAL JOIN need '
-                                        . 'WHERE idzone = ? and school_has_need.year_recorded = ?', [$idzone, $lwdLatestYr['yr']]);
-                                
-                                $dbNeeds = $connection->fetchAll('SELECT idneed, needname FROM need');
-                                $needs = array();
-                                foreach ($dbNeeds as $key => $row) {
-                                    $needs[$row['idneed']] = $row['needname'];
-                                }
-                                $available = array('With Learner'=> 'With Learner', 'Resource room'=>'Resource room', 'Else Where'=>'Other');
-                                $teachingNeeds = array();
-                                $needsCount = $dataConverter->countArray($learnersNeeds, 'idzone', $idzone);
-                                
-                                //initialise array
-                                foreach ($needs as $needkey => $need) {
-                                    foreach ($available as $key => $avail) {                                                                                    
-                                        $teachingNeeds[$need][$avail] = 0;                                                                                   
-                                    }
-                                }
-                                
-                                //loop through the selection list summing the quantity value for each need and where it is found (resource room or not)
-                                /*
-                                 * for ($x = 0; $x <= $needsCount-1; $x++){
-                                    foreach ($needs as $needkey => $need) {
-                                        foreach ($available as $key => $avail) {                                            
-                                            if (($learnersNeeds[$x]['needname'] == $need) && ($learnersNeeds[$x]['available_in'] == $avail)){                                                                                               
-                                                $teachingNeeds[$need][$avail] = $teachingNeeds[$need][$avail] + $learnersNeeds[$x]['quantity'];                                              
-                                            }
-                                        }
-                                    }
-                                }
-                                 
-                                //learners needs by resource room or not - ENDS HERE
-                                $options['teachingNeeds'] = $teachingNeeds;
+                            //learners needs - STARTS HERE
+                            $learnersNeeds = $connection->fetchAll('SELECT needname, SUM(school_has_need.quantity_available) as quantity_available, '
+                                    . 'SUM(school_has_need.quantity_in_use) as quantity_in_use, '
+                                    . 'sum(school_has_need.quantity_required) as quantity_required '
+                                    . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need NATURAL JOIN zone '
+                                    . 'WHERE idzone = ? and school_has_need.year_recorded = ? GROUP BY needname', [$idzone, $lwdLatestYr['yr']]);                                                               
+                            //learners needs by resource room or not - ENDS HERE
+                            $options['teachingNeeds'] = $learnersNeeds;                           
                         }
-                        */
                         /*End of Teaching and learning materials*/
+
 			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
 			if($formData['format'] == 'html' || $formData['format'] == 'pdf'){
@@ -314,32 +278,7 @@ class ZoneReportController extends Controller{
 					return $response;
 					exit;
 				}
-			}
-                        /*
-                        else{
-                            $xml = $this->renderView('zone/reports/aggregate_zone_report.xml.twig', $options);
-                            $temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
-                            file_put_contents($temporary_file_name, $xml);
-
-                            $reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
-                            $excelSheet = $reader->load($temporary_file_name);
-                            $writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
-
-                            // create the response
-                            $response = $this->get('phpexcel')->createStreamedResponse($writer);
-                            // adding headers
-                            $dispositionHeader = $response->headers->makeDisposition(
-                                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                                'stream-file.xlsx'
-                            );
-                            $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-                            $response->headers->set('Pragma', 'public');
-                            $response->headers->set('Cache-Control', 'maxage=1');
-                            $response->headers->set('Content-Disposition', $dispositionHeader);
-
-                            return $response; 
-                        }	*/
-			
+			}                        			
 		}
 
 		return $this->render('zone/reports/zone_reports_basic.html.twig', array('form' => $form->createView()));

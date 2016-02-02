@@ -56,7 +56,7 @@ class SchoolController extends Controller{
             
             //keep all information about the selected school in the session    
             $session->set('schoolInfo', $schools[0]);
-                        
+            
             return $this->render('school/school2.html.twig',
                     array('school' => $schools[0],
                             'disabilities' => $disabilities)
@@ -146,20 +146,18 @@ class SchoolController extends Controller{
         public function editResourceAction(Request $request, $needId, $emisCode){
             $connection = $this->get('database_connection');
             $defaultData = array();
+            $itemBeingEdited = '';
             if($needId != 'new'){/*if we are not adding a new material, fill the form fields with
             	the data of the selected learner.*/
-            	$needs = $connection->fetchAll('SELECT * FROM school_has_need
+            	$needs = $connection->fetchAll('SELECT school_has_need.*, needname FROM school_has_need NATURAL JOIN need
             		WHERE idneed = ? AND emiscode = ?', array($needId, $emisCode));
             	$defaultData = $needs[0];
-      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		//$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
       		$defaultData['year_recorded'] = new \DateTime($defaultData['year_recorded'].'-1-1');
-                $defaultData['date_procured'] = new \DateTime($defaultData['date_procured']);
-                $defaultData['idneed_2'] = $needs[0]['idneed'];                
+                $defaultData['idneed_2'] = $needs[0]['idneed'];
+                $itemBeingEdited = $needs[0]['idneed'].': '.$needs[0]['needname'];
             }            
             
             //generate an array to pass into form for select list options    
-            //$needs2 = $connection->fetchAll('SELECT idneed, needname FROM need');
             $needs2 = $connection->fetchAll('SELECT idneed, needname FROM need '
                     . 'WHERE (idneed) NOT IN '
                     . '(SELECT idneed FROM school_has_need where emiscode = ?)', array($emisCode));
@@ -176,58 +174,37 @@ class SchoolController extends Controller{
             if($form1->isValid()){
             	$formData = $form1->getData();
                 $id_need = $formData['idneed'];
+                //print 'form data: '.$formData['idneed'];
+                //print '; default data: '.$defaultData['idneed'].', idneed 2:'.$defaultData['idneed_2'];
+                //exit;
                 $need;
-                $update = '';
-                //$update = '';
       		//check if this record is being edited or created anew
       		if($needId == 'new'){
-                    $need = new \AppBundle\Entity\ResourceRoom();
-                    //$material->setIdRoom($formData['idRoom']);   	
+                    $need = new \AppBundle\Entity\ResourceRoom();  	
       		}else{//if it is being edited, then update the records that already exist 
-                    $need = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')->findOneByIdneed($formData['idneed_2']);
-                    
-                    //check if any of the fields has been changed
-                    //and append the change in updates field with a date stamp
-                    if ($defaultData['updates'] != null){
-                        $update = $defaultData['updates'];}
-                    $date = date('Y-m-d');
-                    if($defaultData['quantity'] != $formData['quantity']){
-                        $update = $update. 'Qty: '.$defaultData['quantity']. 
-                            ' --> '. $formData['quantity']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['state'] != $formData['state']){
-                        $update = $update. 'State: '.$defaultData['state']. 
-                            ' --> '. $formData['state']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['available_in'] != $formData['available_in']){
-                        $update = $update. 'AvRC: '.$defaultData['available_in']. 
-                            ' --> '. $formData['available_in']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['date_procured'] != $formData['date_procured']){
-                        $update = $update. 'DateP: '.$defaultData['date_procured']->format('Y-m-d'). 
-                            ' --> '. $formData['date_procured']->format('Y-m-d'). ' on '. $date. ';';           	
-                    }
-                    if($defaultData['year_recorded'] != $formData['year_recorded']){
-                        $update = $update. 'YearR: '.$defaultData['year_recorded']->format('Y'). 
-                            ' --> '. $formData['year_recorded']->format('Y'). ' on '. $date. ';';           	
-                    }
-              
+                    $need = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')
+                            ->findOneByIdneed($defaultData['idneed_2']);              
    		}
-
-                if ($update != null){$need->setUpdates($update);}               
-                $need->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
+             
+                
                 
                 //If idneed is disabled do the right thing
                 if ($needId == 'new'){
-                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')->findOneByIdneed($formData['idneed']));
+                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
+                            ->findOneByIdneed($formData['idneed']));
                 }else{//pass hidden value if idneed is hidden                   
-                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')->findOneByIdneed($formData['idneed_2']));
+                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
+                            ->findOneByIdneed($defaultData['idneed_2']));
                 }
-                $need->setDateProcured($formData['date_procured']);
+                //$need->setDateProcured($formData['date_procured']);
                 $need->setYearRecorded($formData['year_recorded']->format('Y'));
-                $need->setState($formData['state']);
-                $need->setAvailableInRc($formData['available_in']);
-                $need->setQuantity($formData['quantity']);
+                $need->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')
+                        ->findOneByEmiscode($emisCode));
+                $need->setAvailable($formData['available']);
+                $need->setProvidedBy($formData['provided_by']);
+                $need->setQuantityInUse($formData['quantity_in_use']);
+                $need->setQuantityAvailable($formData['quantity_available']);
+                $need->setQuantityRequired($formData['quantity_required']);
                 
                 $resource = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')
                         ->findOneBy(array('idneed'=>$formData['idneed'],'emiscode'=>$emisCode));
@@ -242,29 +219,33 @@ class SchoolController extends Controller{
                             ->add('resourceAdded', 'Education support item ('.$formData['idneed'].': '.$needname[0]['needname'].') added successfully');                    
                         return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$id_need], 301);
                     }else {
-                        $needname = $connection->fetchAll('SELECT needname FROM need where idneed = ?', array($formData['idneed_2']));
+                        $needname = $connection->fetchAll('SELECT needname FROM need where idneed = ?', array($defaultData['idneed_2']));
                         $request->getSession()->getFlashBag()
-                            ->add('resourceUpdated', 'Education support item ('.$formData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
-                        return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$formData['idneed_2']], 301);
+                            ->add('resourceUpdated', 'Education support item ('.$defaultData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
+                        return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$defaultData['idneed_2']], 301);
                     }
                 }
             }
             //if this is a not new need being added, we want to make the id field uneditable
       	if($needId != 'new'){
             $readonly = true;
-            $disabled = true;          
+            $disabled = true;
+            $display = false;
             //set the value to the session needId if the field is null
             //$empty_data = $needId;
       	}else{
             $readonly = false;            
             $required = true;
             $disabled = false;
+            $display = true;
             //$empty_data = '';
       	}
 
       	return $this->render('school/materials/edit_resource_material.html.twig', array(
       		'form1'=>$form1->createView(),
       		'readonly' => $readonly,
+                'display' => $display,
+                'itemBeingEdited' => $itemBeingEdited,
                 'disabled' => $disabled));
                 //'disabled' => $disabled,'empty_data' => $empty_data));
       }
@@ -280,8 +261,6 @@ class SchoolController extends Controller{
             	$materials = $connection->fetchAll('SELECT * FROM room_state
             		WHERE room_id = ? AND emiscode = ?', array($materialId, $emisCode));
             	$defaultData = $materials[0];
-      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		//$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
       		$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
             }
        
@@ -293,65 +272,29 @@ class SchoolController extends Controller{
             	$formData = $form1->getData();
                 $id_room = $formData['room_id'];
                 $material;
-                $update = '';
+//                $update = '';
       		//check if this record is being edited or created anew
       		if($materialId == 'new'){
-                    $material = new RoomState();
-                    //$material->setIdRoom($formData['idRoom']);   	
+                    $material = new RoomState();  	
       		}else{//if it is being edited, then update the records that already exist 
-                    $material = $this->getDoctrine()->getRepository('AppBundle:RoomState')->findOneByIdRoom($id_room);	
-                    
-                    //check if any of the fields has been changed
-                    //and append the change in updates field with a date stamp
-                    $update = $defaultData['updates'];
-                    $date = date('Y-m-d');
-                    if($defaultData['enough_light'] != $formData['enough_light']){
-                        $update = $update. 'EL: '.$defaultData['enough_light']. 
-                            ' --> '. $formData['enough_light']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['enough_space'] != $formData['enough_space']){
-                        $update = $update. 'ES: '.$defaultData['enough_space']. 
-                            ' --> '. $formData['enough_space']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['enough_ventilation'] != $formData['enough_ventilation']){
-                        $update = $update. 'EV: '.$defaultData['enough_ventilation']. 
-                            ' --> '. $formData['enough_ventilation']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['adaptive_chairs'] != $formData['adaptive_chairs']){
-                        $update = $update. 'AdC: '.$defaultData['adaptive_chairs']. 
-                            ' --> '. $formData['adaptive_chairs']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['access'] != $formData['access']){
-                        $update = $update. 'Acc: '.$defaultData['access']. 
-                            ' --> '. $formData['access']. ' on '. $date. ';';           	
-                    }
-                    if($defaultData['room_type'] != $formData['room_type']){
-                        $update = $update. 'RType: '.$defaultData['room_type']. 
-                            ' --> '. $formData['room_type']. ' on '. $date. ';';           	
-                    }
+                    $material = $this->getDoctrine()->getRepository('AppBundle:RoomState')->findOneByRoomId($id_room);	
       		}
  
-                $material->setUpdates($update);
 		//set the fields for material
-                $material->setIdRoom($formData['room_id']);
+                $material->setRoomId($formData['room_id']);
                 $material->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
-                $material->setYearStarted($formData['year']->format('Y-m-d'));
+                $material->setYear($formData['year']->format('Y-m-d'));
                 $material->setEnoughLight($formData['enough_light']);
       		$material->setEnoughSpace($formData['enough_space']);  
       		$material->setAdaptiveChairs($formData['adaptive_chairs']);
                 $material->setAccess($formData['access']);
                 $material->setEnoughVentilation($formData['enough_ventilation']);
-                $material->setOtherObservations($formData['other_observations']);
-                $material->setRoomType($formData['room_type']);
-                $material->setAccessNote($formData['access_note']);
-                $material->setVentilationNote($formData['ventilation_note']);
-                $material->setSpaceNote($formData['space_note']);
-                $material->setLightNote($formData['light_note']);                
+                $material->setRoomType($formData['room_type']);               
                 
                 $em = $this->getDoctrine()->getManager();
                 
                 $roomState = $this->getDoctrine()->getRepository('AppBundle:RoomState')
-                        ->findOneBy(array('idRoom'=>$formData['room_id'],'emiscode'=>$emisCode));
+                        ->findOneBy(array('roomId'=>$formData['room_id'],'emiscode'=>$emisCode));
                 if ((!$roomState) || ($roomState && ($materialId != 'new'))){
                     //if object already exists but is being edited ie not new
                     $em->persist($material);
@@ -368,12 +311,7 @@ class SchoolController extends Controller{
                     $request->getSession()->getFlashBag()
                            ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');
                     return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>'new'], 301);
-                }            
-               
-                //reproduce new entered details for validation
-//                if($materialId == 'new'){
-//                    
-//                }
+                }                          
             }
             //if this is a new learner being added, we want to make the id field uneditable
       	if($materialId != 'new'){
@@ -514,21 +452,17 @@ class SchoolController extends Controller{
             $teacher->setSLastName($formData['slast_name']);
             $teacher->setSdob($formData['s_dob']);
             $teacher->setSSex($formData['s_sex']);
-            //$teacher->setSinitials($formData['sinitials']);
-            $teacher->setQualification($formData['qualification']);
-            $teacher->setSpeciality($formData['speciality']);
+            $teacher->setQualification($formData['qualification']);            
+            $teacher->setTeacherType($formData['teacher_type']);
             
-            //check not to duplicate the speciailities in other
-            /*
-            for ($i = 0; $i < count($formData['other_specialities']); ++$i) {
-                if ($formData['other_specialities'][$i] == $formData['speciality']) {
-                    unset($formData['other_specialities'][$i]);
-                }
+            if ($formData['teacher_type'] == 'regular') {//insert CPD training data if teacher is regular
+                $teacher->setCpdTraining($formData['cpd_training']);                
+                $teacher->setSpeciality('');
+            }else { //else insert speciality data
+                $teacher->setSpeciality($formData['speciality']);
+                $teacher->setCpdTraining('');
             }
-            array_values($formData['other_specialities']);            
-             */
-            //--end
-            
+
             //$teacher->setOtherSpecialities($formData['other_specialities']);
             $teacher->setYearStarted($formData['year_started']->format('Y'));
             
@@ -541,11 +475,22 @@ class SchoolController extends Controller{
                 //tell the entity manager to keep track of this entity
                 $em->persist($teacher);      
                 $em->flush();//write all entities that are being tracked to the database
-
-                $schoolHasSnt->setSntType($formData['snt_type']);
+                //print 'Written teacher details to database';
+ 
                 $schoolHasSnt->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
                 $schoolHasSnt->setIdsnt($this->getDoctrine()->getRepository('AppBundle:Snt')->findOneByIdsnt($teacher->getIdsnt()));
                 $schoolHasSnt->setYear($formData['year']->format('Y'));
+                
+                if ($formData['teacher_type'] == 'snt') {//insert SNT type                    
+                    $schoolHasSnt->setSntType($formData['snt_type']);
+                } else { //else set this to null
+                    $schoolHasSnt->setSntType('');
+                }
+                if ($formData['snt_type'] == 'Itinerant') {//insert number of visits if SNT is itinerant
+                    $schoolHasSnt->setNoOfVisits($formData['no_of_visits']);
+                } else { //else set it null
+                    $schoolHasSnt->setNoOfVisits('');
+                }
 
                 //tell the entity manager to keep track of this entity
                 $em->persist($schoolHasSnt);
@@ -569,14 +514,36 @@ class SchoolController extends Controller{
         }
 
       	//if this is not a new teacher being added, we want to make the id field uneditable
+        //and all other fields editable
         if($teacherId != 'new'){
-            $readOnly = true;
+            $readOnly = true;            
+            if ($teacher[0]['teacher_type'] == 'snt') {
+                $disabledCPD = true;
+                $disabledSNT = false;
+                if ($teacher[0]['snt_type'] == 'Stationed'){
+                    $disabledSntVisits = true;
+                } else {
+                    $disabledSntVisits = false;
+                }
+            }else {
+                $disabledCPD = false;
+                $disabledSNT = true;
+                $disabledSntVisits = true;
+            }
+           
+           
         }else{
             $readOnly = false;
+            $disabledCPD = true;
+            $disabledSNT = true;
+            $disabledSntVisits = true;
         }
 
         return $this->render('school/specialist_teacher/add_teacher.html.twig', array(
         	'form2'=>$form2->createView(),
+                'disabledSNT'=> $disabledSNT,
+                'disabledCPD'=> $disabledCPD,
+                'disabledSntVisits'=>$disabledSntVisits,
         	'readonly'=> $readOnly));        
     }
         
