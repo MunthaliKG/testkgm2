@@ -513,12 +513,12 @@ class SchoolReportController extends Controller{
                                 exit;
                             }
 			}else{
-                            $dataConverter = $this->get('data_converter');
-                            $enrolled = $connection->fetchAll('SELECT first_name, last_name, initials, home_address, sex, dob, 
-                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, income_level 
-                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school 
-                                        WHERE emiscode = ? AND `year` = ?', 
-                                            [$emisCode, $yearQuery['maxYear']]);
+//                            $dataConverter = $this->get('data_converter');
+//                            $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, 
+//                                        distance_to_school, gfirst_name, glast_name, gsex, occupation 
+//                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school 
+//                                        WHERE emiscode = ? AND `year` = ?', 
+//                                            [$emisCode, $yearQuery['maxYear']]);
                             //$dataConverter->excelDownload($enrolled);
                             //$dataConverter->countArrayMultipleBool($learners)
 			/*	

@@ -13,9 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class LwdBelongsToSchool
 {
     /**
-     * @var boolean
+     * @var integer
      *
-     * @ORM\Column(name="std", type="boolean", nullable=false)
+     * @ORM\Column(name="std", type="integer", nullable=false)
      */
     private $std;
 
@@ -78,7 +78,7 @@ class LwdBelongsToSchool
     /**
      * Set std
      *
-     * @param boolean $std
+     * @param integer $std
      * @return LwdBelongsToSchool
      */
     public function setStd($std)
@@ -91,7 +91,7 @@ class LwdBelongsToSchool
     /**
      * Get std
      *
-     * @return boolean 
+     * @return integer 
      */
     public function getStd()
     {

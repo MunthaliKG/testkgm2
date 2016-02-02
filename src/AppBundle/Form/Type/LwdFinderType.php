@@ -53,10 +53,16 @@ class LwdFinderType extends AbstractType
 			//'label' => 'Other Reason',
 			'required' => false,
                         'choices' => array(
-				1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8,
+				'1' => 1, '2' => 2, '3' => 3, '4' => 4, '5' => 5, '6' => 6, '7' => 7, '8' => 8,
 				),
 			'constraints' => array(new NotBlank()),
 			)
+		)
+                    ->add('distance_to_school', 'choice', array(
+                    'label' => 'Distance from home to new school (Km)',
+                    'choices' => array('<5'=>'Less than 5km', '1-5'=>'between 1 and 5km', '>5'=>'More than 5km'),
+                    'constraints' => array(new NotBlank()),
+                    )
 		)
                 ->add('year', 'datetime', array(
                     'label' => 'Year',

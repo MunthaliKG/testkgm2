@@ -76,8 +76,9 @@ class DistrictController extends Controller{
             $schoolList = $fBag->get('schoolList');           
         }
         $schools = array();
+        //print_r($schoolList);exit;
         foreach ($schoolList as $school) {
-            $schools[$school['emiscode']] = $school['school_name'];
+            $schools[$school->getEmiscode()] = $school->getSchoolName();
         }
 
         $schoolsTo = $connection->fetchAll('SELECT emiscode, school_name '
@@ -93,14 +94,24 @@ class DistrictController extends Controller{
         if($form1->isValid()){                       
             $formData = $form1->getData();
             //$m = $this->getDoctrine()->getManager();
+            //echo $formData['std'];exit;
+            $learnerPrevSchool = $connection->fetchAssoc("SELECT other_means, means_to_school FROM lwd_belongs_to_school"
+                    . " WHERE idlwd = ? ORDER BY year DESC", array($formData['learner']));
             $lwdBTSchool = new \AppBundle\Entity\LwdBelongsToSchool();
             $lwdBTSchool->setEmiscode($em->getReference('AppBundle:School', ['emiscode'=>$formData['schoolTo']]));
             $lwdBTSchool->setYear($formData['year']->format('Y-m-d'));
+            $lwdBTSchool->setDistanceToSchool($formData['distance_to_school']);
+            $lwdBTSchool->setMeansToSchool($learnerPrevSchool['means_to_school']);
+            $lwdBTSchool->setOtherMeans($learnerPrevSchool['other_means']);
             $lwdBTSchool->setIdlwd($em->getReference('AppBundle:Lwd', ['idlwd'=>$formData['learner']]));
             $lwdBTSchool->setStd($formData['std']);                         
                 
             $em->persist($lwdBTSchool);
             $em->flush();
+            
+            $request->getSession()->getFlashBag()
+                            ->add('transfer', 'Transfer for ('.$formData['learner'].') was successful');
+            return $this->redirectToRoute('learner_transfer',['iddistrict'=>$iddistrict], 301);
          }
         
         
