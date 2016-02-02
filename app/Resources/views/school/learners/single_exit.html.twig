@@ -1,0 +1,32 @@
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+
+{{ form_start(form, {'attr':{'class':'learner_exit_form'},'action': path('learner_exit',{'emisCode':emisCode})}) }}
+<td>
+	{{ form_errors(form.idlwd) }}
+	{{ form_widget(form.idlwd) }}
+</td>
+<td>
+	{{ form_errors(form.reason) }}
+	{{ form_widget(form.reason) }}
+</td>
+<td>
+	{{ form_errors(form.other_reason) }}
+	{{ form_widget(form.other_reason, {'attr':{'readonly':'readonly'}}) }}
+</td>
+<td>
+	{% if app.session.flashBag.has('outcome') %}       
+        {% for outcome in app.session.flashBag.get('outcome') %}
+            <div class="alert alert-{{outcome}} alert-dismissible pull-left" role="alert">
+                    {% if outcome == 'success' %}
+                    	<i class="fa fa-check fa-lg"></i>
+                    {% else %}
+                    	<i class="fa fa-remove fa-lg"></i>
+                    {% endif %}
+            </div>
+        {% endfor %}        
+    {% endif %}
+	{{ form_widget(form.save, {'attr':{'data-toggle':'confirmation','data-prompt':'Save exit record for this learner? You will not be able to edit information about this learner under this school', 'class':'btn-sm'},'before_label': '<i class="fa fa-check"></i> '}) }}
+	&nbsp;&nbsp;
+	<a class="btn btn-sm" href="{{ path('school_learners',{'emisCode':emisCode}) }}"><i class="fa fa-remove"></i> Cancel</a>
+</td>
+{{ form_end(form) }}

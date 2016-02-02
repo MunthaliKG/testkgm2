@@ -36,32 +36,31 @@ class LwdHasDisability
      */
     private $idlwd;
 
-    /**
-     * @var \AppBundle\Entity\DisabilityHasLevel
+    /*
+     * @var \AppBundle\Entity\Level
      *
-     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\DisabilityHasLevel")
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Level")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="idlevel", referencedColumnName="idlevel"),
-     *   @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
      * })
-     */
+     */  
     private $idlevel;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Need", inversedBy="idlwd")
-     * @ORM\JoinTable(name="lwd_has_disability_has_need",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="idlwd", referencedColumnName="idlwd"),
-     *     @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idneed", referencedColumnName="idneed")
-     *   }
-     * )
-     */
-    private $idneed;
+    // *
+    //  * @var \Doctrine\Common\Collections\Collection
+    //  *
+    //  * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Need", inversedBy="idlwd")
+    //  * @ORM\JoinTable(name="lwd_has_disability_has_need",
+    //  *   joinColumns={
+    //  *     @ORM\JoinColumn(name="idlwd", referencedColumnName="idlwd"),
+    //  *     @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
+    //  *   },
+    //  *   inverseJoinColumns={
+    //  *     @ORM\JoinColumn(name="idneed", referencedColumnName="idneed")
+    //  *   }
+    //  * )
+     
+    // private $idneed;
 
     /**
      * Constructor
@@ -121,10 +120,10 @@ class LwdHasDisability
     /**
      * Set idlevel
      *
-     * @param \AppBundle\Entity\DisabilityHasLevel $idlevel
+     * @param \AppBundle\Entity\Level $idlevel
      * @return LwdHasDisability
      */
-    public function setIdlevel(\AppBundle\Entity\DisabilityHasLevel $idlevel = null)
+    public function setIdlevel(\AppBundle\Entity\Level $idlevel = null)
     {
         $this->idlevel = $idlevel;
 

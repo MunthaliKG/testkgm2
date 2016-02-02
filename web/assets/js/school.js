@@ -112,11 +112,13 @@ $(document).ready(function(){
 		$('.datepicker').datepicker();
     }
     
-    $('#learner_exit_reason').change(function(event){
+    $('.exit_reason').change(function(event){
+    	var count = $(this).data('reasoncount');
+    	var target = $('[data-othercount='+count+']');
         if($(this).val() === "other"){
-            $('#learner_exit_other_reason').prop('readonly','');
+            target.prop('readonly','');
         }else{
-            $('#learner_exit_other_reason').prop('readonly','readonly');
+            target.prop('readonly','readonly');
         }
     });
     $('#customReport_standard').change(function(event){
@@ -127,5 +129,86 @@ $(document).ready(function(){
 		}
 	});
 
+//code that hides/shows "other means" field depending on the value of the "means of travelling to school" field
+	if($('#learner_personal_means_to_school').val() !== 'other'){
+		$('#other_means').hide();
+	}
+	$('#learner_personal_means_to_school').change(function(event){
+		var selected = $(this).val();
+        if(selected === 'other'){
+        	$('#other_means').show();
+        }else{
+        	$('#other_means').hide();
+        }
+	});
 	$('[autofocus]:enabled:not([readonly]):first').focus();
+
+//submit learner exit forms through ajax
+	$('body').on('submit', '.learner_exit_form', function (e) {
+ 		console.log('hehede!');
+        e.preventDefault();
+
+        var form = $(this);
+
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize()
+        })
+        .done(function (data) {
+        	alert(data.htmlresponse);
+        	form.parent('tr').html( data.htmlresponse );
+        	if(data.error !== ''){
+        		$('.error-box').append('<div class="alert alert-danger alert-dismissible pull-left" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+data.error+'</div><hr>');
+        	}        	
+            if (typeof data.message !== 'undefined') {
+                alert(data.message);
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (typeof jqXHR.responseJSON !== 'undefined') {
+                if (jqXHR.responseJSON.hasOwnProperty('form')) {
+                    $('#form_body').html(jqXHR.responseJSON.form);
+                }
+ 
+                $('.form_error').html(jqXHR.responseJSON.message);
+ 
+            } else {
+                alert(errorThrown);
+            }
+ 
+        });
+    });
+    $('body').on('click', '#save-all', function (e) {
+ 		console.log('hehede!');
+        e.preventDefault();
+
+        var form = $(this);
+
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize()
+        })
+        .done(function (data) {
+        	form.parent('tr').html(data);
+            if (typeof data.message !== 'undefined') {
+                alert(data.message);
+            }
+        })
+        .fail(function (jqXHR, textStatus, errorThrown) {
+            if (typeof jqXHR.responseJSON !== 'undefined') {
+                if (jqXHR.responseJSON.hasOwnProperty('form')) {
+                    $('#form_body').html(jqXHR.responseJSON.form);
+                }
+ 
+                $('.form_error').html(jqXHR.responseJSON.message);
+ 
+            } else {
+                alert(errorThrown);
+            }
+ 
+        });
+    });
+
 });

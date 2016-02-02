@@ -14,15 +14,15 @@
 {% endblock %}
 {# Form for learner personal information and guardian information #}
 	{% block form_container %}
-                        {% if app.session.flashBag.has('lwdExists') %}       
-                            {% for msg in app.session.flashBag.get('lwdExists') %}
-                                <div class="alert alert-success alert-dismissible" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span></button>
-                                    {{ msg }}
-                                </div>
-                            {% endfor %}        
-                        {% endif %}
+        {% if app.session.flashBag.has('lwdExists') %}       
+            {% for msg in app.session.flashBag.get('lwdExists') %}
+                <div class="alert alert-error alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+        {% endif %}
 		{# render the learner personal information form #}
 		{{ form_start(form1) }}
 		{{ form_errors(form1) }}
@@ -37,7 +37,11 @@
 					{{ form_row(form1.sex, {'label_attr':{'class':'radio-inline'}}) }}
 					{{ form_row(form1.dob) }}
 					{{ form_row(form1.home_address) }}					
-					{{ form_row(form1.distance_to_school) }}	
+					{{ form_row(form1.distance_to_school) }}
+					{{ form_row(form1.means_to_school) }}
+					<div id="other_means">
+						{{ form_row(form1.other_means) }}
+					</div>						
 					{{ form_row(form1.std) }}										
 				</fieldset>
 			</div>
@@ -48,7 +52,6 @@
 					{{ form_row(form1.gfirst_name) }}
 					{{ form_row(form1.glast_name) }}
 					{{ form_row(form1.gsex, {'label_attr':{'class':'radio-inline'}}) }}
-					{{ form_row(form1.gdob) }}
 					{{ form_row(form1.gaddress) }}					
 					{{ form_row(form1.occupation) }}
 					{{ form_row(form1.district) }}

@@ -42,19 +42,19 @@ class Need
      */
     private $idneed;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\School", mappedBy="idneed")
-     */
-    private $emiscode;
+    // *
+    //  * @var \Doctrine\Common\Collections\Collection
+    //  *
+    //  * @ORM\ManyToMany(targetEntity="AppBundle\Entity\School", mappedBy="idneed")
+     
+    // private $emiscode;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\LwdHasDisability", mappedBy="idneed")
-     */
-    private $idlwd;
+    // *
+    //  * @var \Doctrine\Common\Collections\Collection
+    //  *
+    //  * @ORM\ManyToMany(targetEntity="AppBundle\Entity\LwdHasDisability", mappedBy="idneed")
+     
+    // private $idlwd;
 
     /**
      * @var \Doctrine\Common\Collections\Collection

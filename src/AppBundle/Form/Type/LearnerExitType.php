@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 
@@ -14,9 +15,18 @@ class LearnerExitType extends AbstractType
 	{
 		//add the form fields
 		$builder
+		->add('idlwd','text', array(
+				'label' => 'Learner Identification Number',
+				'constraints' => array(new NotBlank(), new Regex(array(
+					'pattern'=>'#\d{16}#',
+					'message'=>'This field must be a 16 digit number'
+					)),
+				)
+			)
+		)
 		->add('reason', 'choice', array(
 			'label' => 'Reason for Exit',
-			'placeholder' => 'Choose reason for exit',
+			'placeholder' => '--reason for exit--',
 			'choices' => [
 				'completed' => 'Completed', 
 				'sickness' => 'Sickness', 

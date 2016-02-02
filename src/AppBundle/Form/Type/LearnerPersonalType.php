@@ -7,6 +7,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 
 //this class builds the form that is used to add/edit a learner's personal details
 class LearnerPersonalType extends AbstractType
@@ -71,6 +73,24 @@ class LearnerPersonalType extends AbstractType
 				)
 			)
 		)
+		->add('means_to_school', 'choice', array(
+			'label' => 'Means of travelling to school',
+			'placeholder' => '--Means of travelling to school--',
+			'choices' => array(
+				'bus' => 'Bus',
+				'walking' => 'Walking',
+				'bicycle' => 'Bicycle',
+				'tricycle'=> 'Tricycle',
+				'wheel chair'=>'Wheel Chair',
+				'other'=> 'Other'
+				),
+			'constraints' => array(new NotBlank()),
+			))
+		->add('other_means', 'text', array(
+			'label' => 'Other means',
+			'required' => false,
+			'constraints' => array(new NotBlank())
+			))
 		//The following are fields for guardian
 		->add('idguardian','hidden', array(
 			)
@@ -98,14 +118,6 @@ class LearnerPersonalType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			)
 		)
-		->add('gdob', 'date', array(
-			'label' => 'Date of birth',
-			'widget' => 'single_text',
-			'format' => 'dd-MM-yyyy',
-			'constraints' => array(new NotBlank()),
-			'attr' => array('class'=>'datepicker','data-date-format'=>'dd-mm-yyyy'),
-			)
-		)
 		->add('occupation','text', array(
 			'label' => 'Occupation',
 			'constraints' => array(new NotBlank()),
@@ -118,7 +130,13 @@ class LearnerPersonalType extends AbstractType
 		)
 		->add('guardian_relationship', 'choice', array(
 			'label' => 'Relationship',
-			'choices' => array('parent'=>'parent','sibling'=>'sibling','other'=>'other'),
+			'choices' => array(
+				'parent'=>'parent',
+				'sibling'=>'sibling',
+				'uncle/aunt' => 'uncle/aunt',
+				'grandparent' => 'grandparent',
+				'other relative' => 'other relative',
+				'other non-relative'=>'other non-relative'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => true,
 			'multiple' => false,
@@ -127,7 +145,23 @@ class LearnerPersonalType extends AbstractType
 		->add('save','submit', array(
 			'label' => 'save',
 			)
-		);
+		)->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+			$learner = $event->getData();
+			$form = $event->getForm();
+
+			if (!$learner) {
+				return;
+			}
+			
+			//remove other_means field based on the value of the means_to_school field
+			if($learner['means_to_school'] != 'other'){
+				$form->add('other_means', 'text', array(
+			        'label' => 'Other means',
+			        'required' => false,
+			    ));
+			}
+			
+		});
 	}
 	public function getName()
 	{

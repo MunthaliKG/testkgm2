@@ -1,4 +1,6 @@
-{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% for form in forms %}
+		{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+{% endfor %}
 
 {% extends 'school/learners/learners_main.html.twig' %}
 
@@ -7,25 +9,49 @@
 {% endblock %}
 
 {% block form_container %}
-	<div class="col-sm-6 col-sm-offset-3">
-		{{ form_start(form) }}
+	<div class="col-sm-12">
 		<fieldset>
 			<legend>Student exit details</legend>
-			{{ form_errors(form) }}
-			{{ form_row(form.reason) }}
-			{{ form_row(form.other_reason, {'attr':{'readonly':'readonly'}}) }}
-			<div class="form-group">
-				<div class="col-sm-5"></div>
-				<div class="col-sm-7">
-					{{ form_widget(form.save, {'attr':{'data-toggle':'confirmation','data-prompt':'Save exit record for this learner? You will not be able to edit information about this learner under this school'},'before_label': '<i class="fa fa-check"></i> '}) }}
-					&nbsp;&nbsp;
-					<a class="btn btn-default" href="{{ path('edit_learner_personal',{'emisCode':emisCode, 'learnerId':learnerId}) }}"><i class="fa fa-remove"></i> Cancel</a>
-				</div>
-			</div>
-			
+			<div class="error-box"></div>
+			<table class="table">
+				<tr>
+					<th>LIN</th><th>Reason for exit</th><th>Other reason (specify)</th>
+					<th></th>
+				</tr>
+				{% set counter = 1 %}
+				{% for form in forms%}
+					<tr>
+						{{ form_start(form, {'attr':{'class':'learner_exit_form'},'action': path('learner_exit',{'emisCode':emisCode})}) }}
+						<td>
+							{{ form_errors(form.idlwd) }}
+							{{ form_widget(form.idlwd) }}
+						</td>
+					    <td>
+					    	{{ form_errors(form.reason) }}
+					    	{{ form_widget(form.reason, {'attr':{'class':'exit_reason','data-reasoncount': counter}}) }}
+					    </td>
+						<td>
+							{{ form_errors(form.other_reason) }}
+							{{ form_widget(form.other_reason, {'attr':{'data-othercount': counter,'readonly':'readonly'}}) }}
+						</td>
+					
+						<td>
+							{{ form_widget(form.save, {'attr':{'data-toggle':'confirmation','data-prompt':'Save exit record for this learner? You will not be able to edit information about this learner under this school', 'class':'btn-sm'},'before_label': '<i class="fa fa-check"></i> '}) }}
+							&nbsp;&nbsp;
+						</td>
+						{{ form_end(form) }}
+					</tr>
+					{% set counter = counter + 1 %}	
+				{% endfor %}
+			</table>			
 		</fieldset>
-		{{ form_end(form) }}
 	</div>
+	<div class="row">
+		<div class="col-sm-4 col-sm-offset-8">
+			<a class="btn btn-sm" href="{{ path('school_learners',{'emisCode':emisCode}) }}"><i class="fa fa-remove"></i> Cancel</a>
+			<button class="btn btn-sm" id="save-all" href="{{ path('school_learners',{'emisCode':emisCode}) }}"><i class="fa fa-check"></i> Save all</button>
+		</div>
+	</div><br>
 {% endblock %}
 
 {% block javascripts %}

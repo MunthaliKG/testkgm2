@@ -51,40 +51,6 @@ class LearnerDisabilityType extends AbstractType
 			'empty_data' => '',
 			)
 		)
-		->add('case_description','textarea', array(
-			'label' => 'Description',
-			'required' => false,
-			)
-		)
-		->add('identified_by','choice', array(
-			'label' => 'Identified by',
-			'expanded' => false,
-			'multiple' => false,
-			'constraints' => array(new NotBlank()),
-			'choices' => array(
-				'special needs teacher' => 'special needs teacher',
-				'ordinary teacher' => 'ordinary teacher',
-				'health personnel' => 'health personnel',
-				'parents' => 'parents'),
-			)
-		)
-		->add('identification_date','date', array(
-			'label' => 'Identified on (yyyy-mm-dd)',
-			'widget' => 'single_text',
-			'format' => 'yyyy-MM-dd',
-			'years' => range(date('Y')-30, date('Y')),
-			'constraints' => array(new NotBlank(), new Range(array(
-				'min'=>'-30 years',
-				'max'=>'now', 
-				'maxMessage'=>'This date should be '.date('M j, Y').' or less'
-				))),
-			'attr' => array(
-				'class'=>'datepicker',
-				'data-date-format'=>'yyyy-mm-dd',
-				'max' => date('Y-m-d')
-				),
-			)
-		)
 		->add('save','submit', array('label' => 'save'));
 
 		if($this->isDeletable){

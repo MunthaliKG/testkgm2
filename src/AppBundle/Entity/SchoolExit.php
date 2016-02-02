@@ -13,9 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
 class SchoolExit
 {
     /**
-     * @var simplearray
+     * @var string
      *
-     * @ORM\Column(name="reason", type="simplearray", nullable=false)
+     * @ORM\Column(name="reason", type="string", nullable=false)
      */
     private $reason;
 
@@ -71,10 +71,10 @@ class SchoolExit
     /**
      * Set reason
      *
-     * @param \simplearray $reason
+     * @param string $reason
      * @return SchoolExit
      */
-    public function setReason(\simplearray $reason)
+    public function setReason($reason)
     {
         $this->reason = $reason;
 
@@ -84,7 +84,7 @@ class SchoolExit
     /**
      * Get reason
      *
-     * @return \simplearray 
+     * @return string 
      */
     public function getReason()
     {

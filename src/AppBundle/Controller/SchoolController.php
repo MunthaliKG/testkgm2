@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\ChoiceList;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Form\Type\LearnerPersonalType;
 use AppBundle\Entity\Lwd;
 use AppBundle\Form\Type\RoomStateType;
@@ -24,19 +25,20 @@ use AppBundle\Entity\Guardian;
 use AppBundle\Entity\SchoolHasSnt;
 use AppBundle\Entity\Need;
 use AppBundle\Entity\ResourceRoom;
+use AppBundle\Entity\SchoolExit;
 use AppBundle\Form\Type\ResourceRoomType;
 use AppBundle\Entity\LwdHasDisability;
 use AppBundle\Form\Type\LearnerExitType;
-
+use Symfony\Component\Validator\Constraints\NotBlank;
 use AppBundle\Form\Type\LwdFinderType;
-use AppBundle\Entity\SchoolExit;
 Use AppBundle\Form\Type\TransferType;
+use Doctrine\DBAL\DBALException;
 
 class SchoolController extends Controller{
-	/**
-	 *@Route("/school/{emisCode}", name="school_main", requirements={"emisCode":"\d+"})
-	 */
-	public function schoolMainAction($emisCode, Request $request){
+    /**
+     *@Route("/school/{emisCode}", name="school_main", requirements={"emisCode":"\d+"})
+     */
+    public function schoolMainAction($emisCode, Request $request){
 
             $connection = $this->get('database_connection');
             $schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
@@ -61,10 +63,10 @@ class SchoolController extends Controller{
                     array('school' => $schools[0],
                             'disabilities' => $disabilities)
                     );
-	}
+    }
         /**
-	 *@Route("/school/{emisCode}/materials/{link}", name="school_materials", requirements = {"emisCode":"\d+", "link":"fresh|resource|room"}, options={"expose"= true})
-	 */
+     *@Route("/school/{emisCode}/materials/{link}", name="school_materials", requirements = {"emisCode":"\d+", "link":"fresh|resource|room"}, options={"expose"= true})
+     */
         public function materialsAction($emisCode, $link, Request $request){
 
             if($link == 'resource'){
@@ -74,71 +76,71 @@ class SchoolController extends Controller{
             }
         }
          /**
-	 *@Route("/findResourceForm/{emisCode}", name="find_need_materials")
-	 */
+     *@Route("/findResourceForm/{emisCode}", name="find_need_materials")
+     */
         public function findResourceFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
-	$connection = $this->get('database_connection');
-		$needs = $connection->fetchAll('SELECT * FROM need n NATURAL JOIN school_has_need s WHERE s.emiscode = ?', array($emisCode));
+    $connection = $this->get('database_connection');
+        $needs = $connection->fetchAll('SELECT * FROM need n NATURAL JOIN school_has_need s WHERE s.emiscode = ?', array($emisCode));
                    
-		$choices = array();
-		foreach ($needs as $key => $row) {
-			$choices[$row['idneed']] = $row['idneed'].': '.$row['needname'];
-		}
+        $choices = array();
+        foreach ($needs as $key => $row) {
+            $choices[$row['idneed']] = $row['idneed'].': '.$row['needname'];
+        }
 
-		//create the form for choosing an existing student to edit
-        	$defaultData = array();
-        	$form = $this->createFormBuilder($defaultData, array(
-        		'action' => $this->generateUrl('find_need_materials', ['emisCode'=>$emisCode])))
-        	->add('need','choice', array(
-        		'label' => 'Choose Resource',
-        		'placeholder'=>'Edit Resource',
-        		'choices'=> $choices,
-        		))
-        	->getForm();
+        //create the form for choosing an existing student to edit
+            $defaultData = array();
+            $form = $this->createFormBuilder($defaultData, array(
+                'action' => $this->generateUrl('find_need_materials', ['emisCode'=>$emisCode])))
+            ->add('need','choice', array(
+                'label' => 'Choose Resource',
+                'placeholder'=>'Edit Resource',
+                'choices'=> $choices,
+                ))
+            ->getForm();
 
-        	$form->handleRequest($request);
+            $form->handleRequest($request);
 
-        	if($form->isValid()){
-        		$formData = $form->getData();
-        		$needId = $formData['need'];
-        		return $this->redirectToRoute('edit_resource_material',array('emisCode'=>$emisCode,'needId'=>$needId));
-        	}
-        	return $this->render('school/materials/findresourceform.html.twig', array(
-        		'form' => $form->createView()));
+            if($form->isValid()){
+                $formData = $form->getData();
+                $needId = $formData['need'];
+                return $this->redirectToRoute('edit_resource_material',array('emisCode'=>$emisCode,'needId'=>$needId));
+            }
+            return $this->render('school/materials/findresourceform.html.twig', array(
+                'form' => $form->createView()));
         }
         /**
-	 *@Route("/findMaterialForm/{emisCode}", name="find_school_materials")
-	 */
+     *@Route("/findMaterialForm/{emisCode}", name="find_school_materials")
+     */
         public function findMaterialFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
-	$connection = $this->get('database_connection');
-		$materials = $connection->fetchAll('SELECT room_id, year FROM room_state WHERE emiscode = ?', array($emisCode));
+    $connection = $this->get('database_connection');
+        $materials = $connection->fetchAll('SELECT room_id, year FROM room_state WHERE emiscode = ?', array($emisCode));
                    //room_id, year, enough_light, enough_space, adaptive_chairs, accessible, enough_ventilation, other_observations
-		//create the associative array to be used for the select list
-		$choices = array();
-		foreach ($materials as $key => $row) {
-			$choices[$row['room_id']] = $row['room_id'].': '.$row['year'];
-		}
+        //create the associative array to be used for the select list
+        $choices = array();
+        foreach ($materials as $key => $row) {
+            $choices[$row['room_id']] = $row['room_id'].': '.$row['year'];
+        }
 
-		//create the form for choosing an existing student to edit
-        	$defaultData = array();
-        	$form = $this->createFormBuilder($defaultData, array(
-        		'action' => $this->generateUrl('find_school_materials', ['emisCode'=>$emisCode])))
-        	->add('material','choice', array(
-        		'label' => 'Choose Room',
-        		'placeholder'=>'Edit Room',
-        		'choices'=> $choices,
-        		))
-        	->getForm();
+        //create the form for choosing an existing student to edit
+            $defaultData = array();
+            $form = $this->createFormBuilder($defaultData, array(
+                'action' => $this->generateUrl('find_school_materials', ['emisCode'=>$emisCode])))
+            ->add('material','choice', array(
+                'label' => 'Choose Room',
+                'placeholder'=>'Edit Room',
+                'choices'=> $choices,
+                ))
+            ->getForm();
 
-        	$form->handleRequest($request);
+            $form->handleRequest($request);
 
-        	if($form->isValid()){
-        		$formData = $form->getData();
-        		$materialId = $formData['material'];
-        		return $this->redirectToRoute('edit_school_material',array('emisCode'=>$emisCode,'materialId'=>$materialId));
-        	}
-        	return $this->render('school/materials/findmaterialform.html.twig', array(
-        		'form' => $form->createView()));
+            if($form->isValid()){
+                $formData = $form->getData();
+                $materialId = $formData['material'];
+                return $this->redirectToRoute('edit_school_material',array('emisCode'=>$emisCode,'materialId'=>$materialId));
+            }
+            return $this->render('school/materials/findmaterialform.html.twig', array(
+                'form' => $form->createView()));
         }
          /**
         * @Route("/school/{emisCode}/needs/{needId}", name="edit_resource_material", requirements={"needId":"new|\d+"})
@@ -147,13 +149,13 @@ class SchoolController extends Controller{
             $connection = $this->get('database_connection');
             $defaultData = array();
             if($needId != 'new'){/*if we are not adding a new material, fill the form fields with
-            	the data of the selected learner.*/
-            	$needs = $connection->fetchAll('SELECT * FROM school_has_need
-            		WHERE idneed = ? AND emiscode = ?', array($needId, $emisCode));
-            	$defaultData = $needs[0];
-      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		//$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
-      		$defaultData['year_recorded'] = new \DateTime($defaultData['year_recorded'].'-1-1');
+                the data of the selected learner.*/
+                $needs = $connection->fetchAll('SELECT * FROM school_has_need
+                    WHERE idneed = ? AND emiscode = ?', array($needId, $emisCode));
+                $defaultData = $needs[0];
+            //convert the dates into their corresponding objects so that they will be rendered correctly by the form
+            //$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
+            $defaultData['year_recorded'] = new \DateTime($defaultData['year_recorded'].'-1-1');
                 $defaultData['date_procured'] = new \DateTime($defaultData['date_procured']);
                 $defaultData['idneed_2'] = $needs[0]['idneed'];                
             }            
@@ -174,16 +176,16 @@ class SchoolController extends Controller{
             $form1->handleRequest($request);
                         
             if($form1->isValid()){
-            	$formData = $form1->getData();
+                $formData = $form1->getData();
                 $id_need = $formData['idneed'];
                 $need;
                 $update = '';
                 //$update = '';
-      		//check if this record is being edited or created anew
-      		if($needId == 'new'){
+            //check if this record is being edited or created anew
+            if($needId == 'new'){
                     $need = new \AppBundle\Entity\ResourceRoom();
-                    //$material->setIdRoom($formData['idRoom']);   	
-      		}else{//if it is being edited, then update the records that already exist 
+                    //$material->setIdRoom($formData['idRoom']);    
+            }else{//if it is being edited, then update the records that already exist 
                     $need = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')->findOneByIdneed($formData['idneed_2']);
                     
                     //check if any of the fields has been changed
@@ -193,26 +195,26 @@ class SchoolController extends Controller{
                     $date = date('Y-m-d');
                     if($defaultData['quantity'] != $formData['quantity']){
                         $update = $update. 'Qty: '.$defaultData['quantity']. 
-                            ' --> '. $formData['quantity']. ' on '. $date. ';';           	
+                            ' --> '. $formData['quantity']. ' on '. $date. ';';             
                     }
                     if($defaultData['state'] != $formData['state']){
                         $update = $update. 'State: '.$defaultData['state']. 
-                            ' --> '. $formData['state']. ' on '. $date. ';';           	
+                            ' --> '. $formData['state']. ' on '. $date. ';';            
                     }
                     if($defaultData['available_in'] != $formData['available_in']){
                         $update = $update. 'AvRC: '.$defaultData['available_in']. 
-                            ' --> '. $formData['available_in']. ' on '. $date. ';';           	
+                            ' --> '. $formData['available_in']. ' on '. $date. ';';             
                     }
                     if($defaultData['date_procured'] != $formData['date_procured']){
                         $update = $update. 'DateP: '.$defaultData['date_procured']->format('Y-m-d'). 
-                            ' --> '. $formData['date_procured']->format('Y-m-d'). ' on '. $date. ';';           	
+                            ' --> '. $formData['date_procured']->format('Y-m-d'). ' on '. $date. ';';               
                     }
                     if($defaultData['year_recorded'] != $formData['year_recorded']){
                         $update = $update. 'YearR: '.$defaultData['year_recorded']->format('Y'). 
-                            ' --> '. $formData['year_recorded']->format('Y'). ' on '. $date. ';';           	
+                            ' --> '. $formData['year_recorded']->format('Y'). ' on '. $date. ';';               
                     }
               
-   		}
+        }
 
                 if ($update != null){$need->setUpdates($update);}               
                 $need->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
@@ -255,21 +257,21 @@ class SchoolController extends Controller{
 //                }
             }
             //if this is a not new need being added, we want to make the id field uneditable
-      	if($needId != 'new'){
+        if($needId != 'new'){
             $readonly = true;
             $disabled = true;          
             //set the value to the session needId if the field is null
             //$empty_data = $needId;
-      	}else{
+        }else{
             $readonly = false;            
             $required = true;
             $disabled = false;
             //$empty_data = '';
-      	}
+        }
 
-      	return $this->render('school/materials/edit_resource_material.html.twig', array(
-      		'form1'=>$form1->createView(),
-      		'readonly' => $readonly,
+        return $this->render('school/materials/edit_resource_material.html.twig', array(
+            'form1'=>$form1->createView(),
+            'readonly' => $readonly,
                 'disabled' => $disabled));
                 //'disabled' => $disabled,'empty_data' => $empty_data));
       }
@@ -281,13 +283,13 @@ class SchoolController extends Controller{
             $defaultData = array();
             echo $materialId;
             if($materialId != 'new'){/*if we are not adding a new material, fill the form fields with
-            	the data of the selected learner.*/
-            	$materials = $connection->fetchAll('SELECT * FROM room_state
-            		WHERE room_id = ? AND emiscode = ?', array($materialId, $emisCode));
-            	$defaultData = $materials[0];
-      		//convert the dates into their corresponding objects so that they will be rendered correctly by the form
-      		//$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
-      		$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
+                the data of the selected learner.*/
+                $materials = $connection->fetchAll('SELECT * FROM room_state
+                    WHERE room_id = ? AND emiscode = ?', array($materialId, $emisCode));
+                $defaultData = $materials[0];
+            //convert the dates into their corresponding objects so that they will be rendered correctly by the form
+            //$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
+            $defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
             }
        
             $form1 = $this->createForm(new RoomStateType(), $defaultData);
@@ -295,16 +297,16 @@ class SchoolController extends Controller{
             $form1->handleRequest($request);
                         
             if($form1->isValid()){
-            	$formData = $form1->getData();
+                $formData = $form1->getData();
                 $id_room = $formData['room_id'];
                 $material;
                 $update = '';
-      		//check if this record is being edited or created anew
-      		if($materialId == 'new'){
+            //check if this record is being edited or created anew
+            if($materialId == 'new'){
                     $material = new RoomState();
-                    //$material->setIdRoom($formData['idRoom']);   	
-      		}else{//if it is being edited, then update the records that already exist 
-                    $material = $this->getDoctrine()->getRepository('AppBundle:RoomState')->findOneByIdRoom($id_room);	
+                    //$material->setIdRoom($formData['idRoom']);    
+            }else{//if it is being edited, then update the records that already exist 
+                    $material = $this->getDoctrine()->getRepository('AppBundle:RoomState')->findOneByIdRoom($id_room);  
                     
                     //check if any of the fields has been changed
                     //and append the change in updates field with a date stamp
@@ -312,38 +314,38 @@ class SchoolController extends Controller{
                     $date = date('Y-m-d');
                     if($defaultData['enough_light'] != $formData['enough_light']){
                         $update = $update. 'EL: '.$defaultData['enough_light']. 
-                            ' --> '. $formData['enough_light']. ' on '. $date. ';';           	
+                            ' --> '. $formData['enough_light']. ' on '. $date. ';';             
                     }
                     if($defaultData['enough_space'] != $formData['enough_space']){
                         $update = $update. 'ES: '.$defaultData['enough_space']. 
-                            ' --> '. $formData['enough_space']. ' on '. $date. ';';           	
+                            ' --> '. $formData['enough_space']. ' on '. $date. ';';             
                     }
                     if($defaultData['enough_ventilation'] != $formData['enough_ventilation']){
                         $update = $update. 'EV: '.$defaultData['enough_ventilation']. 
-                            ' --> '. $formData['enough_ventilation']. ' on '. $date. ';';           	
+                            ' --> '. $formData['enough_ventilation']. ' on '. $date. ';';               
                     }
                     if($defaultData['adaptive_chairs'] != $formData['adaptive_chairs']){
                         $update = $update. 'AdC: '.$defaultData['adaptive_chairs']. 
-                            ' --> '. $formData['adaptive_chairs']. ' on '. $date. ';';           	
+                            ' --> '. $formData['adaptive_chairs']. ' on '. $date. ';';              
                     }
                     if($defaultData['access'] != $formData['access']){
                         $update = $update. 'Acc: '.$defaultData['access']. 
-                            ' --> '. $formData['access']. ' on '. $date. ';';           	
+                            ' --> '. $formData['access']. ' on '. $date. ';';               
                     }
                     if($defaultData['room_type'] != $formData['room_type']){
                         $update = $update. 'RType: '.$defaultData['room_type']. 
-                            ' --> '. $formData['room_type']. ' on '. $date. ';';           	
+                            ' --> '. $formData['room_type']. ' on '. $date. ';';            
                     }
-      		}
+            }
  
                 $material->setUpdates($update);
-		//set the fields for material
+        //set the fields for material
                 $material->setIdRoom($formData['room_id']);
                 $material->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
                 $material->setYearStarted($formData['year']->format('Y-m-d'));
                 $material->setEnoughLight($formData['enough_light']);
-      		$material->setEnoughSpace($formData['enough_space']);  
-      		$material->setAdaptiveChairs($formData['adaptive_chairs']);
+            $material->setEnoughSpace($formData['enough_space']);  
+            $material->setAdaptiveChairs($formData['adaptive_chairs']);
                 $material->setAccess($formData['access']);
                 $material->setEnoughVentilation($formData['enough_ventilation']);
                 $material->setOtherObservations($formData['other_observations']);
@@ -381,103 +383,103 @@ class SchoolController extends Controller{
 //                }
             }
             //if this is a new learner being added, we want to make the id field uneditable
-      	if($materialId != 'new'){
+        if($materialId != 'new'){
             $readOnly = true;
-      	}else{
+        }else{
             $readOnly = false;
-      	}
-      	
-      	return $this->render('school/materials/edit_school_material.html.twig', array(
-      		'form1'=>$form1->createView(),
-      		'readonly' => $readOnly));
+        }
+        
+        return $this->render('school/materials/edit_school_material.html.twig', array(
+            'form1'=>$form1->createView(),
+            'readonly' => $readOnly));
       }
-	/**
-	 *@Route("/school/{emisCode}/learners", name="school_learners", requirements={"emisCode":"\d+"})
-	 */
-	public function learnerAction($emisCode, Request $request){
+    /**
+     *@Route("/school/{emisCode}/learners", name="school_learners", requirements={"emisCode":"\d+"})
+     */
+    public function learnerAction($emisCode, Request $request){
             return $this->render('school/learners/learners_main.html.twig');
-	}
-	/**
-	 *@Route("/findLearnerForm/{emisCode}", name="find_learner_form")
-	 */
-	public function findLearnerFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
-		$connection = $this->get('database_connection');
+    }
+    /**
+     *@Route("/findLearnerForm/{emisCode}", name="find_learner_form")
+     */
+    public function findLearnerFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
+        $connection = $this->get('database_connection');
         $thisYear = date('Y');
-		$students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  lwd NATURAL JOIN lwd_belongs_to_school lbts
+        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  lwd NATURAL JOIN lwd_belongs_to_school lbts
             LEFT JOIN school_exit ON lwd.idlwd = school_exit.idlwd AND lbts.emiscode = school_exit.emiscode AND 
             lbts.year <= school_exit.year WHERE school_exit.idlwd IS NULL AND
             school_exit.emiscode IS NULL AND lbts.emiscode = ?', array($emisCode));
 
-		//create the associative array to be used for the select list
-		$choices = array();
-		foreach ($students as $key => $row) {
+        //create the associative array to be used for the select list
+        $choices = array();
+        foreach ($students as $key => $row) {
                     $choices[$row['idlwd']] = $row['first_name'].' '.$row['last_name'];
-		}
+        }
 
-		//create the form for choosing an existing student to edit
-		$defaultData = array('learner' => $request->get('learnerId'));
-		$form = $this->createFormBuilder($defaultData, array(
-			'action' => $this->generateUrl('find_learner_form', ['emisCode'=>$emisCode])))
-		->add('learner','choice', array(
-			'label' => 'Choose Learner',
-			'placeholder'=>'Choose Learner',
-			'choices'=> $choices,
-			))
-		->getForm();
+        //create the form for choosing an existing student to edit
+        $defaultData = array('learner' => $request->get('learnerId'));
+        $form = $this->createFormBuilder($defaultData, array(
+            'action' => $this->generateUrl('find_learner_form', ['emisCode'=>$emisCode])))
+        ->add('learner','choice', array(
+            'label' => 'Choose Learner',
+            'placeholder'=>'Choose Learner',
+            'choices'=> $choices,
+            ))
+        ->getForm();
 
-		$form->handleRequest($request);
+        $form->handleRequest($request);
 
-		if($form->isValid()){
+        if($form->isValid()){
                     $formData = $form->getData();
                     $learnerId = $formData['learner'];
                     return $this->redirectToRoute('edit_learner_personal',array('emisCode'=>$emisCode,'learnerId'=>$learnerId));
-		}
-		return $this->render('school/learners/findlearnerform.html.twig', array(
-			'form' => $form->createView()));
-	}
+        }
+        return $this->render('school/learners/findlearnerform.html.twig', array(
+            'form' => $form->createView()));
+    }
 
     /**
     *@Route("/findTeacherForm/{emisCode}/", name="find_teacher_form", requirements={"teacherId":"new|\S+"})
      */
     public function findTeacherFormAction(Request $request, $emisCode){//this controller will return the form used for selecting a specialist teacher
-    	$connection = $this->get('database_connection');
-    	$teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name FROM snt NATURAL JOIN school_has_snt
-    		WHERE emiscode = ?', array($emisCode));
+        $connection = $this->get('database_connection');
+        $teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name FROM snt NATURAL JOIN school_has_snt
+            WHERE emiscode = ?', array($emisCode));
 
-    	$choices = array();
-    	foreach ($teachers as $key => $row) {
+        $choices = array();
+        foreach ($teachers as $key => $row) {
             $choices[$row['idsnt']] = $row['sfirst_name'].' '.$row['slast_name'];
-    	}
+        }
 
-    	//create the form for choosing an existing teacher to edit      
-    	$defaultData = array();
-    	$form = $this->createFormBuilder($defaultData, array(
-    		'action' => $this->generateUrl('find_teacher_form', ['emisCode'=>$emisCode])))
-    	->add('teacher','choice', array(
-    		'label' => 'Choose Teacher',
-    		'placeholder'=>'Choose Teacher',
-    		'choices'=> $choices,
-    		))
-    	->getForm();
+        //create the form for choosing an existing teacher to edit      
+        $defaultData = array();
+        $form = $this->createFormBuilder($defaultData, array(
+            'action' => $this->generateUrl('find_teacher_form', ['emisCode'=>$emisCode])))
+        ->add('teacher','choice', array(
+            'label' => 'Choose Teacher',
+            'placeholder'=>'Choose Teacher',
+            'choices'=> $choices,
+            ))
+        ->getForm();
 
-    	$form->handleRequest($request);
+        $form->handleRequest($request);
 
-    	if($form->isValid()){
-    		$formData = $form->getData();
-    		$teacherId = $formData['teacher'];
-    		return $this->redirectToRoute('add_teacher',array('emisCode'=>$emisCode,'teacherId'=>$teacherId));
-    	}
+        if($form->isValid()){
+            $formData = $form->getData();
+            $teacherId = $formData['teacher'];
+            return $this->redirectToRoute('add_teacher',array('emisCode'=>$emisCode,'teacherId'=>$teacherId));
+        }
 
-    	return $this->render('school/specialist_teacher/findteacherform.html.twig', array(
-    		'form' => $form->createView()));
+        return $this->render('school/specialist_teacher/findteacherform.html.twig', array(
+            'form' => $form->createView()));
     }
      /**
      * @Route("/school/{emisCode}/teachers/{teacherId}/edit", name="add_teacher", requirements ={"teacherId":"new|\S+"})      
      */
     public function addTeacherAction(Request $request, $teacherId, $emisCode){//this method will only be called through ajax
 
-    	$connection = $this->get('database_connection');
-    	$defaultData = array();
+        $connection = $this->get('database_connection');
+        $defaultData = array();
 
         if($teacherId != 'new'){/*if we are not adding a new learner, fill the form fields with
             the data of the selected learner.*/           
@@ -486,19 +488,19 @@ class SchoolController extends Controller{
             //convert the dates into their corresponding objects so that they will be rendered correctly by the form
             $defaultData['s_dob'] = new \DateTime($defaultData['s_dob']);            
             $defaultData['year_started'] = new \DateTime($defaultData['year_started'].'-1-1');/*append -1-1 at the end to make sure the string is correclty converted to 
-      		a DateTime object*/
+            a DateTime object*/
 
             $defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
             
             /*convert the SET value of MySQL to corresponding array in Php
             to enable correct rendering of choices in the form*/          
             $defaultData['other_specialities'] = explode(',',$defaultData['other_specialities']);
-      	}
+        }
         
-      	$form2=  $this->createForm(new TeacherType(), $defaultData);
-      	$form2->handleRequest($request);
+        $form2=  $this->createForm(new TeacherType(), $defaultData);
+        $form2->handleRequest($request);
 
-      	if($form2->isValid()){
+        if($form2->isValid()){
             $formData = $form2->getData();
             $teacher;
             $schoolHasSnt;
@@ -509,7 +511,7 @@ class SchoolController extends Controller{
                     $schoolHasSnt = new SchoolHasSnt();
             }else{
                 //if it is being edited, then update the records that already exist 
-            	$teacher = $this->getDoctrine()->getRepository('AppBundle:Snt')->findOneByIdsnt($teacherId);
+                $teacher = $this->getDoctrine()->getRepository('AppBundle:Snt')->findOneByIdsnt($teacherId);
                 $schoolHasSnt = $this->getDoctrine()->getRepository('AppBundle:SchoolHasSnt')->findOneBy(array('idsnt'=>$teacherId, 'emiscode'=>$emisCode, 'year'=>$defaultData['year']->format('Y')));
             }
 
@@ -571,7 +573,7 @@ class SchoolController extends Controller{
             
         }
 
-      	//if this is not a new teacher being added, we want to make the id field uneditable
+        //if this is not a new teacher being added, we want to make the id field uneditable
         if($teacherId != 'new'){
             $readOnly = true;
         }else{
@@ -579,8 +581,8 @@ class SchoolController extends Controller{
         }
 
         return $this->render('school/specialist_teacher/add_teacher.html.twig', array(
-        	'form2'=>$form2->createView(),
-        	'readonly'=> $readOnly));        
+            'form2'=>$form2->createView(),
+            'readonly'=> $readOnly));        
     }
         
     /**
@@ -588,54 +590,50 @@ class SchoolController extends Controller{
      */
     public function editLearnerPersonalAction(Request $request, $learnerId, $emisCode){
 
-    	$connection = $this->get('database_connection');
-    	$defaultData = array();
-      	if($learnerId != 'new'){/*if we are not adding a new learner, fill the form fields with
+        $connection = $this->get('database_connection');
+        $defaultData = array();
+        if($learnerId != 'new'){/*if we are not adding a new learner, fill the form fields with
             the data of the selected learner.*/
             $defaultData = $connection->fetchAssoc('SELECT * FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school 
-            	WHERE emiscode = ? AND idlwd = ? ORDER BY `year` DESC', array($emisCode, $learnerId));
+                WHERE emiscode = ? AND idlwd = ? ORDER BY `year` DESC', array($emisCode, $learnerId));
             //convert the dates into their corresponding objects so that they will be rendered correctly by the form
             $defaultData['dob'] = new \DateTime($defaultData['dob']);
-            $defaultData['gdob'] = new \DateTime($defaultData['gdob']);
-      	}
-      	$form1 = $this->createForm(new LearnerPersonalType(), $defaultData);
+        }
+        $form1 = $this->createForm(new LearnerPersonalType(), $defaultData);
+        $form1->handleRequest($request);
 
-      	$form1->handleRequest($request);
+        if($form1->isValid()){
+            $formData = $form1->getData();
+            $id_lwd = $formData['idlwd'];
+            $id_guardian = $formData['idguardian'];
+            $guardian; 
+            $learner;
 
-      	if($form1->isValid()){
-      		$formData = $form1->getData();
-      		$id_lwd = $formData['idlwd'];
-      		$id_guardian = $formData['idguardian'];
-      		$guardian; 
-      		$learner;
-
-      		//check if this record is being edited or created anew
-      		if($learnerId == 'new'){
-      			$guardian = new Guardian();
-      			$learner = new Lwd();
-      			$learner->setIdlwd($formData['idlwd']);
-      		}else{//if it is being edited, then update the records that already exist 
-      			$guardian = $this->getDoctrine()->getRepository('AppBundle:Guardian')->findOneByIdguardian($id_guardian);
-      			$learner = $this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($id_lwd);
-      		}
+            //check if this record is being edited or created anew
+            if($learnerId == 'new'){
+                $guardian = new Guardian();
+                $learner = new Lwd();
+                $learner->setIdlwd($formData['idlwd']);
+            }else{//if it is being edited, then update the records that already exist 
+                $guardian = $this->getDoctrine()->getRepository('AppBundle:Guardian')->findOneByIdguardian($id_guardian);
+                $learner = $this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($id_lwd);
+            }
                 //set the fields for guardian
-      		$guardian->setGfirstName($formData['gfirst_name']);
-      		$guardian->setGlastName($formData['glast_name']);
-      		$guardian->setGsex($formData['gsex']);
-      		$guardian->setGaddress($formData['gaddress']);
-      		$guardian->setGdob($formData['gdob']);
-      		$guardian->setOccupation($formData['occupation']);
-      		$guardian->setDistrict($formData['district']);  
-      		//set the fields for learner
-      		$learner->setFirstName($formData['first_name']);
-      		$learner->setLastName($formData['last_name']);
-      		$learner->setSex($formData['sex']);
-      		$learner->setHomeaddress($formData['home_address']);
-      		$learner->setFirstName($formData['first_name']);
-      		$learner->setDob($formData['dob']);
-      		$learner->setDistanceToSchool($formData['distance_to_school']);
-      		$learner->setIdguardian($guardian);
-      		$learner->setGuardianRelationship($formData['guardian_relationship']);
+            $guardian->setGfirstName($formData['gfirst_name']);
+            $guardian->setGlastName($formData['glast_name']);
+            $guardian->setGsex($formData['gsex']);
+            $guardian->setGaddress($formData['gaddress']);
+            $guardian->setOccupation($formData['occupation']);
+            $guardian->setDistrict($formData['district']);  
+            //set the fields for learner
+            $learner->setFirstName($formData['first_name']);
+            $learner->setLastName($formData['last_name']);
+            $learner->setSex($formData['sex']);
+            $learner->setHomeaddress($formData['home_address']);
+            $learner->setFirstName($formData['first_name']);
+            $learner->setDob($formData['dob']);
+            $learner->setIdguardian($guardian);
+            $learner->setGuardianRelationship($formData['guardian_relationship']);
                 
                 //check if learnerId already exists and handle the error
                 $lwdId = $this->getDoctrine()->getRepository('AppBundle:Lwd')
@@ -653,10 +651,21 @@ class SchoolController extends Controller{
                     $metadata->setIdGeneratorType(\Doctrine\ORM\Mapping\ClassMetadata::GENERATOR_TYPE_NONE);
                     $em->flush();
 
-                    $today = new \DateTime('y');
+                    $today = new \DateTime('y');//currentyear
                     //if this is a new learner, add an entry in the lwd_belongs_to_school table, otherwise, just update the std column
-                    $connection->executeQuery('INSERT IGNORE INTO lwd_belongs_to_school (idlwd, emiscode, `year`, `std`) VALUES 
-                            (?,?,?,?)', [$id_lwd, $emisCode, $today->format('Y-m-d'), $formData['std']]);      		
+                    $parameters = [$id_lwd, $emisCode, $today->format('Y-m-d'), $formData['std'], $formData['distance_to_school'], $formData['means_to_school']];
+                    $columnName = '';
+                    $placeHolder = '';
+                    $update = '';
+                    if($formData['means_to_school'] == 'other'){
+                        $columnName = ',other_means';
+                        $placeHolder = ',?';
+                        $parameters[] = $formData['other_means'];
+                        $update = ',other_means = VALUES(other_means)';
+                    }
+                    $connection->executeQuery("INSERT INTO lwd_belongs_to_school (idlwd, emiscode, `year`, `std`, distance_to_school,
+                     means_to_school $columnName) VALUES (?,?,?,?,?,? $placeHolder) ON DUPLICATE KEY UPDATE `year`= VALUES(`year`),
+                      `std`= VALUES(`std`), means_to_school = VALUES(means_to_school), distance_to_school = VALUES(distance_to_school) $update", $parameters);              
                     
                     if ($lwdId){//Acknowledge update
                         $request->getSession()->getFlashBag()
@@ -671,52 +680,51 @@ class SchoolController extends Controller{
                             ->add('lwdExists', 'LWD with id ('.$formData['idlwd'].') already exists');
                     return $this->redirectToRoute('edit_learner_personal',['emisCode'=>$emisCode, 'learnerId'=>'new'], 301);
                 } 
-      	}
-      	//if this is a new learner being added, we want to make the id field uneditable
-      	if($learnerId != 'new'){
+        }
+        //if this is a new learner being added, we want to make the id field uneditable
+        if($learnerId != 'new'){
             $readOnly = true;
-      	}else{
+        }else{
             $readOnly = false;
-      	}
-      	
-      	return $this->render('school/learners/edit_learner_personal.html.twig', array(
-      		'form1'=>$form1->createView(),
-      		'readonly' => $readOnly));
+        }
+        
+        return $this->render('school/learners/edit_learner_personal.html.twig', array(
+            'form1'=>$form1->createView(),
+            'readonly' => $readOnly));
       }
     /**
      * @Route("/school/{emisCode}/learners/{learnerId}/need", name="edit_learner_disability", requirements ={"learnerId":"new|\d+"})
      */
     public function editLearnerDisabilityAction(Request $request, $learnerId, $emisCode){
 
-    	$forms = array(); //array to keep the forms: there could be more than one disability form for a learner
-    	$connection = $this->get('database_connection'); 
-    	$disabilities = $connection->fetchAll("SELECT * FROM disability");
+        $forms = array(); //array to keep the forms: there could be more than one disability form for a learner
+        $connection = $this->get('database_connection'); 
+        $disabilities = $connection->fetchAll("SELECT * FROM disability");
         $disabilityNames = array(); //will be used in the template to provide pagination for the disabilities
 
-    	if($learnerId != 'new'){
-    		$learnerDisabilities = $connection->fetchAll("SELECT * FROM lwd_has_disability WHERE idlwd = ?", array(
-    			$learnerId));
-    		if($learnerDisabilities){
-    			$formCounter = 1;
-    			//prepare SQL statements to be executed with each iteration
-    			$levelsStmt = $connection->prepare("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
-    					WHERE iddisability = ?");
-    			$needsStmt = $connection->prepare("SELECT idneed, needname FROM disability_has_need NATURAL JOIN need 
-    					WHERE iddisability = ?");
-    			$needsRowsStmt = $connection->prepare("SELECT idneed FROM lwd_has_disability_has_need WHERE idlwd = ? 
-    					AND iddisability = ?");
+        if($learnerId != 'new'){
+            $learnerDisabilities = $connection->fetchAll("SELECT * FROM lwd_has_disability WHERE idlwd = ?", array(
+                $learnerId));
+            if($learnerDisabilities){
+                $formCounter = 1;
+                //prepare SQL statements to be executed with each iteration
+                $levelsStmt = $connection->prepare("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
+                        WHERE iddisability = ?");
+                $needsStmt = $connection->prepare("SELECT idneed, needname FROM disability_has_need NATURAL JOIN need 
+                        WHERE iddisability = ?");
+                $needsRowsStmt = $connection->prepare("SELECT idneed FROM lwd_has_disability_has_need WHERE idlwd = ? 
+                        AND iddisability = ?");
 
                 $dataConverter = $this->get('data_converter');
-    			//iterate over each disability for this learner
-    			foreach($learnerDisabilities as $disability){
+                //iterate over each disability for this learner
+                foreach($learnerDisabilities as $disability){
                     $disabilityNames[] = $dataConverter->selectFromArray($disabilities, 'iddisability', $disability['iddisability'])[0]['disability_name'];
-    				//get the levels to show in the form for this disability
-    				$levelsStmt->bindParam(1, $disability['iddisability']);
-    				$levelsStmt->execute();
-    				$levels = $levelsStmt->fetchAll();
+                    //get the levels to show in the form for this disability
+                    $levelsStmt->bindParam(1, $disability['iddisability']);
+                    $levelsStmt->execute();
+                    $levels = $levelsStmt->fetchAll();
 
-    				$disability['identification_date'] = new \DateTime($disability['identification_date']);
-    				$disability['iddisability_2'] = $disability['iddisability'];//set default data for the hidden field since the true iddisability will be disabled
+                    $disability['iddisability_2'] = $disability['iddisability'];//set default data for the hidden field since the true iddisability will be disabled
                     //get the needs for this disability
                     $needsStmt->bindParam(1, $disability['iddisability']);
                     $needsStmt->execute();
@@ -729,95 +737,89 @@ class SchoolController extends Controller{
                     //get the ids of all the available needs as a single array
                     $availableNeeds = array_column($availableNeedsRows, 'idneed');
                     $disability['needs'] = $availableNeeds;
-    				$forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels, $formCounter, $needs), $disability); 
+                    $forms[] = $this->createForm(new LearnerDisabilityType($disabilities, $levels, $formCounter, $needs), $disability); 
 
-    				$formCounter++;
-    			}
-    			$levelsStmt->closeCursor();
-    			$needsStmt->closeCursor();
-    			$needsRowsStmt->closeCursor();
-    		}
-    		//process each of the forms
-    		$formCounter = 1;
-    		foreach($forms as $form){
-    			$form->handleRequest($request);
-    			if($form->isValid()){
-    				$formData = $form->getData();
-    				$em = $this->getDoctrine()->getManager();
-    				$lwdHasDisability = $em->getRepository('AppBundle:LwdHasDisability')->findOneBy([
-    					'idlwd'=>$learnerId,
-    					'iddisability' =>$formData['iddisability_2']
-    					]
-					);
-					if($form->get('remove')->isClicked()){//if the remove button was clicked for this record
-                                            $em->remove($lwdHasDisability);
-                                            //delete needs records
-                                            $connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
-                                            AND idlwd = ?', array($formData['iddisability_2'], $learnerId));
-                                            $message = "Disability/Special need record removed";
-                                            $messageType = 'recordRemovedMessage';
-					}
-					else{
-                                            $lwdHasDisability->setIdentifiedBy($formData['identified_by']);
-                                            $lwdHasDisability->setIdentificationDate($formData['identification_date']);
-                                            $lwdHasDisability->setCaseDescription($formData['case_description']);
-                                            if($formData['idlevel'] != null){
-                                               $lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
-                                            }
-                                            $em->persist($lwdHasDisability);
-                                            $dataConverter = $this->get('data_converter');
-                                            $selectedNeeds = $dataConverter->arrayRemoveQuotes($formData['needs']);                 
-                                            $commaString = $dataConverter->convertToCommaString($selectedNeeds); /*convert array 
-                                            of checked values to comma delimited string */
-                                            $connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
-                                                AND idlwd = ? AND idneed NOT IN (?)', array($formData['iddisability_2'], $learnerId, $commaString));/*delete all records in the db
-                                            that are not checked on the form*/
-                                            //write the records for needs available to this learner if the records do not already exist in the db
-                                            $writeNeeds = $connection->prepare('INSERT IGNORE INTO lwd_has_disability_has_need SET idlwd = ?, 
-                                                iddisability = ?, idneed = ?');
-                                            $writeNeeds->bindParam(1, $learnerId);
-                                            $writeNeeds->bindParam(2, $formData['iddisability_2']);
-                                            //iterate over array of needs checked on the form and add each one to the database
-                                            foreach($selectedNeeds as $selectedNeed){
-                                                $writeNeeds->bindParam(3, $selectedNeed);
-                                                $writeNeeds->execute();
-                                            }
-                                            $writeNeeds->closeCursor();
-                                            $message = "Disability/Special need record updated";
-                                            $messageType = $formCounter;
-					}
-					$em->flush();
+                    $formCounter++;
+                }
+                $levelsStmt->closeCursor();
+                $needsStmt->closeCursor();
+                $needsRowsStmt->closeCursor();
+            }
+            //process each of the forms
+            $formCounter = 1;
+            foreach($forms as $form){
+                $form->handleRequest($request);
+                if($form->isValid()){
+                    $formData = $form->getData();
+                    $em = $this->getDoctrine()->getManager();
+                    $lwdHasDisability = $em->getRepository('AppBundle:LwdHasDisability')->findOneBy([
+                        'idlwd'=>$learnerId,
+                        'iddisability' =>$formData['iddisability_2']
+                        ]
+                    );
+                    if($form->get('remove')->isClicked()){//if the remove button was clicked for this record
+                        $em->remove($lwdHasDisability);
+                        //delete needs records
+                        $connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
+                        AND idlwd = ?', array($formData['iddisability_2'], $learnerId));
+                        $message = "Disability/Special need record removed";
+                        $messageType = 'recordRemovedMessage';
+                    }
+                    else{
+                        if($formData['idlevel'] != null){
+                           $lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
+                           $em->persist($lwdHasDisability);
+                        }
+                        $dataConverter = $this->get('data_converter');
+                        $selectedNeeds = $dataConverter->arrayRemoveQuotes($formData['needs']);                 
+                        $commaString = $dataConverter->convertToCommaString($selectedNeeds); /*convert array 
+                        of checked values to comma delimited string */
+                        $connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
+                            AND idlwd = ? AND idneed NOT IN (?)', array($formData['iddisability_2'], $learnerId, $commaString));/*delete all records in the db
+                        that are not checked on the form*/
+                        //write the records for needs available to this learner if the records do not already exist in the db
+                        $writeNeeds = $connection->prepare('INSERT IGNORE INTO lwd_has_disability_has_need SET idlwd = ?, 
+                            iddisability = ?, idneed = ?');
+                        $writeNeeds->bindParam(1, $learnerId);
+                        $writeNeeds->bindParam(2, $formData['iddisability_2']);
+                        //iterate over array of needs checked on the form and add each one to the database
+                        foreach($selectedNeeds as $selectedNeed){
+                            $writeNeeds->bindParam(3, $selectedNeed);
+                            $writeNeeds->execute();
+                        }
+                        $writeNeeds->closeCursor();
+                        $message = "Disability/Special need record updated";
+                        $messageType = $formCounter;
+                    }
+                    $em->flush();
 
-					$this->addFlash($messageType, $message);
-					return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
-    			}
-    			$formCounter++;
-    		}
-    	}
+                    $this->addFlash($messageType, $message);
+                    //return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+                }
+                $formCounter++;
+            }
+        }
 
-    	$levels2 = array();
+        $levels2 = array();
         $hasLevels = false;
-    	if($this->get('session')->getFlashBag()->has('levels')){
+        if($this->get('session')->getFlashBag()->has('levels')){
             $hasLevels = true;
-    		$levels2 = $this->get('session')->getFlashBag()->get('levels');
-    	}
+            $levels2 = $this->get('session')->getFlashBag()->get('levels');
+        }
         //the form for adding a new disability to this learner's profile
-    	$newForm = $this->createForm(new LearnerDisabilityType($disabilities, $levels2, "", array(), false));
+        $newForm = $this->createForm(new LearnerDisabilityType($disabilities, $levels2, "", array(), false));
 
-    	$newForm->handleRequest($request);
-    	if($newForm->isValid()){
-    		$em = $this->getDoctrine()->getManager();
-    		$formData = $newForm->getData();
-    		$lwdHasDisability = new LwdHasDisability();
-    		$lwdHasDisability->setIdlwd($em->getReference('AppBundle:Lwd', $learnerId));
-    		$idDisability = $this->getDoctrine()->getRepository('AppBundle:Disability')->findOneByIddisability($formData['iddisability']);
-    		$lwdHasDisability->setIddisability($idDisability);
-    		$lwdHasDisability->setIdentifiedBy($formData['identified_by']);
-    		$lwdHasDisability->setIdentificationDate($formData['identification_date']);
-    		$lwdHasDisability->setCaseDescription($formData['case_description']);
-    		if($hasLevels){
-	    		$lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
-	    	} 
+        $newForm->handleRequest($request);
+        if($newForm->isValid()){
+            $em = $this->getDoctrine()->getManager();
+            $formData = $newForm->getData();
+            $lwdHasDisability = new LwdHasDisability();
+            $lwdHasDisability->setIdlwd($em->getReference('AppBundle:Lwd', $learnerId));
+            $idDisability = $this->getDoctrine()->getRepository('AppBundle:Disability')->findOneByIddisability($formData['iddisability']);
+            $lwdHasDisability->setIddisability($idDisability);
+            if($hasLevels){
+                $lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
+            } 
 
                 //check if disability already exists in db
                 $lwdDisability = $this->getDoctrine()->getRepository('AppBundle:LwdHasDisability')
@@ -826,57 +828,87 @@ class SchoolController extends Controller{
                     $em->persist($lwdHasDisability);
                     $em->flush();
 
-                    $message = "New disability/special need record added for learner ".$learnerId;
+                    $message = "Disability/special need record added for learner ".$learnerId;
                     $this->addFlash('disabilityAddedMessage', $message);                    
                 } else {
-                    $message = "Disability/special need record already exists for learner ".$learnerId;
+                    $message = "This disability/special need record already exists for learner ".$learnerId;
                     $this->addFlash('disabilityExists', $message);
                 }
                 return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
-    	}
-
-    	//create a view of each of the forms
-    	foreach($forms as &$form){
-    		$form = $form->createView();
-    	}
-    	return $this->render('school/learners/edit_learner_disability.html.twig', array(
-    		'forms' => $forms, 'newform' => $newForm->createView(), 
-            'disabilityNames' => $disabilityNames)
-    	);
-    } 
-    /**
-     * @Route("/school/{emisCode}/learners/{learnerId}/exit", name="learner_exit", requirements ={"learnerId":"new|\d+"})
-     */
-    public function learnerExitAction(Request $request, $learnerId, $emisCode){
-        $em = $this->getDoctrine()->getManager();
-        $form = $this->createForm(new LearnerExitType);
-
-        $form->handleRequest($request);
-        if($form->isValid()){
-            $formData = $form->getData();
-            $exit = new SchoolExit();
-            $exit->setIdlwd($em->getReference('AppBundle:Lwd', $learnerId));
-            $exit->setEmiscode($em->getReference('AppBundle:School', $emisCode));
-            $exit->setReason($formData['reason']);
-            $today = new \DateTime('y');
-            $exit->setYear($today->format('Y-m-d'));
-            if($formData['reason'] != "other"){
-                $exit->setOtherReason($formData['other_reason']);
-            }
-
-            $em->persist($exit);
-            $em->flush();
-
-            $schoolName = "";
-            if($request->getSession()->has('emiscode')){
-                $schoolName = ' from '.$request->getSession()->get('school_name');
-            }
-            $this->addFlash('exitMessage', 'Exit of student '.$learnerId.$schoolName.' recorded');
-            return $this->redirectToRoute('school_learners', ['emisCode' => $emisCode], 301);
         }
 
+        //create a view of each of the forms
+        foreach($forms as &$form){
+            $form = $form->createView();
+        }
+        return $this->render('school/learners/edit_learner_disability.html.twig', array(
+            'forms' => $forms, 'newform' => $newForm->createView(), 
+            'disabilityNames' => $disabilityNames)
+        );
+    } 
+    /**
+     * @Route("/school/{emisCode}/learners/exit", name="learner_exit", requirements ={"emisCode":"\d+"})
+     */
+    public function learnerExitAction(Request $request, $emisCode){
+        $form = $this->createForm(new LearnerExitType);
+        $form->handleRequest($request);
+        $error = '';
+        if($form->isValid()){
+            try{
+                $em = $this->getDoctrine()->getManager();
+                $formData = $form->getData();
+                $exit = new SchoolExit();
+                $exit->setIdlwd($em->getReference('AppBundle:Lwd', $formData['idlwd']));
+                $exit->setEmiscode($em->getReference('AppBundle:School', $emisCode));
+                $exit->setReason($formData['reason']);
+                $today = new \DateTime('y');
+                $exit->setYear($today->format('Y-m-d'));
+                if($formData['reason'] != "other"){
+                    $exit->setOtherReason($formData['other_reason']);
+                }
+
+                $em->persist($exit);
+                $em->flush();
+
+                $schoolName = "";
+                if($request->getSession()->has('emiscode')){
+                    $schoolName = ' from '.$request->getSession()->get('school_name');
+                }
+                $this->addFlash('outcome','success');
+                $this->addFlash('exitMessage', 'Exit of student '.$formData['idlwd'].$schoolName.' recorded');
+            }
+            catch(DBALException $e){
+                $error = 'There was an error writing to the database. Either a student with the id '.$formData['idlwd']
+                .' does not exist or this record has already been entered';
+                $this->addFlash('outcome','danger');
+            }
+            
+        }else{
+            $this->addFlash('outcome','danger');
+        }
+        $response = $this->renderView('school/learners/single_exit.html.twig', array(
+                'form' => $form->createView(),
+                'emisCode' => $emisCode
+            )
+        );
+        return new JsonResponse(array('error'=>$error, 'htmlresponse'=>$response));
+    }
+    /**
+     * @Route("/school/{emisCode}/learners/exits", name="learner_exits", requirements ={"emisCode":"\d+"})
+     */
+    public function learnerExitsAction(Request $request, $emisCode){
+        //$form = $this->createForm(new LearnerExitType);
+        $exitForms = array();
+        for($i = 0; $i < 6; $i++){
+            $exitForms[] = $this->createForm(new LearnerExitType);
+        }
+        
+        //create a view of each of the forms
+        foreach($exitForms as &$form){
+            $form = $form->createView();
+        } 
         return $this->render('school/learners/learner_exit.html.twig', array(
-                'form' => $form->createView()
+                'forms' => $exitForms
             )
         );
 
@@ -886,119 +918,119 @@ class SchoolController extends Controller{
      * @Route("/populateschools/{districtId}", name="populate_schools", requirements ={"iddistrict":"\d+"}, condition="request.isXmlHttpRequest()", options={"expose":true})
      */
     public function populateSchoolsAction($districtId){
-    	$connection = $this->get('database_connection');
-    	$schools = $connection->fetchAll("SELECT emiscode, school_name FROM school WHERE iddistrict = ?", array($districtId));
-    	$html = '';
-    	if($schools){
-    		$this->get('session')->getFlashBag()->set('schools', $schools);
-    		foreach($schools as $key => $school){
-    			$html .= '<option value="'.$school['emiscode'].'">'.$school['emiscode'].': '.$school['school_name'].'</option>';
-    		}
-    	}
-    	return new Response($html);
+        $connection = $this->get('database_connection');
+        $schools = $connection->fetchAll("SELECT emiscode, school_name FROM school WHERE iddistrict = ?", array($districtId));
+        $html = '';
+        if($schools){
+            $this->get('session')->getFlashBag()->set('schools', $schools);
+            foreach($schools as $key => $school){
+                $html .= '<option value="'.$school['emiscode'].'">'.$school['emiscode'].': '.$school['school_name'].'</option>';
+            }
+        }
+        return new Response($html);
     }
     /**
      * @Route("/populatelearners/{schoolId}", name="populate_learners", requirements ={"emiscode":"\d+"}, condition="request.isXmlHttpRequest()", options={"expose":true})
      */
     public function populateLearnersAction($schoolId){
-    	$connection = $this->get('database_connection');
-    	$learners = $connection->fetchAll("SELECT idlwd, first_name, last_name FROM lwd_belongs_to_school NATURAL JOIN lwd WHERE emiscode = ?", array($schoolId));
-    	$html = '';
-    	if($learners){
-    		$this->get('session')->getFlashBag()->set('learners', $learners);
-    		foreach($learners as $key => $learner){
-    			$html .= '<option value="'.$learner['idlwd'].'">'.$learner['idlwd'].': '.$learner['first_name'].' '.$learner['last_name'].'</option>';
-    		}
-    	}
-    	return new Response($html);
+        $connection = $this->get('database_connection');
+        $learners = $connection->fetchAll("SELECT idlwd, first_name, last_name FROM lwd_belongs_to_school NATURAL JOIN lwd WHERE emiscode = ?", array($schoolId));
+        $html = '';
+        if($learners){
+            $this->get('session')->getFlashBag()->set('learners', $learners);
+            foreach($learners as $key => $learner){
+                $html .= '<option value="'.$learner['idlwd'].'">'.$learner['idlwd'].': '.$learner['first_name'].' '.$learner['last_name'].'</option>';
+            }
+        }
+        return new Response($html);
     }
     //controller called through ajax to autopopulate level select list
     /**
      * @Route("/populatelevels/{disabilityId}", name="populate_levels", requirements ={"iddisability":"\d+"}, condition="request.isXmlHttpRequest()", options={"expose":true})
      */
     public function populateLevelsAction($disabilityId){
-    	$connection = $this->get('database_connection');
-    	$levels = $connection->fetchAll("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
-    					WHERE iddisability = ?", array($disabilityId));
-    	$html = '';
-    	if($levels){
-    		$this->get('session')->getFlashBag()->set('levels', $levels);
-    		foreach($levels as $key => $level){
-    			$html .= '<option value="'.$level['idlevel'].'">'.$level['level_name'].'</option>';
-    		}
-    	}
-    	return new Response($html);
+        $connection = $this->get('database_connection');
+        $levels = $connection->fetchAll("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
+                        WHERE iddisability = ?", array($disabilityId));
+        $html = '';
+        if($levels){
+            $this->get('session')->getFlashBag()->set('levels', $levels);
+            foreach($levels as $key => $level){
+                $html .= '<option value="'.$level['idlevel'].'">'.$level['level_name'].'</option>';
+            }
+        }
+        return new Response($html);
     }
      /**
      * @Route("/school/{emisCode}/learners/{learnerId}/performance/{record}", name="edit_learner_performance", requirements ={"learnerId":"new|\d+", "record":"update|add"}, defaults={"record":"update"})
      */
      public function editLearnerPerformanceAction(Request $request, $learnerId, $record, $emisCode){
-     	$connection = $this->get('database_connection');
-    	//if this is not a new record, then create some default data.
-     	$action = "added";
-     	$mode = "Editing last performance record";
-     	$performanceRecord;
+        $connection = $this->get('database_connection');
+        //if this is not a new record, then create some default data.
+        $action = "added";
+        $mode = "Editing last performance record";
+        $performanceRecord;
 
-     	$defaultData = array();
-    	if($learnerId != 'new' && $record == 'update'){//if we are not adding a new learner or a new performance record for an existing learner
-    		//fetch the last record added for this learner
-    		$last_record = $connection->fetchAll("SELECT * FROM performance WHERE idlwd = ? ORDER BY year DESC,
-    			term DESC LIMIT 1", array($learnerId));
-    		if($last_record){//if a previous record exists for this learner
-    			$defaultData = $last_record[0];
-    			$defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
-    			$performanceRecord = $this->getDoctrine()->getRepository('AppBundle:Performance')->findOneByRecId($defaultData['rec_id']);
-    			$action = "updated";
-    		}else{
-    			$performanceRecord = new Performance();
-    			$mode = "Adding new performance record";
-    		}
+        $defaultData = array();
+        if($learnerId != 'new' && $record == 'update'){//if we are not adding a new learner or a new performance record for an existing learner
+            //fetch the last record added for this learner
+            $last_record = $connection->fetchAll("SELECT * FROM performance WHERE idlwd = ? ORDER BY year DESC,
+                term DESC LIMIT 1", array($learnerId));
+            if($last_record){//if a previous record exists for this learner
+                $defaultData = $last_record[0];
+                $defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
+                $performanceRecord = $this->getDoctrine()->getRepository('AppBundle:Performance')->findOneByRecId($defaultData['rec_id']);
+                $action = "updated";
+            }else{
+                $performanceRecord = new Performance();
+                $mode = "Adding new performance record";
+            }
 
-    	}else{
-    		$performanceRecord = new Performance();
-    		$mode = "Adding new performance record";
-    	}
-    	$message = "";
+        }else{
+            $performanceRecord = new Performance();
+            $mode = "Adding new performance record";
+        }
+        $message = "";
 
-    	$form = $this->createForm(new LearnerPerformanceType(), $defaultData);
-    	$form->handleRequest($request);
+        $form = $this->createForm(new LearnerPerformanceType(), $defaultData);
+        $form->handleRequest($request);
 
-    	if($form->isValid()){
-    		$formData = $form->getData();
+        if($form->isValid()){
+            $formData = $form->getData();
 
-    		$performanceRecord->setIdlwd($this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($learnerId));
-    		$performanceRecord->setStd($formData['std']);
-    		$performanceRecord->setYear($formData['year']->format('Y-m-d'));
-    		$performanceRecord->setTerm($formData['term']);
-    		$performanceRecord->setGrade($formData['grade']);
-    		$performanceRecord->setTeachercomment($formData['teachercomment']);
-    		$performanceRecord->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
+            $performanceRecord->setIdlwd($this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($learnerId));
+            $performanceRecord->setStd($formData['std']);
+            $performanceRecord->setYear($formData['year']->format('Y-m-d'));
+            $performanceRecord->setTerm($formData['term']);
+            $performanceRecord->setGrade($formData['grade']);
+            $performanceRecord->setTeachercomment($formData['teachercomment']);
+            $performanceRecord->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
 
-    		$em = $this->getDoctrine()->getManager();
-    		$em->persist($performanceRecord);
-    		$em->flush();
-    		$message = "Performance record ".$action;
-    		$this->addFlash('message',$message);
-    		return $this->redirectToRoute('edit_learner_performance', array(
-    			'form' => $form,
-    			'emisCode'=> $emisCode,
-    			'learnerId' => $learnerId,
-    			),
-    		301
-    		);
-    	}
-    	return $this->render('school/learners/edit_learner_performance.html.twig',array(
-    		'form' => $form->createView(),
-    		'mode' => $mode,)
-    	);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($performanceRecord);
+            $em->flush();
+            $message = "Performance record ".$action;
+            $this->addFlash('message',$message);
+            return $this->redirectToRoute('edit_learner_performance', array(
+                'form' => $form,
+                'emisCode'=> $emisCode,
+                'learnerId' => $learnerId,
+                ),
+            301
+            );
+        }
+        return $this->render('school/learners/edit_learner_performance.html.twig',array(
+            'form' => $form->createView(),
+            'mode' => $mode,)
+        );
     }
 
     /**
-	 *@Route("/school/{emisCode}/teachers", name="school_teachers", requirements={"emisCode":"\d+"}, options={"expose"= true})
-	 */
+     *@Route("/school/{emisCode}/teachers", name="school_teachers", requirements={"emisCode":"\d+"}, options={"expose"= true})
+     */
     public function teacherAction($emisCode, Request $request){
 
-    	return $this->render('school/specialist_teacher/teachers_main.html.twig');
+        return $this->render('school/specialist_teacher/teachers_main.html.twig');
     }
 
 

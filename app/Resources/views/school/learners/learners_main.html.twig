@@ -19,6 +19,11 @@
 		<div class="col-sm-3">
 			<p class="text-right"><a href="{{ path('edit_learner_personal',{"emisCode":emisCode, "learnerId": "new"}) }}" class="btn btn-sm" id="add_learner"><i class="fa fa-plus fa-lg"></i> Add New Learner</a>
 			</p>
+			{% block  student_exit_button %}
+				<p class="text-right"><a href="{{ path('learner_exits',{"emisCode":emisCode}) }}" class="btn btn-sm" id="learner_exits"><i class="fa fa-plus fa-lg"></i> Record Exits</a>
+			    </p>
+			{% endblock %}
+			
 		</div>
 	</div>
 	<hr>
