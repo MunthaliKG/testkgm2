@@ -17,7 +17,7 @@ class TeacherType extends AbstractType
 			)
 		)
                 ->add('sfirst_name','text', array(
-			'label' => 'First name',
+			'label' => 'First name(s)',
 			'constraints' => array(new NotBlank()),
 			)
 		)

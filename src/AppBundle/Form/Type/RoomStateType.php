@@ -42,6 +42,14 @@ class RoomStateType extends AbstractType
 			'multiple' => false,
 			)
                 )
+                ->add('noise_free', 'choice', array(
+			'label' => 'Noise free',
+			'choices' => array('No'=>'No','Yes'=>'Yes'),
+			'constraints' => array(new NotBlank()),
+			'expanded' => false,
+			'multiple' => false,
+			)
+                )
                 ->add('adaptive_chairs', 'choice', array(
 			'label' => 'Adaptive Chairs',
                         'choices' => array('No'=>'No','Yes'=>'Yes'),

@@ -53,6 +53,13 @@ class Lwd
      * @ORM\Column(name="guardian_relationship", type="string", nullable=false)
      */
     private $guardianRelationship;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="status_of_parent", type="string", nullable=false)
+     */
+    private $statusOfParent;
 
     /**
      * @var string
@@ -80,7 +87,28 @@ class Lwd
      */
     private $idguardian;
 
+/**
+     * Set statusOfParent
+     *
+     * @param string $statusOfParent
+     * @return Lwd
+     */
+    public function setStatusOfParent($statusOfParent)
+    {
+        $this->statusOfParent = $statusOfParent;
 
+        return $this;
+    }
+
+    /**
+     * Get statusOfParent
+     *
+     * @return string 
+     */
+    public function getStatusOfParent()
+    {
+        return $this->statusOfParent;
+    }
 
     /**
      * Set firstName
@@ -253,6 +281,17 @@ class Lwd
         return $this->idlwd;
     }
 
+    /**
+     * Set idlwd
+     *
+     * @param integer $idlwd
+     * @return Lwd
+     */
+    public function setIdlwd($idlwd)
+    {
+        $this->idlwd = $idlwd;
+    }
+    
     /**
      * Set idguardian
      *

@@ -287,11 +287,12 @@ class SchoolController extends Controller{
                 $material->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
                 $material->setYear($formData['year']->format('Y-m-d'));
                 $material->setEnoughLight($formData['enough_light']);
-            $material->setEnoughSpace($formData['enough_space']);  
-            $material->setAdaptiveChairs($formData['adaptive_chairs']);
+                $material->setEnoughSpace($formData['enough_space']);  
+                $material->setAdaptiveChairs($formData['adaptive_chairs']);
                 $material->setAccess($formData['access']);
                 $material->setEnoughVentilation($formData['enough_ventilation']);
-                $material->setRoomType($formData['room_type']);               
+                $material->setRoomType($formData['room_type']);
+                $material->setRoomType($formData['noise_free']);
                 
                 $em = $this->getDoctrine()->getManager();
                 
@@ -596,6 +597,7 @@ class SchoolController extends Controller{
             $learner->setSex($formData['sex']);
             $learner->setHomeaddress($formData['home_address']);
             $learner->setFirstName($formData['first_name']);
+            $learner->setStatusOfParent($formData['status_of_parent']);
             $learner->setDob($formData['dob']);
             $learner->setIdguardian($guardian);
             $learner->setGuardianRelationship($formData['guardian_relationship']);

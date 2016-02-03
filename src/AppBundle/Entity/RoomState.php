@@ -25,6 +25,13 @@ class RoomState
      * @ORM\Column(name="enough_light", type="string", nullable=false)
      */
     private $enoughLight;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="noise_free", type="string", nullable=false)
+     */
+    private $noiseFree;
 
     /**
      * @var string
@@ -289,5 +296,28 @@ class RoomState
     public function getEmiscode()
     {
         return $this->emiscode;
+    }
+    
+    /**
+     * Set noiseFree
+     *
+     * @param string $noiseFree
+     * @return RoomState
+     */
+    public function setNoiseFree($noiseFree)
+    {
+        $this->noiseFree = $noiseFree;
+
+        return $this;
+    }
+
+    /**
+     * Get noiseFree
+     *
+     * @return string 
+     */
+    public function getNoiseFree()
+    {
+        return $this->noiseFree;
     }
 }

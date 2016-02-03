@@ -38,7 +38,7 @@ class LearnerPersonalType extends AbstractType
 			)
 		)
 		->add('home_address', 'textarea', array(
-			'label' => 'Home address',
+			'label' => 'Present address',
 			'constraints' => array(new NotBlank()),
 			)
 		)
@@ -59,7 +59,7 @@ class LearnerPersonalType extends AbstractType
 			)
 		)
 		->add('distance_to_school', 'choice', array(
-			'label' => 'Distance to school (Km)',
+			'label' => 'Estimated distance to school (Km)',
 			'choices' => array('<5'=>'Less than 5km', '1-5'=>'between 1 and 5km', '>5'=>'More than 5km'),
 			'constraints' => array(new NotBlank()),
 			)
@@ -86,6 +86,14 @@ class LearnerPersonalType extends AbstractType
 				),
 			'constraints' => array(new NotBlank()),
 			))
+                ->add('status_of_parent', 'choice', array(
+                'label' => 'Status of parent',                
+                'choices' => array(
+                        'living' => 'Living',
+                        'deceased' => 'Deceased'
+                        ),
+                'constraints' => array(new NotBlank()),
+                ))
 		->add('other_means', 'text', array(
 			'label' => 'Other means',
 			'required' => false,
@@ -138,7 +146,7 @@ class LearnerPersonalType extends AbstractType
 				'other relative' => 'other relative',
 				'other non-relative'=>'other non-relative'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => true,
+			'expanded' => false,
 			'multiple' => false,
 			)
 		)
