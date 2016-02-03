@@ -256,8 +256,7 @@ class SchoolController extends Controller{
         */
         public function editMaterialAction(Request $request, $materialId, $emisCode){
             $connection = $this->get('database_connection');
-            $defaultData = array();
-            echo $materialId;
+            $defaultData = array();            
             if($materialId != 'new'){/*if we are not adding a new material, fill the form fields with
             	the data of the selected learner.*/
             	$materials = $connection->fetchAll('SELECT * FROM room_state
@@ -291,9 +290,8 @@ class SchoolController extends Controller{
                 $material->setAdaptiveChairs($formData['adaptive_chairs']);
                 $material->setAccess($formData['access']);
                 $material->setEnoughVentilation($formData['enough_ventilation']);
-                $material->setRoomType($formData['room_type']);
                 $material->setRoomType($formData['noise_free']);
-                
+                echo 'room type: '.$formData['room_type'].'; noise free: '.$formData['noise_free']; exit;
                 $em = $this->getDoctrine()->getManager();
                 
                 $roomState = $this->getDoctrine()->getRepository('AppBundle:RoomState')
@@ -419,17 +417,15 @@ class SchoolController extends Controller{
             the data of the selected learner.*/           
             $teacher = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt Where idsnt = ?', array($teacherId));
             $defaultData = $teacher[0];            
-            //convert the dates into their corresponding objects so that they will be rendered correctly by the form
-            $defaultData['s_dob'] = new \DateTime($defaultData['s_dob']);            
-            $defaultData['year_started'] = new \DateTime($defaultData['year_started'].'-1-1');/*append -1-1 at the end to make sure the string is correclty converted to 
+            //convert the dates into their corresponding objects so that they will be rendered correctly by the form                       
+            if ($defaultData['year_started'] == null){
+                $defaultData['year_started'] = null;
+            } else {
+                $defaultData['year_started'] = new \DateTime($defaultData['year_started'].'-1-1');/*append -1-1 at the end to make sure the string is correclty converted to 
             a DateTime object*/
+            }
 
             $defaultData['year'] = new \DateTime($defaultData['year'].'-1-1');
-            
-            /*convert the SET value of MySQL to corresponding array in Php
-            to enable correct rendering of choices in the form*/          
-
-            //$defaultData['other_specialities'] = explode(',',$defaultData['other_specialities']);
       	}
         
         $form2=  $this->createForm(new TeacherType(), $defaultData);
@@ -454,22 +450,23 @@ class SchoolController extends Controller{
             $teacher->setEmploymentNumber($formData['employment_number']);
             $teacher->setSFirstName($formData['sfirst_name']);             
             $teacher->setSLastName($formData['slast_name']);
-            $teacher->setSdob($formData['s_dob']);
             $teacher->setSSex($formData['s_sex']);
-            $teacher->setQualification($formData['qualification']);            
             $teacher->setTeacherType($formData['teacher_type']);
             
+            //preset necessary fields
             if ($formData['teacher_type'] == 'regular') {//insert CPD training data if teacher is regular
-                $teacher->setCpdTraining($formData['cpd_training']);                
-                $teacher->setSpeciality('');
-            }else { //else insert speciality data
-                $teacher->setSpeciality($formData['speciality']);
-                $teacher->setCpdTraining('');
+                $teacher->setCpdTraining($formData['cpd_training']);
+                $teacher->setSpeciality(null);                
+                $teacher->setYearStarted(null);
+                $teacher->setQualification(null);                            
             }
-
-            //$teacher->setOtherSpecialities($formData['other_specialities']);
-            $teacher->setYearStarted($formData['year_started']->format('Y'));
-            
+            if ($formData['teacher_type'] == 'snt'){ //else snt related data
+                $teacher->setSpeciality($formData['speciality']);                
+                $teacher->setYearStarted($formData['year_started']->format('Y'));
+                $teacher->setQualification($formData['qualification']);            
+                $teacher->setCpdTraining(null); 
+            }
+           
             $snt = $this->getDoctrine()->getRepository('AppBundle:Snt')
                         ->findOneBy(array('employmentNumber'=>$formData['employment_number']));
             if ((!$snt) || ($snt && ($teacherId != 'new'))){                
@@ -487,13 +484,15 @@ class SchoolController extends Controller{
                 
                 if ($formData['teacher_type'] == 'snt') {//insert SNT type                    
                     $schoolHasSnt->setSntType($formData['snt_type']);
-                } else { //else set this to null
-                    $schoolHasSnt->setSntType('');
+                } 
+                if ($formData['teacher_type'] == 'regular') {//insert CPD training data if teacher is regular
+                    $schoolHasSnt->setSntType(null);
+                    $schoolHasSnt->setNoOfVisits(null);
                 }
                 if ($formData['snt_type'] == 'Itinerant') {//insert number of visits if SNT is itinerant
                     $schoolHasSnt->setNoOfVisits($formData['no_of_visits']);
-                } else { //else set it null
-                    $schoolHasSnt->setNoOfVisits('');
+                }else { //else set it null
+                    $schoolHasSnt->setNoOfVisits(null);
                 }
 
                 //tell the entity manager to keep track of this entity

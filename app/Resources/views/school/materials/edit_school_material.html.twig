@@ -39,19 +39,19 @@
     <div class="row">
         <div class="col-sm-6">
              <fieldset class="fieldset">                    		
-                    {{ form_row(form1.room_id, {'attr':{'readonly': readonly}}) }}			                          
-                    {{ form_row(form1.year) }}
+                    {{ form_row(form1.room_id, {'attr':{'readonly': readonly}}) }}			                                              
                     {{ form_row(form1.enough_light) }}
                     {{ form_row(form1.enough_space) }}
+                    {{ form_row(form1.access) }}
+                    {{ form_row(form1.year) }}
                 </fieldset>
             </div>
                 <div class="col-sm-6">
                 <fieldset class="fieldset">                    		                    
-                    {{ form_row(form1.adaptive_chairs) }}
-                    {{ form_row(form1.room_type) }}
-                    {{ form_row(form1.access) }}
                     {{ form_row(form1.enough_ventilation) }}
+                    {{ form_row(form1.adaptive_chairs) }}
                     {{ form_row(form1.noise_free) }}
+                    {{ form_row(form1.room_type) }}
                 </fieldset>
             </div>
     </div>                    
