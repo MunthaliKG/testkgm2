@@ -60,11 +60,11 @@ class SettingsController extends Controller{
 		//get all the needs
 		$needs = $connection->fetchAll('SELECT idneed, needname FROM need');
 		//get all the levels
-		if($request->getSession()->has('disability_levels')){
-			$levels = $request->getSession()->get('disability_levels');
+		if($request->getSession()->getFlashBag()->has('disability_levels')){
+			$levels = $request->getSession()->getFlashBag()->get('disability_levels');
 		}else{
 			$levels = $connection->fetchAll('SELECT idlevel, level_name FROM level');
-			$request->getSession()->set('disability_levels', $levels);
+			$request->getSession()->getFlashBag()->set('disability_levels', $levels);
 		}
 		$dataConverter = $this->get('data_converter');
 
@@ -164,15 +164,15 @@ class SettingsController extends Controller{
 			$connection->executeQuery("INSERT INTO `level`(level_name) VALUES(?)", array($level));
 			$response['idlevel'] = $connection->lastInsertId();
 			$response['levelName'] = $level;
-			$levels = $session->get('disability_levels');
+			$levels = $session->getFlashBag()->get('disability_levels');
 			$levels[] = array('idlevel'=>$response['idlevel'], 'level_name' => $level);
-			$session->set('disability_levels', $levels);
+			$session->getFlashBag()->set('disability_levels', $levels);
 			$response['result'] = 'success';
 		}
 		catch(DBALException $e){
 			$response['result'] = 'failure';
 		}
-
+		$session->invalidate();
 		return new JsonResponse($response);
 
 	}
