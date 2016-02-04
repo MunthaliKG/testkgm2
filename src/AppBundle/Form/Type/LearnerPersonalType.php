@@ -87,7 +87,8 @@ class LearnerPersonalType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			))
                 ->add('status_of_parent', 'choice', array(
-                'label' => 'Status of parent',                
+                'label' => 'Status of parent', 
+                'placeholder' => '--status of parent--',               
                 'choices' => array(
                         'living' => 'Living',
                         'deceased' => 'Deceased'
@@ -104,7 +105,7 @@ class LearnerPersonalType extends AbstractType
 			)
 		)
 		->add('gfirst_name','text', array(
-			'label' => 'First name',
+			'label' => 'First name(s)',
 			'constraints' => array(new NotBlank()),
 			)
 		)
@@ -122,7 +123,7 @@ class LearnerPersonalType extends AbstractType
 			)
 		)
 		->add('gaddress', 'textarea', array(
-			'label' => 'Home address',
+			'label' => 'Postal address',
 			'constraints' => array(new NotBlank()),
 			)
 		)
@@ -138,6 +139,7 @@ class LearnerPersonalType extends AbstractType
 		)
 		->add('guardian_relationship', 'choice', array(
 			'label' => 'Relationship',
+			'placeholder' => '--relationship--',
 			'choices' => array(
 				'parent'=>'parent',
 				'sibling'=>'sibling',
@@ -148,6 +150,12 @@ class LearnerPersonalType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
 			'multiple' => false,
+			)
+		)
+		->add('non_relative','text', array(
+			'label' => 'Specify Other Non-Relative',
+			'required' => false,
+			'constraints' => array(new NotBlank()),
 			)
 		)
 		->add('save','submit', array(
@@ -161,10 +169,18 @@ class LearnerPersonalType extends AbstractType
 				return;
 			}
 			
-			//remove other_means field based on the value of the means_to_school field
+			//remove non-blank constraint from other_means field based on the value of the means_to_school field
 			if($learner['means_to_school'] != 'other'){
 				$form->add('other_means', 'text', array(
 			        'label' => 'Other means',
+			        'required' => false,
+			    ));
+			}
+
+			//remove non_relative field based on the value of guardian_relationship field
+			if($learner['guardian_relationship'] != 'other non-relative'){
+				$form->add('non_relative', 'text', array(
+			        'label' => 'Specify Other Non-Relative',
 			        'required' => false,
 			    ));
 			}

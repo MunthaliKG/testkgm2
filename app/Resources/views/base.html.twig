@@ -105,6 +105,9 @@
                     </div>
                 </div>
             </div>
+            {% if app.session.has('school_year') %}
+                <input type="hidden" id="year_set" value="{{ app.session.get('school_year') }}"/>
+            {% endif %}
         {% endblock %}
         <!-- Bootstrap core JavaScript==================================================-
         ->
@@ -114,9 +117,12 @@
         <script src="{{ asset('./bootstrap/js/carousel.js') }}"></script>
         <script src="{{asset('assets/js/jquery.min.js')}}"></script>
         <script src="{{asset('bootstrap/dist/js/bootstrap.min.js')}}"></script>
+        <script src="{{asset('assets/js/bootbox.min.js')}}"></script>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="{{asset('assets/js/ie10-viewport-bug-workaround.js')}}"></script>
         <!--js that applies to entire system -->
+        <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
         <script src="{{asset('assets/js/global.js')}}"></script>
         {% endblock %}
     

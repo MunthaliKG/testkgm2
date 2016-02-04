@@ -234,15 +234,13 @@ class DefaultController extends Controller
     public function nationalAction(){
         $connection = $this->get('database_connection');
         
+        $year = $connection->fetchAssoc("SELECT year FROM lwd_belongs_to_school ORDER BY year DESC");
         $sumquery = 'SELECT count(iddisability) FROM lwd 
-            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school';
-        
-        //disabilities in a Malawi
-        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone');
+            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE year = ?';
 
         $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
             FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-            WHERE year = ? GROUP BY iddisability", array($lwdLatestYr['yr']));
+            WHERE year = ? GROUP BY iddisability", array($year['year'], $year['year']));
         
         //schools in a zone
         $schoolsInMalawi = $connection->fetchAll('select emiscode, idzone from school');
@@ -251,7 +249,8 @@ class DefaultController extends Controller
       
         return $this->render('national/national.html.twig',
                 array('disabilities' => $disabilities,
-                    'numOfSchools' => $numOfSchools)
+                    'numOfSchools' => $numOfSchools,
+                    'year' => $year['year'])
                 );
     }
     public function removeTrailingSlashAction(Request $request){
@@ -279,5 +278,12 @@ class DefaultController extends Controller
         $em->flush();
 
         return $this->redirectToRoute('homepage', array(), 301);
+    }
+    /**
+     *@Route("/set_year/{year}", name="set_year", condition="request.isXmlHttpRequest()", options={"expose"= true})
+     */
+    public function setYearAction(Request $request, $year){
+        $request->getSession()->set('school_year', $year);
+        return new \Symfony\Component\HttpFoundation\JsonResponse(array('result'=>'success'));
     }
 }

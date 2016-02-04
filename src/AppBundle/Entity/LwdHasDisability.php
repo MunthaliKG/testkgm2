@@ -67,7 +67,7 @@ class LwdHasDisability
      */
     public function __construct()
     {
-        $this->idneed = new \Doctrine\Common\Collections\ArrayCollection();
+        //$this->idneed = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 
@@ -123,7 +123,7 @@ class LwdHasDisability
      * @param \AppBundle\Entity\Level $idlevel
      * @return LwdHasDisability
      */
-    public function setIdlevel(\AppBundle\Entity\Level $idlevel = null)
+    public function setIdlevel(\AppBundle\Entity\Level $idlevel)
     {
         $this->idlevel = $idlevel;
 

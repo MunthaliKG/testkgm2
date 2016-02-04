@@ -179,11 +179,23 @@ $(document).ready(function(){
         	$('#other_means').hide();
         }
 	});
+//code that hides/shows "other non-relative" field depending on the value of the "relationship" field
+	if($('#learner_personal_guardian_relationship').val() !== 'other non-relative'){
+		$('#non_relative').hide();
+	}
+	$('#learner_personal_guardian_relationship').change(function(event){
+		var selected = $(this).val();
+		if(selected === 'other non-relative'){
+			$('#non_relative').show();
+		}else{
+			$('#non_relative').hide();
+		}
+	})
+
 	$('[autofocus]:enabled:not([readonly]):first').focus();
 
 //submit learner exit forms through ajax
-	$('body').on('submit', '.learner_exit_form', function (e) {
- 		console.log('hehede!');
+	$('#exit_form_container').on('submit', '.learner_exit_form', function (e) {
         e.preventDefault();
 
         var form = $(this);
@@ -194,7 +206,6 @@ $(document).ready(function(){
             data: $(this).serialize()
         })
         .done(function (data) {
-        	alert(data.htmlresponse);
         	form.parent('tr').html( data.htmlresponse );
         	if(data.error !== ''){
         		$('.error-box').append('<div class="alert alert-danger alert-dismissible pull-left" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+data.error+'</div><hr>');
@@ -218,35 +229,11 @@ $(document).ready(function(){
         });
     });
     $('body').on('click', '#save-all', function (e) {
- 		console.log('hehede!');
-        e.preventDefault();
-
-        var form = $(this);
-
-        $.ajax({
-            type: $(this).attr('method'),
-            url: $(this).attr('action'),
-            data: $(this).serialize()
-        })
-        .done(function (data) {
-        	form.parent('tr').html(data);
-            if (typeof data.message !== 'undefined') {
-                alert(data.message);
-            }
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            if (typeof jqXHR.responseJSON !== 'undefined') {
-                if (jqXHR.responseJSON.hasOwnProperty('form')) {
-                    $('#form_body').html(jqXHR.responseJSON.form);
-                }
+    	e.preventDefault();
+    	$('.learner_exit_form').each(function(index){
+    		$(this).submit();
+    	});
  
-                $('.form_error').html(jqXHR.responseJSON.message);
- 
-            } else {
-                alert(errorThrown);
-            }
- 
-        });
     });
 
 });

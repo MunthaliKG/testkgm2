@@ -21,14 +21,16 @@ class DistrictController extends Controller{
         $connection = $this->get('database_connection');
         $district =  $connection->fetchAll('SELECT * FROM district '
                 . 'WHERE iddistrict = ?',array($iddistrict));
-          
+
+        $year = $connection->fetchAssoc("SELECT year FROM lwd_belongs_to_school ORDER BY year DESC");
+
         $sumquery = 'SELECT count(iddisability) FROM lwd 
             NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-            WHERE iddistrict = ?';
+            WHERE iddistrict = ? AND year = ?';
         //disabilities in a district
         $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
             FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-            WHERE iddistrict = ? AND year = ? GROUP BY iddisability", array($iddistrict,$iddistrict,date('Y')));
+            WHERE iddistrict = ? AND year = ? GROUP BY iddisability", array($iddistrict,$year['year'],$iddistrict,$year['year']));
         
         //schools in a district
         $schoolsInDistrict = $connection->fetchAll('select emiscode, iddistrict from school where iddistrict =?', [$iddistrict]);
@@ -48,7 +50,8 @@ class DistrictController extends Controller{
         return $this->render('district/district2.html.twig',
                 array('district' => $district[0],
                         'disabilities' => $disabilities,
-                    'numOfSchools' => $numOfSchools)
+                    'numOfSchools' => $numOfSchools,
+                    'year' => $year['year'])
                 );
     }
       /**

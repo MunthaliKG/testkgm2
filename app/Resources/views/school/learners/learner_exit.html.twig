@@ -13,7 +13,7 @@
 		<fieldset>
 			<legend>Student exit details</legend>
 			<div class="error-box"></div>
-			<table class="table">
+			<table class="table" id="exit_form_container">
 				<tr>
 					<th>LIN</th><th>Reason for exit</th><th>Other reason (specify)</th>
 					<th></th>
@@ -37,7 +37,6 @@
 					
 						<td>
 							{{ form_widget(form.save, {'attr':{'data-toggle':'confirmation','data-prompt':'Save exit record for this learner? You will not be able to edit information about this learner under this school', 'class':'btn-sm'},'before_label': '<i class="fa fa-check"></i> '}) }}
-							&nbsp;&nbsp;
 						</td>
 						{{ form_end(form) }}
 					</tr>
@@ -49,7 +48,7 @@
 	<div class="row">
 		<div class="col-sm-4 col-sm-offset-8">
 			<a class="btn btn-sm" href="{{ path('school_learners',{'emisCode':emisCode}) }}"><i class="fa fa-remove"></i> Cancel</a>
-			<button class="btn btn-sm" id="save-all" href="{{ path('school_learners',{'emisCode':emisCode}) }}"><i class="fa fa-check"></i> Save all</button>
+			<a class="btn btn-sm" data-toggle='confirmation' data-prompt='Save exit records?' id="save-all" href="#"><i class="fa fa-check"></i> Save all</a>
 		</div>
 	</div><br>
 {% endblock %}

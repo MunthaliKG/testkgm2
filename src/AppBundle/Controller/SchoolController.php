@@ -44,12 +44,16 @@ class SchoolController extends Controller{
             $schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
                     NATURAL JOIN district WHERE emiscode = ?',array($emisCode));
 
+            $year = $connection->fetchAssoc("SELECT year FROM lwd_belongs_to_school ORDER BY year DESC");
+
             $sumquery = 'SELECT count(iddisability) FROM lwd 
             NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-            WHERE emiscode = ?';
+            WHERE emiscode = ? AND year = ?';
+            //get the latest year recorded for learners
+    
             $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
                     FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-                    WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$emisCode,date('Y')));
+                    WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$year['year'],$emisCode,$year['year']));
             $session = $request->getSession();
             //keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
             $session->set('emiscode', $emisCode);
@@ -61,7 +65,8 @@ class SchoolController extends Controller{
             
             return $this->render('school/school2.html.twig',
                     array('school' => $schools[0],
-                            'disabilities' => $disabilities)
+                            'disabilities' => $disabilities,
+                            'year' => $year['year'])
                     );
     }
         /**
@@ -601,6 +606,10 @@ class SchoolController extends Controller{
             $learner->setDob($formData['dob']);
             $learner->setIdguardian($guardian);
             $learner->setGuardianRelationship($formData['guardian_relationship']);
+
+            if($formData['guardian_relationship'] == 'other non-relative'){
+                $learner->setNonRelative($formData['non_relative']);
+            }
                 
                 //check if learnerId already exists and handle the error
                 $lwdId = $this->getDoctrine()->getRepository('AppBundle:Lwd')
@@ -678,7 +687,7 @@ class SchoolController extends Controller{
                 $levelsStmt = $connection->prepare("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
                         WHERE iddisability = ?");
                 $needsStmt = $connection->prepare("SELECT idneed, needname FROM disability_has_need NATURAL JOIN need 
-                        WHERE iddisability = ?");
+                        WHERE iddisability = ? AND (need_type = 'learner only' OR need_type = 'both') ");
                 $needsRowsStmt = $connection->prepare("SELECT idneed FROM lwd_has_disability_has_need WHERE idlwd = ? 
                         AND iddisability = ?");
 
@@ -724,6 +733,8 @@ class SchoolController extends Controller{
                         'iddisability' =>$formData['iddisability_2']
                         ]
                     );
+                    // echo $learnerId.'<br>';
+                    //     echo $formData['iddisability_2']; exit;
                     if($form->get('remove')->isClicked()){//if the remove button was clicked for this record
                         $em->remove($lwdHasDisability);
                         //delete needs records
@@ -958,7 +969,6 @@ class SchoolController extends Controller{
             $mode = "Adding new performance record";
         }
         $message = "";
-
         $form = $this->createForm(new LearnerPerformanceType(), $defaultData);
         $form->handleRequest($request);
 
@@ -970,7 +980,6 @@ class SchoolController extends Controller{
             $performanceRecord->setYear($formData['year']->format('Y-m-d'));
             $performanceRecord->setTerm($formData['term']);
             $performanceRecord->setGrade($formData['grade']);
-            $performanceRecord->setTeachercomment($formData['teachercomment']);
             $performanceRecord->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
 
             $em = $this->getDoctrine()->getManager();

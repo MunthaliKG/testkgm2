@@ -23,16 +23,16 @@ class ZoneController extends Controller{
         //$schools = array();
         //$schools = $connection->fetchAll('SELECT emiscode from school '
         //        . 'WHERE idzone = ?', array($idzone));
-        
+        $year = $connection->fetchAssoc("SELECT year FROM lwd_belongs_to_school ORDER BY year DESC");
        
         //$emisCode = $row['emiscode'];
         $sumquery = 'SELECT count(iddisability) FROM lwd 
             NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-            WHERE idzone = ?';
+            WHERE idzone = ? AND year = ?';
         //disabilities in a zone
         $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
             FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-            WHERE idzone = ? AND year = ? GROUP BY iddisability", array($idzone,$idzone,date('Y')));
+            WHERE idzone = ? AND year = ? GROUP BY iddisability", array($idzone,$year['year'],$idzone,$year['year']));
         
         //schools in a zone
         $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);
@@ -52,7 +52,8 @@ class ZoneController extends Controller{
         return $this->render('zone/zone2.html.twig',
                 array('zone' => $zone[0],
                         'disabilities' => $disabilities,
-                    'numOfSchools' => $numOfSchools)
+                    'numOfSchools' => $numOfSchools,
+                    'year' => $year['year'])
                 );
     }
 }

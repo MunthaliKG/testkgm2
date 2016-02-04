@@ -39,19 +39,19 @@ class LearnerPerformanceType extends AbstractType
 		->add('grade','choice', array(
                     'placeholder' => 'Choose grade',
 			'choices' => array(
-				1 => '0-40',
-				2 => '41-50', 
-				3 => '51-65',
-				4 => '66-75',
-				5 => '76-100',
+				'0-40' => '0-40',
+				'41-50' => '41-50', 
+				'51-65' => '51-65',
+				'66-75' => '66-75',
+				'76-100' => '76-100',
 				)
 			)
 		)
-		->add('teachercomment', 'textarea', array(
-			'label' => "Teacher's Comment",
-			'required' => false,
-			)
-		)
+		// ->add('teachercomment', 'textarea', array(
+		// 	'label' => "Teacher's Comment",
+		// 	'required' => false,
+		// 	)
+		// )
 		->add('save', 'submit', array(
 			'label' => 'save')
 		);

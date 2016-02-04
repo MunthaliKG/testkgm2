@@ -28,19 +28,19 @@ class Level
      */
     private $idlevel;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Disability", mappedBy="idlevel")
-     */
-    private $iddisability;
+    // *
+    //  * @var \Doctrine\Common\Collections\Collection
+    //  *
+    //  * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Disability", mappedBy="idlevel")
+     
+    // private $iddisability;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->iddisability = new \Doctrine\Common\Collections\ArrayCollection();
+        //$this->iddisability = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
 

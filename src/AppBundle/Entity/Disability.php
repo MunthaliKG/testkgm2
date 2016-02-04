@@ -66,20 +66,20 @@ class Disability
      */
     private $idneed;
 
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Level", inversedBy="iddisability")
-     * @ORM\JoinTable(name="disability_has_level",
-     *   joinColumns={
-     *     @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
-     *   },
-     *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="idlevel", referencedColumnName="idlevel")
-     *   }
-     * )
-     */
-    private $idlevel;
+    // *
+    //  * @var \Doctrine\Common\Collections\Collection
+    //  *
+    //  * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Level", inversedBy="iddisability")
+    //  * @ORM\JoinTable(name="disability_has_level",
+    //  *   joinColumns={
+    //  *     @ORM\JoinColumn(name="iddisability", referencedColumnName="iddisability")
+    //  *   },
+    //  *   inverseJoinColumns={
+    //  *     @ORM\JoinColumn(name="idlevel", referencedColumnName="idlevel")
+    //  *   }
+    //  * )
+     
+    // private $idlevel;
 
     /**
      * Constructor

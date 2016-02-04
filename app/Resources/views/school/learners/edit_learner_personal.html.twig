@@ -38,18 +38,21 @@
 					{{ form_row(form1.dob) }}
 					{{ form_row(form1.home_address) }}					
 					{{ form_row(form1.distance_to_school) }}
+					{{ form_row(form1.std) }}
+                    {{ form_row(form1.status_of_parent) }}
 					{{ form_row(form1.means_to_school) }}
-                                        {{ form_row(form1.status_of_parent) }}
 					<div id="other_means">
 						{{ form_row(form1.other_means) }}
-					</div>						
-					{{ form_row(form1.std) }}										
+					</div>																
 				</fieldset>
 			</div>
 			<div class="col-sm-6">
 				<fieldset>
 					<legend><small>Guardian Information</small></legend>
 					{{ form_row(form1.guardian_relationship, {'label_attr':{'class':'radio-inline'}}) }}
+					<div id="non_relative">
+						{{ form_row(form1.non_relative) }}
+					</div>	
 					{{ form_row(form1.gfirst_name) }}
 					{{ form_row(form1.glast_name) }}
 					{{ form_row(form1.gsex, {'label_attr':{'class':'radio-inline'}}) }}
