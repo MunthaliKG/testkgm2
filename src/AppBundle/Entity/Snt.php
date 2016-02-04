@@ -62,13 +62,6 @@ class Snt
     private $employmentNumber;
 
     /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="s_dob", type="date", nullable=false)
-     */
-    private $sDob;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="teacher_type", type="string", nullable=false)
@@ -252,30 +245,7 @@ class Snt
     public function getEmploymentNumber()
     {
         return $this->employmentNumber;
-    }
-
-    /**
-     * Set sDob
-     *
-     * @param \DateTime $sDob
-     * @return Snt
-     */
-    public function setSDob($sDob)
-    {
-        $this->sDob = $sDob;
-
-        return $this;
-    }
-
-    /**
-     * Get sDob
-     *
-     * @return \DateTime 
-     */
-    public function getSDob()
-    {
-        return $this->sDob;
-    }
+    }    
 
     /**
      * Set teacherType

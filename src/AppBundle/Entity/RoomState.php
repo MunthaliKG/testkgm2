@@ -89,8 +89,6 @@ class RoomState
      */
     private $emiscode;
 
-
-
     /**
      * Set year
      *

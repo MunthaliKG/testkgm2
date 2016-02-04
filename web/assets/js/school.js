@@ -134,14 +134,12 @@ $(document).ready(function(){
 
 		if($(this).val() == "snt"){
                     //alert('SNT selected');
+                    $('#teacher_cpd_training').prop('disabled','disabled');
                     $('#teacher_snt_type').prop('disabled','');
-                    //$('#teacher_no_of_visits').prop('disabled','');
+                    $('#teacher_speciality').prop('disabled','');                                       
+                    $('#teacher_year_started').prop('disabled','');
+                    $('#teacher_qualification').prop('disabled','');
                     $('#teacher_speciality').prop('disabled','');
-                    //$('#teacher_cpd_training').prop('disabled','disabled');
-                     document.getElementById('teacher_snt_type').style.display = 'block';
-                     //document.getElementById('teacher_no_of_visits').style.display = 'block';
-                     document.getElementById('teacher_speciality').style.display = 'block';
-                     document.getElementById('teacher_cpd_training').style.display = 'none';
                    
 		}
 	});
@@ -149,21 +147,19 @@ $(document).ready(function(){
 
 		if($(this).val() == "regular"){
                     $('#teacher_cpd_training').prop('disabled','');
-                    //$('#teacher_snt_type').prop('disabled','disabled');
-                    //$('#teacher_no_of_visits').prop('disabled','disabled');
-                    document.getElementById('teacher_snt_type').style.display = 'none';
-                    document.getElementById('teacher_no_of_visits').style.display = 'none';
-                    document.getElementById('teacher_speciality').style.display = 'none';
-                    document.getElementById('teacher_cpd_training').style.display = 'block';
+                    $('#teacher_snt_type').prop('disabled','disabled');
+                    $('#teacher_no_of_visits').prop('disabled','disabled');
+                    $('#teacher_year_started').prop('disabled','disabled');
+                    $('#teacher_qualification').prop('disabled','disabled');
+                    $('#teacher_speciality').prop('disabled','disabled');
 		}
 	});
         $('#teacher_snt_type').change(function(event){ //check snt type
 
 		if($(this).val() == "Itinerant"){                    
-                    $('#teacher_no_of_visits').prop('disabled','');                    
-                    document.getElementById('teacher_no_of_visits').style.display = 'block';                    
-		}else {
-                    document.getElementById('teacher_no_of_visits').style.display = 'none';
+                    $('#teacher_no_of_visits').prop('disabled','');                                            
+		}else {                    
+                    $('#teacher_no_of_visits').prop('disabled','disabled'); 
                 }
 	});
 
