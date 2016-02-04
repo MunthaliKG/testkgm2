@@ -9,7 +9,7 @@ $(document).ready(function(e){
 		wrap: false
 	});
 
-	if(!$('#year_set').length){
+	if(!$('#year_set').length && !$('#year_not_necessary').length){
 		//function to display modal box prompting the user for the school year
 		var getYear = function(message){
 			bootbox.prompt(message, function(response){

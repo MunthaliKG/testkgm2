@@ -725,17 +725,15 @@ class SchoolController extends Controller{
             foreach($forms as $form){
                 $form->handleRequest($request);
                 if($form->isValid()){
+
                     $formData = $form->getData();
                     $em = $this->getDoctrine()->getManager();
-                    $lwdHasDisability = $em->getRepository('AppBundle:LwdHasDisability')->findOneBy([
-                        'idlwd'=>$learnerId,
-                        'iddisability' =>$formData['iddisability_2']
-                        ]
-                    );
+
                     // echo $learnerId.'<br>';
                     //     echo $formData['iddisability_2']; exit;
                     if($form->get('remove')->isClicked()){//if the remove button was clicked for this record
-                        $em->remove($lwdHasDisability);
+                        $connection->executeQuery('DELETE FROM lwd_has_disability WHERE idlwd = ? and iddisability = ?',
+                            array($learnerId, $formData['iddisability_2']));
                         //delete needs records
                         $connection->executeQuery('DELETE FROM lwd_has_disability_has_need WHERE iddisability = ? 
                         AND idlwd = ?', array($formData['iddisability_2'], $learnerId));
@@ -743,9 +741,10 @@ class SchoolController extends Controller{
                         $messageType = 'recordRemovedMessage';
                     }
                     else{
+                        $this->addFlash('active', $formCounter);
                         if($formData['idlevel'] != null){
-                           $lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
-                           $em->persist($lwdHasDisability);
+                           $connection->executeQuery('UPDATE lwd_has_disability SET idlevel = ? WHERE iddisability =? 
+                            AND idlwd = ?', array($formData['idlevel'], $formData['iddisability_2'], $learnerId));
                         }
                         $dataConverter = $this->get('data_converter');
                         $selectedNeeds = $dataConverter->arrayRemoveQuotes($formData['needs']);                 
@@ -768,10 +767,9 @@ class SchoolController extends Controller{
                         $message = "Disability/Special need record updated";
                         $messageType = $formCounter;
                     }
-                    $em->flush();
 
                     $this->addFlash($messageType, $message);
-                    //return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+                    return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
                 }
                 $formCounter++;
             }
@@ -788,30 +786,37 @@ class SchoolController extends Controller{
 
         $newForm->handleRequest($request);
         if($newForm->isValid()){
-            $em = $this->getDoctrine()->getManager();
             $formData = $newForm->getData();
-            $lwdHasDisability = new LwdHasDisability();
-            $lwdHasDisability->setIdlwd($em->getReference('AppBundle:Lwd', $learnerId));
-            $idDisability = $this->getDoctrine()->getRepository('AppBundle:Disability')->findOneByIddisability($formData['iddisability']);
-            $lwdHasDisability->setIddisability($idDisability);
-            if($hasLevels){
-                $lwdHasDisability->setIdlevel($em->getReference('AppBundle:Level', $formData['idlevel']));
-            } 
 
-                //check if disability already exists in db
-                $lwdDisability = $this->getDoctrine()->getRepository('AppBundle:LwdHasDisability')
-                        ->findOneBy(array('idlwd'=>$learnerId,'iddisability'=>$formData['iddisability']));
-                if (!$lwdDisability){//if disability does not exist
-                    $em->persist($lwdHasDisability);
-                    $em->flush();
-
-                    $message = "Disability/special need record added for learner ".$learnerId;
-                    $this->addFlash('disabilityAddedMessage', $message);                    
-                } else {
-                    $message = "This disability/special need record already exists for learner ".$learnerId;
-                    $this->addFlash('disabilityExists', $message);
+            //check if disability already exists in db
+            $lwdDisability = $this->getDoctrine()->getRepository('AppBundle:LwdHasDisability')
+                    ->findOneBy(array('idlwd'=>$learnerId,'iddisability'=>$formData['iddisability']));
+            if (!$lwdDisability){//if disability does not exist
+                $columnName = '';
+                $placeHolder = '';
+                $parameterArray = array($learnerId, $formData['iddisability']);
+                if($hasLevels){
+                    $columnName = ', idlevel';
+                    $placeHolder = ', ?';
+                    $parameterArray[] = $formData['idlevel'];
                 }
-                return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+                try{
+                    $connection->executeQuery("INSERT INTO lwd_has_disability (idlwd, iddisability $columnName) VALUES".
+                        " (?,? $placeHolder)", $parameterArray);
+                    $message = "Disability/special need record added for learner ".$learnerId;
+                    $this->addFlash('active', $formCounter);
+                    $this->addFlash('disabilityAddedMessage', $message);
+                }
+                catch(DBALException $e){
+                    $message = "There was an error recording the disability. Please try again.
+                    If the problem persists, please contact the administrator";
+                    $this->addFlash('dbWriteError', $message);
+                }
+            } else {
+                $message = "This disability/special need record already exists for learner ".$learnerId;
+                $this->addFlash('disabilityExists', $message);
+            }
+            return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
         }
 
         //create a view of each of the forms

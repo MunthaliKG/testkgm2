@@ -42,9 +42,9 @@ class DefaultController extends Controller
     public function schoolReturnAction(Request $request){
         $session = $request->getSession();
         $session->remove('school_name');
-        $session->remove('emis_code');
+        $session->remove('emiscode');
         $session->remove('schoolInfo'); 
-        $session->invalidate();
+        $session->save();
 
         return $this->redirectToRoute('school', array(), 301);
     }

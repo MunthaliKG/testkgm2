@@ -13,24 +13,34 @@
 {% endblock %}
 {% block context_options %}{% endblock %}
 {% block form_container %}
-                        {% if app.session.flashBag.has('lwdUpdated') %}       
-                            {% for msg in app.session.flashBag.get('lwdUpdated') %}
-                                <div class="alert alert-success alert-dismissible" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span></button>
-                                    {{ msg }}
-                                </div>
-                            {% endfor %}        
-                        {% endif %}
-                        {% if app.session.flashBag.has('lwdAdded') %}       
-                            {% for msg in app.session.flashBag.get('lwdAdded') %}
-                                <div class="alert alert-success alert-dismissible" role="alert">
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span></button>
-                                    {{ msg }}
-                                </div>
-                            {% endfor %}        
-                        {% endif %}
+			{% if app.session.flashBag.has('lwdUpdated') %}
+				{% for msg in app.session.flashBag.get('lwdUpdated') %}
+					<div class="alert alert-success alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span></button>
+						{{ msg }}
+					</div>
+				{% endfor %}
+			{% endif %}
+			{% if app.session.flashBag.has('lwdAdded') %}
+				{% for msg in app.session.flashBag.get('lwdAdded') %}
+					<div class="alert alert-success alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span></button>
+						{{ msg }}
+					</div>
+				{% endfor %}
+			{% endif %}
+			{#show a database error#}
+			{% if app.session.flashBag.has('dbWriteError') %}
+				{% for msg in app.session.flashBag.get('dbWriteError') %}
+					<div class="alert alert-danger alert-dismissible" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span></button>
+						{{ msg }}
+					</div>
+				{% endfor %}
+			{% endif %}
 			{# show new disability added flash message #}
 			{% set disabilityAddedMessage = app.session.flashbag.get('disabilityAddedMessage') %}
 			{% if disabilityAddedMessage is not empty %}
@@ -60,8 +70,14 @@
 					<li data-target="#disabilityFormsCarousel" data-slide-to="1"></li>
 				</ol> #}
 				<div class="carousel-inner" role="listbox">
+                    {% set active =  0 %}
+                    {% if app.session.flashBag.has('active') %}
+                        {% for active_disability in app.session.flashBag.get('active') %}
+                            {% set active = active_disability %}
+                        {% endfor %}
+                    {% endif %}
 				{% for form in forms %}
-					<div class="item {% if counter == 1 %}active{% endif %}">
+					<div class="item {% if (active == 0 and counter == 1 ) or counter == active%}active{% endif %}">
 						{# {% if counter > 1 %}
 							<div class="clearfix"></div>
 							<br>
@@ -86,15 +102,15 @@
 									</div>
 								{% endfor %}
 							{% endif %}
-                                                        {% if app.session.flashBag.has('disabilityExists') %}       
-                                                        {% for msg in app.session.flashBag.get('disabilityExists') %}
-                                                            <div class="alert alert-success alert-dismissible" role="alert">
-                                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span></button>
-                                                                {{ msg }}
-                                                            </div>
-                                                        {% endfor %}        
-                                                        {% endif %}
+                            {% if app.session.flashBag.has('disabilityExists') %}
+                            {% for msg in app.session.flashBag.get('disabilityExists') %}
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span></button>
+                                    {{ msg }}
+                                </div>
+                            {% endfor %}
+                            {% endif %}
 							<div class="row">
 								{{ form_start(form)}}
 								<div class="col-sm-8" style="border-right: lightgray 1px solid">			
@@ -108,8 +124,7 @@
 											{{ form_widget(form.remove, {'attr':{'class':'pull-left','data-toggle':'confirmation','data-prompt':'Remove this disability/special need record?'},'before_label':'<i class="fa fa-remove"></i> '}) }}
 											{{ form_widget(form.save, {'attr':{'class':'pull-right'},'before_label':'<i class="fa fa-check"></i> '}) }}
 										</div>
-									</div>	
-
+									</div>
 									
 								</div>
 								
