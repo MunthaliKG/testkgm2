@@ -78,6 +78,7 @@ class LearnerPersonalType extends AbstractType
 			'placeholder' => '--Means of travelling to school--',
 			'choices' => array(
 				'bus' => 'Bus',
+                            'carried' => 'Carried',
 				'walking' => 'Walking',
 				'bicycle' => 'Bicycle',
 				'tricycle'=> 'Tricycle',

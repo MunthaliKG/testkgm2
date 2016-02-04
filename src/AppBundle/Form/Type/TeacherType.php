@@ -75,15 +75,7 @@ class TeacherType extends AbstractType
 			'constraints' => array(new NotBlank()),
 			)
 		)                
-                //This is for school_has_snt table
-                ->add('year', 'datetime', array(
-			'label' => 'Current working year at School',
-			'widget' => 'single_text',
-			'format' => 'yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
-			'constraints' => array(new NotBlank()),
-			)
-		)
+                //This is for school_has_snt tabl              
                 ->add('snt_type', 'choice', array(
                     'label' => 'SNT Type',
                     'choices' => array('Itinerant'=>'Itinerant', 'Stationed'=>'Stationed'),
