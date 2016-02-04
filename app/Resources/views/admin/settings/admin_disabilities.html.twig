@@ -34,5 +34,10 @@
 {% endblock %}
 {% block javascripts %}
 	<script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+	<script src="{{asset('bootstrap/dist/js/bootstrap.min.js')}}"></script>
+	<script src="{{asset('assets/js/bootbox.min.js')}}"></script>
+	<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+	<script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
 	<script src="{{ asset('assets/js/admin_disability.js') }}"></script>
+
 {% endblock %}

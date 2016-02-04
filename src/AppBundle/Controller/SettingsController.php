@@ -5,8 +5,10 @@
 
 namespace AppBundle\Controller;
 
+use Doctrine\DBAL\DBALException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Disability;
 use AppBundle\Form\Type\DisabilityType;
@@ -58,7 +60,12 @@ class SettingsController extends Controller{
 		//get all the needs
 		$needs = $connection->fetchAll('SELECT idneed, needname FROM need');
 		//get all the levels
-		$levels = $connection->fetchAll('SELECT idlevel, level_name FROM level');
+		if($request->getSession()->has('disability_levels')){
+			$levels = $request->getSession()->get('disability_levels');
+		}else{
+			$levels = $connection->fetchAll('SELECT idlevel, level_name FROM level');
+			$request->getSession()->set('disability_levels', $levels);
+		}
 		$dataConverter = $this->get('data_converter');
 
 		$defaultData = array();
@@ -144,6 +151,30 @@ class SettingsController extends Controller{
 			'form'=>$form->createView()
 			)
 		);
+	}
+	/**
+	 *@Route("/admin/add_level/{level}", name="add_level", condition="request.isXmlHttpRequest()", options={"expose":true})
+	 */
+	public function adminAddLevelAction(Request $request, $level){
+		$connection = $this->get('database_connection');
+		$session = $request->getSession();
+		$response = array();
+
+		try{
+			$connection->executeQuery("INSERT INTO `level`(level_name) VALUES(?)", array($level));
+			$response['idlevel'] = $connection->lastInsertId();
+			$response['levelName'] = $level;
+			$levels = $session->get('disability_levels');
+			$levels[] = array('idlevel'=>$response['idlevel'], 'level_name' => $level);
+			$session->set('disability_levels', $levels);
+			$response['result'] = 'success';
+		}
+		catch(DBALException $e){
+			$response['result'] = 'failure';
+		}
+
+		return new JsonResponse($response);
+
 	}
 }
 

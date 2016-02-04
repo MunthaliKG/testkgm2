@@ -90,9 +90,10 @@ class AdminController extends Controller{
 			
 		}, $dataConverter);
 
+		$allUsers = $connection->fetchAll('SELECT enabled FROM fos_user');
 		$userData = array();
-		$userData['numUsers'] = count($users);
-		$userData['numDisabled'] = $dataConverter->countArray($users, 'enabled', 0);
+		$userData['numUsers'] = count($allUsers);
+		$userData['numDisabled'] = $dataConverter->countArray($allUsers, 'enabled', 0);
 
 		$paginator = $this->get('knp_paginator');
 		$userPagination = $paginator->paginate($users, $request->query->getInt('page',1), 10);
@@ -123,5 +124,6 @@ class AdminController extends Controller{
 			)
 		);
 	}
+
 }
 ?>

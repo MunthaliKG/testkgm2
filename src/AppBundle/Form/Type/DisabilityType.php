@@ -40,7 +40,8 @@ class DisabilityType extends AbstractType{
 			'choices' => array(
 				'VI'=>'Visual Impairment',
 				'HI'=>'Hearing impairment',
-				'LD'=>'Learning Difficulties'
+				'LD'=>'Learning Difficulties',
+				'DB' => 'Deaf Blind'
 				),
 			'constraints' => array(new Assert\NotBlank()),
 			'multiple' => true,

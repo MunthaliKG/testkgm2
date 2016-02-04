@@ -75,7 +75,10 @@
                                                 <li class="{%block navzone%}{%endblock%}"><a href="{{path('zone')}}">Zone</a></li>
                                                 <li class="{%block navdistr%}{%endblock%}"><a href="{{path('district')}}">District</a></li>
                                                 <li class="{%block navnat%}{%endblock%}"><a href="{{path('national')}}">National</a></li>
-                                                <li class="{%block navyear%}{%endblock%}"><a href="">|| Current Working Year: {{ currentWY }} ||</a></li>                                                
+                                                {% if currentWY is defined %}
+                                                    <span class="{%block navyear%}{%endblock%}"><a href="">|| Current Working Year: {{ currentWY }} ||</a></span>
+                                                {% endif %}
+
                                             {% endblock %}
                                         </ul>
                                     </div>
