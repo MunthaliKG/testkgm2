@@ -164,12 +164,18 @@ class SchoolController extends Controller{
                 $itemBeingEdited = $needs[0]['idneed'].': '.$needs[0]['needname'];
             }            
             
-            //generate an array to pass into form for select list options    
-            $needs2 = $connection->fetchAll('SELECT idneed, needname FROM need '
-                    . 'WHERE (idneed) NOT IN '
-                    . '(SELECT idneed FROM school_has_need where emiscode = ?)', array($emisCode));
+            //generate an array to pass into form for select list options
+            $paramList = array();
+            $whereClause = '';
+            if($needId == 'new'){
+                $paramList[] = $emisCode;
+                $whereClause = 'WHERE (idneed) NOT IN (SELECT idneed FROM school_has_need where emiscode = ?)';
+            }
+            $needs2 = $connection->fetchAll("SELECT idneed, needname FROM need $whereClause", $paramList);
             
             $choices = array();
+//            echo $defaultData['idneed'].'<br><br>';
+//            echo print_r($needs2); exit;
             foreach ($needs2 as $key => $row) {
                 $choices[$row['idneed']] = $row['idneed'].': '.$row['needname'];
             }

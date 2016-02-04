@@ -27,7 +27,7 @@ class ResourceRoomType extends AbstractType
         ->add('idneed','choice', array(
            'placeholder' => 'Choose special need item',
            'label' => 'Special Needs Item',
-           'choices' => $needs,                
+           'choices' => $needs,
             'expanded' => false,
             'multiple' => false,
             ))                        
@@ -35,13 +35,13 @@ class ResourceRoomType extends AbstractType
            'label' => 'Quantity Available',
            'constraints' => array(
                 new NotBlank(),
-                new Range(array('min'=> 1))
+                new Range(array('min'=> 0))
             )))
         ->add('quantity_in_use', 'integer', array(
            'label' => 'Quantity In Use',
            'constraints' => array(
                 new NotBlank(),
-                new Range(array('min'=> 1))
+                new Range(array('min'=> 0))
             )))
         ->add('quantity_required', 'integer', array(
            'label' => 'Quantity Required',
@@ -75,7 +75,7 @@ class ResourceRoomType extends AbstractType
                         $event->getForm()->add('idneed','choice', array(
                             'placeholder' => 'Choose special need item',
                             'label' => 'Special Needs Item',
-                            'choices' => $needs,                
+                            'choices' => $this->needs,
                              'expanded' => false,
                             'disabled' => false,
                              'multiple' => false,
