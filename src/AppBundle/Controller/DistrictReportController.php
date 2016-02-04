@@ -57,11 +57,31 @@ class DistrictReportController extends Controller{
                         //schools in a district
                                
                         $dataConverter = $this->get('data_converter');
-                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+                        $dataConverter = $this->get('data_converter');
+                        $session = $request->getSession();
+                        $year;
+                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                        if ($session->has('school_year')){
+                            $year = $session->get('school_year');
+                        } else {
+                            return $this->redirectToRoute('district_snl',['iddistrict'=>$iddistrict], 301);
+                        }
+                        $sntLatestYr['yr'] = $year;
+                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $sntLastYr = $sntLatestYr['yr'] - 1;
-                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+                        $lwdLatestYr['yr'] = $year;
+                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $lwdLastYr = $lwdLatestYr['yr'] - 1;
-                        $options['chaka'] = $lwdLatestYr['yr'];
+                        $options['chaka'] = $year;
+                        
+                        
+//                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+//                        $sntLastYr = $sntLatestYr['yr'] - 1;
+//                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+//                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
+//                        $options['chaka'] = $lwdLatestYr['yr'];
                         //schools in a District
                         $schoolsInDistrict = $connection->fetchAll('select emiscode, iddistrict from school where iddistrict =?', [$iddistrict]);                               
                         $options['numOfSchools'] = $dataConverter->countArray($schoolsInDistrict, 'iddistrict', $iddistrict);//get the number of schools                        
@@ -340,11 +360,29 @@ class DistrictReportController extends Controller{
                         //schools in a district
                                
                         $dataConverter = $this->get('data_converter');
-                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+                        $dataConverter = $this->get('data_converter');
+                        $session = $request->getSession();
+                        $year;
+                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                        if ($session->has('school_year')){
+                            $year = $session->get('school_year');
+                        } else {
+                            return $this->redirectToRoute('district_custom_snl',['iddistrict'=>$iddistrict], 301);
+                        }
+                        $sntLatestYr['yr'] = $year;
+                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $sntLastYr = $sntLatestYr['yr'] - 1;
-                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+                        $lwdLatestYr['yr'] = $year;
+                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $lwdLastYr = $lwdLatestYr['yr'] - 1;
-                        $options['chaka'] = $lwdLatestYr['yr'];
+                        $options['chaka'] = $year;
+//                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+//                        $sntLastYr = $sntLatestYr['yr'] - 1;
+//                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
+//                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
+//                        $options['chaka'] = $lwdLatestYr['yr'];
                         //schools in a District
                         $schoolsInDistrict = $connection->fetchAll('select emiscode, iddistrict from school where iddistrict =?', [$iddistrict]);                               
                         $options['numOfSchools'] = $dataConverter->countArray($schoolsInDistrict, 'iddistrict', $iddistrict);//get the number of schools                        
@@ -372,7 +410,7 @@ class DistrictReportController extends Controller{
                                     $options['snTeachers'] = true;
                                     //get teachers this year
                                     $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
-                                        s_sex, s_dob, qualification, speciality, year_started, teacher_type 
+                                        s_sex, qualification, speciality, year_started, teacher_type 
                                         FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school
                                         WHERE iddistrict = ? AND `year` = ?', 
                                             [$iddistrict, $yearQuery['yr']]);				

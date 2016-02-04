@@ -59,12 +59,29 @@ class ZoneReportController extends Controller{
                        
 			//$options['school'] = $school;
                         $dataConverter = $this->get('data_converter');
-                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
+                        $session = $request->getSession();
+                        $year;
+                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                        if ($session->has('school_year')){
+                            $year = $session->get('school_year');
+                        } else {
+                            return $this->redirectToRoute('zone_snl',['emisCode'=>$emisCode], 301);
+                        }
+                        $sntLatestYr['yr'] = $year;
+                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $sntLastYr = $sntLatestYr['yr'] - 1;
-                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
+                        $lwdLatestYr['yr'] = $year;
+                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $lwdLastYr = $lwdLatestYr['yr'] - 1;
-                        $options['chaka'] = $lwdLatestYr['yr'];
-                        //schools in a zone
+                        $options['chaka'] = $year;
+//                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
+//                        $sntLastYr = $sntLatestYr['yr'] - 1;
+//                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone WHERE idzone = ?',[$idzone]);
+//                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
+//                        $options['chaka'] = $lwdLatestYr['yr'];
+//                        //schools in a zone
                         $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);                               
                         $options['numOfSchools'] = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools		
         
@@ -326,8 +343,21 @@ class ZoneReportController extends Controller{
 			->add('produce','submit', array('label' => "Produce report"))
 			->getForm();
 
-		$form->handleRequest($request);                                
-                
+		$form->handleRequest($request);  
+                $session = $request->getSession();
+                $year;
+                //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                if ($session->has('school_year')){
+                    $year = $session->get('school_year');
+                } else {
+                    return $this->redirectToRoute('zone_custom_snl',['emisCode'=>$emisCode], 301);
+                }
+                //get the latest year from the lwd_belongs to school table
+//                            $yearQuery = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone '
+//                                    . 'WHERE idzone = ?',[$idzone]);
+//                                    //$connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
+//                                    //WHERE emiscode = ?', [$emisCode]);
+                            $yearQuery['maxYear'] = $year;
 		if($form->isValid()){
 			$connection = $this->get('database_connection');
 			$formData = $form->getData();
@@ -341,12 +371,10 @@ class ZoneReportController extends Controller{
 
 			$learners = array();			
 			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
+                        $options['chaka'] = $year;
+                           
 
-                            //get the latest year from the lwd_belongs to school table
-                            $yearQuery = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone '
-                                    . 'WHERE idzone = ?',[$idzone]);
-                                    //$connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
-                                    //WHERE emiscode = ?', [$emisCode]);                           		
+//                                                       		
         
                             /*SN learners' details section*/
                             if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
@@ -356,17 +384,17 @@ class ZoneReportController extends Controller{
                                         distance_to_school, gfirst_name, glast_name, gsex, occupation, household_type 
                                         FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
                                         WHERE idzone = ? AND `year` = ?', 
-                                            [$idzone, $yearQuery['yr']]);				
+                                            [$idzone, $yearQuery['maxYear']]);				
                                     $options['snLearners'] = $enrolled;    
 				}
                             if(in_array(1, $formData['reports'])){//if the SN teachers' details option was checked
                                     $options['snTeachers'] = true;
                                     //get teachers this year
                                     $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
-                                        s_sex, s_dob, qualification, speciality, year_started, teacher_type 
+                                        s_sex, qualification, speciality, year_started, teacher_type 
                                         FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school
                                         WHERE idzone = ? AND `year` = ?', 
-                                            [$idzone, $yearQuery['yr']]);				
+                                            [$idzone, $yearQuery['maxYear']]);				
                                     $options['snTeachers'] = $employed;    
 				}
 			}	

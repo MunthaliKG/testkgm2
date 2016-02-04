@@ -60,18 +60,12 @@ class LwdFinderType extends AbstractType
 		)
                     ->add('distance_to_school', 'choice', array(
                     'label' => 'Distance from home to new school (Km)',
+                        'placeholder' => 'Distance range',
                     'choices' => array('<5'=>'Less than 5km', '1-5'=>'between 1 and 5km', '>5'=>'More than 5km'),
                     'constraints' => array(new NotBlank()),
                     )
 		)
-                ->add('year', 'datetime', array(
-                    'label' => 'Year',
-                    'widget' => 'single_text',
-                    'format' => 'yyyy',
-                    'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
-                    'constraints' => array(new NotBlank()),
-                        )
-                )
+                
 		->add('save', 'submit', array('label'=>'Save'));
 	}
 	public function getName()
