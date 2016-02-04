@@ -17,15 +17,7 @@ class RoomStateType extends AbstractType
 			'label' => 'Room Id',
 			'constraints' => array(new NotBlank()),
 			)
-		)
-		->add('year', 'datetime', array(
-			'label' => 'Year',
-			'widget' => 'single_text',
-                        'format' => 'yyyy',
-			'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
-			'constraints' => array(new NotBlank()),
-			)
-		)
+		)		
                 ->add('enough_light', 'choice', array(
 			'label' => 'Enough Lighting',
                     'placeholder' => '--Lighting--',
@@ -91,8 +83,7 @@ class RoomStateType extends AbstractType
                 )                
 		->add('save','submit', array(
 			'label' => 'save',
-			)
-		);
+			));
 	}
 	public function getName()
 	{

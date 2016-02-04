@@ -159,7 +159,7 @@ class SchoolController extends Controller{
             	$needs = $connection->fetchAll('SELECT school_has_need.*, needname FROM school_has_need NATURAL JOIN need
             		WHERE idneed = ? AND emiscode = ?', array($needId, $emisCode));
             	$defaultData = $needs[0];
-      		$defaultData['year_recorded'] = new \DateTime($defaultData['year_recorded'].'-1-1');
+      		//$defaultData['year_recorded'] = new \DateTime($defaultData['year_recorded'].'-1-1');
                 $defaultData['idneed_2'] = $needs[0]['idneed'];
                 $itemBeingEdited = $needs[0]['idneed'].': '.$needs[0]['needname'];
             }            
@@ -204,7 +204,14 @@ class SchoolController extends Controller{
                             ->findOneByIdneed($defaultData['idneed_2']));
                 }
                 //$need->setDateProcured($formData['date_procured']);
-                $need->setYearRecorded($formData['year_recorded']->format('Y'));
+                $session = $request->getSession();
+                //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                if ($session->has('school_year')){
+                    $year = $session->get('school_year');
+                    $need->setYearRecorded($year);
+                } else {
+                    return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$defaultData['idneed_2']], 301);
+                }                 
                 $need->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')
                         ->findOneByEmiscode($emisCode));
                 $need->setAvailable($formData['available']);
@@ -289,14 +296,25 @@ class SchoolController extends Controller{
 		//set the fields for material
                 $material->setRoomId($formData['room_id']);
                 $material->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
-                $material->setYear($formData['year']->format('Y-m-d'));
+                //get seesion variable
+                $session = $request->getSession();
+                //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                if ($session->has('school_year')){
+                    $year = $session->get('school_year');
+                    $material->setYear($year);
+                } else {
+                    return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>'new'], 301);
+                }            
+
                 $material->setEnoughLight($formData['enough_light']);
                 $material->setEnoughSpace($formData['enough_space']);  
                 $material->setAdaptiveChairs($formData['adaptive_chairs']);
                 $material->setAccess($formData['access']);
                 $material->setEnoughVentilation($formData['enough_ventilation']);
-                $material->setRoomType($formData['noise_free']);
-                echo 'room type: '.$formData['room_type'].'; noise free: '.$formData['noise_free']; exit;
+                $material->setRoomType($formData['room_type']);
+                $material->setNoiseFree($formData['noise_free']);
+                
+                //echo 'room type: '.$formData['room_type'].'; noise free: '.$formData['noise_free']; exit;
                 $em = $this->getDoctrine()->getManager();
                 
                 $roomState = $this->getDoctrine()->getRepository('AppBundle:RoomState')
@@ -380,12 +398,25 @@ class SchoolController extends Controller{
      */
     public function findTeacherFormAction(Request $request, $emisCode){//this controller will return the form used for selecting a specialist teacher
         $connection = $this->get('database_connection');
-        $teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name FROM snt NATURAL JOIN school_has_snt
-            WHERE emiscode = ?', array($emisCode));
+        $session = $request->getSession();
+        $teacher;
+        if ($session->has('school_year')){
+            $year = $session->get('school_year');
+            $teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name, year '
+                    . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ? AND '
+                    . 'idsnt NOT IN (SELECT idsnt FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?) '
+                    . 'UNION '
+                    . 'SELECT idsnt,sfirst_name,slast_name, year '
+                    . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?', 
+                    array($emisCode, $year-1,$emisCode, $year,$emisCode, $year));
+        } else {
+            return $this->redirectToRoute('find_teacher_form',['emisCode'=>$emisCode], 301);
+        }  
+        
 
         $choices = array();
         foreach ($teachers as $key => $row) {
-            $choices[$row['idsnt']] = $row['sfirst_name'].' '.$row['slast_name'];
+            $choices[$row['idsnt']] = $row['year'].': '.$row['sfirst_name'].' '.$row['slast_name'];
         }
 
         //create the form for choosing an existing teacher to edit      
@@ -419,7 +450,7 @@ class SchoolController extends Controller{
         $defaultData = array();
 
         if($teacherId != 'new'){/*if we are not adding a new learner, fill the form fields with
-            the data of the selected learner.*/           
+            the data of the selected learner.*/             
             $teacher = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt Where idsnt = ?', array($teacherId));
             $defaultData = $teacher[0];            
             //convert the dates into their corresponding objects so that they will be rendered correctly by the form                       
@@ -439,16 +470,14 @@ class SchoolController extends Controller{
         if($form2->isValid()){
             $formData = $form2->getData();
             $teacher;
-            $schoolHasSnt;
-
+            $schoolHasSnt = new SchoolHasSnt();
             //check if this record is being edited or created anew
             if($teacherId == 'new'){
-                    $teacher = new Snt();
-                    $schoolHasSnt = new SchoolHasSnt();
+                    $teacher = new Snt();                    
             }else{
                 //if it is being edited, then update the records that already exist 
                 $teacher = $this->getDoctrine()->getRepository('AppBundle:Snt')->findOneByIdsnt($teacherId);
-                $schoolHasSnt = $this->getDoctrine()->getRepository('AppBundle:SchoolHasSnt')->findOneBy(array('idsnt'=>$teacherId, 'emiscode'=>$emisCode, 'year'=>$defaultData['year']->format('Y')));
+                //$schoolHasSnt = $this->getDoctrine()->getRepository('AppBundle:SchoolHasSnt')->findOneBy(array('idsnt'=>$teacherId, 'emiscode'=>$emisCode, 'year'=>$defaultData['year']->format('Y')));
             }
 
             //set the fields for teacher
@@ -485,8 +514,14 @@ class SchoolController extends Controller{
  
                 $schoolHasSnt->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
                 $schoolHasSnt->setIdsnt($this->getDoctrine()->getRepository('AppBundle:Snt')->findOneByIdsnt($teacher->getIdsnt()));
-                $schoolHasSnt->setYear($formData['year']->format('Y'));
-                
+                $session = $request->getSession();
+                //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                if ($session->has('school_year')){
+                    $year = $session->get('school_year');
+                    $schoolHasSnt->setYear($year);
+                } else {
+                    return $this->redirectToRoute('add_teacher',['emisCode'=>$emisCode, 'teacherId'=>'new'], 301);                    
+                }                                                   
                 if ($formData['teacher_type'] == 'snt') {//insert SNT type                    
                     $schoolHasSnt->setSntType($formData['snt_type']);
                 } 
@@ -499,7 +534,6 @@ class SchoolController extends Controller{
                 }else { //else set it null
                     $schoolHasSnt->setNoOfVisits(null);
                 }
-
                 //tell the entity manager to keep track of this entity
                 $em->persist($schoolHasSnt);
                 $em->flush();
@@ -518,7 +552,6 @@ class SchoolController extends Controller{
                             ->add('sntExists', 'SNT with Employee Number ('.$formData['employment_number'].') already exists');
                     return $this->redirectToRoute('add_teacher',['emisCode'=>$emisCode, 'teacherId'=>'new'], 301);
                 }    
-            
         }
 
       	//if this is not a new teacher being added, we want to make the id field uneditable

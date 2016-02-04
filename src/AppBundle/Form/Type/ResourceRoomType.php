@@ -8,7 +8,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Constraints\Range;
-
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 
 //this class build the form that is used to select a teacher using district name and school name
 class ResourceRoomType extends AbstractType
@@ -29,14 +30,7 @@ class ResourceRoomType extends AbstractType
            'choices' => $needs,                
             'expanded' => false,
             'multiple' => false,
-            )) 
-        ->add('year_recorded', 'datetime', array(
-                'label' => 'Year Recorded',
-                'widget' => 'single_text',
-                'format' => 'yyyy',
-                'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
-                'constraints' => array(new NotBlank()),
-                ))                
+            ))                        
         ->add('quantity_available', 'integer', array(
            'label' => 'Quantity Available',
            'constraints' => array(
@@ -57,6 +51,7 @@ class ResourceRoomType extends AbstractType
             )		))
         ->add('available', 'choice', array(
            'label' => 'Available',
+            'placeholder' => '--Available resource--',
            'choices' => array('No'=>'No','Yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
@@ -69,7 +64,23 @@ class ResourceRoomType extends AbstractType
         ->add('save','submit', array(
 			'label' => 'save',
 			)
-		);
+		)
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+			$material = $event->getData();
+			$form = $event->getForm();
+
+			if (!$material) {
+                            return;
+			}
+                        $event->getForm()->add('idneed','choice', array(
+                            'placeholder' => 'Choose special need item',
+                            'label' => 'Special Needs Item',
+                            'choices' => $needs,                
+                             'expanded' => false,
+                            'disabled' => false,
+                             'multiple' => false,
+                             ));
+		});
     }
     public function getName()
     {
