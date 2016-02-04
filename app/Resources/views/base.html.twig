@@ -1,3 +1,6 @@
+{% if app.session.has('school_year') %} 
+    {% set currentWY = app.session.get('school_year') %} {# get the current school year #}
+{% endif %}
 <!DOCTYPE html>
 <html>
     
@@ -51,7 +54,7 @@
                     </div>                                                        
                 </div>
                 <div class="row row2">
-                    <div class="col-md-12">
+                    <div class="col-md-12">                     
                         {# <img src="{{asset('assets/images/banner.jpg')}}" class="img-responsive col-xs-10 col-xs-offset-1"> #}
                         <div class="row">
                             <div class="col-xs-12">
@@ -72,12 +75,14 @@
                                                 <li class="{%block navzone%}{%endblock%}"><a href="{{path('zone')}}">Zone</a></li>
                                                 <li class="{%block navdistr%}{%endblock%}"><a href="{{path('district')}}">District</a></li>
                                                 <li class="{%block navnat%}{%endblock%}"><a href="{{path('national')}}">National</a></li>
+                                                <li class="{%block navyear%}{%endblock%}"><a href="">|| Current Working Year: {{ currentWY }} ||</a></li>                                                
                                             {% endblock %}
                                         </ul>
                                     </div>
                                 </nav>
                             </div>
                         </div>
+                                        
                     </div>
                     
                 </div><!--row2 -->
@@ -93,6 +98,7 @@
                     {% endblock %}
                     
                     <div class="col-sm-{%block rightcolumnwidth%}10{%endblock%} right-column col-pull-10" style="{% block right_column_style %}{% endblock %}">
+                        
                         {%block rightcolumn%}{%endblock%}
                     </div>
                 </div>

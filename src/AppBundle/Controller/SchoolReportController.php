@@ -57,11 +57,13 @@ class SchoolReportController extends Controller{
 
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
-                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
-				$sntLastYr = $sntLatestYr['yr'] - 1;
-                                $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
-				$lwdLastYr = $lwdLatestYr['yr'] - 1;
-                                $options['chaka'] = $lwdLatestYr['yr'];
+                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                . 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+                        $sntLastYr = $sntLatestYr['yr'] - 1;
+                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                . 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
+                        $options['chaka'] = $lwdLatestYr['yr'];
 			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
 
 				//get the latest year from the lwd_belongs to school table
