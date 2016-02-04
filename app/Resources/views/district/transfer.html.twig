@@ -32,27 +32,22 @@
             <div class="col-sm-12">
                 <fieldset class="fieldset">
                     <legend><small>Transfer Learner</small></legend>
-                    <div class="col-sm-5">      
+                    <div class="col-sm-6">      
                         <fieldset>
                     {{ form_row(learnerFinderForm.district) }}
+                    {{ form_widget(learnerFinderForm.school) }} <br>
+                    {{ form_widget(learnerFinderForm.learner) }}
                     {#{{ form_widget(form1.light_note, {'label_attr':{'class':'sr-only'}} ) }}#}
-                    {{ form_row(learnerFinderForm.schoolTo) }}
+                    
                         </fieldset>
                         </div>
-                        <div class="col-sm-3">      
+                        <div class="col-sm-6">      
                         <fieldset>
-                            {{ form_widget(learnerFinderForm.school) }} <br>
-                            {{ form_widget(learnerFinderForm.std) }}
+                            {{ form_row(learnerFinderForm.schoolTo) }}
+                            {{ form_widget(learnerFinderForm.std) }} <br>
+                            {{ form_row(learnerFinderForm.distance_to_school, {'attr':{'title':'The distance from the learner\'s home to the new school'}}) }}
                             </fieldset>
                         </div>
-                     
-                       
-                     <div class="col-sm-3">      
-                        <fieldset>
-                            {{ form_widget(learnerFinderForm.learner) }} <br>
-                            {{ form_widget(learnerFinderForm.year) }} 
-                            </fieldset>
-                        </div> 
                     
                  </fieldset>
             </div>
@@ -61,7 +56,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-6">
-                    {{ form_row(learnerFinderForm.distance_to_school, {'attr':{'title':'The distance from the learner\'s home to the new school'}}) }}
+                    
                 </div>
                 <div class="col-sm-5">
                 <p class="text-left">

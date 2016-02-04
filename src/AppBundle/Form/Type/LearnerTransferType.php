@@ -38,15 +38,7 @@ class LearnerTransferType extends AbstractType
 			//'label' => 'Other Reason',
 			'required' => false,
 			)
-		)
-                ->add('year', 'datetime', array(
-                    'label' => 'Year',
-                    'widget' => 'single_text',
-                    'format' => 'yyyy',
-                    'attr' => array('class'=>'datepicker','data-date-format'=>'yyyy '),
-                    'constraints' => array(new NotBlank()),
-                        )
-                )
+		)                
 		->add('save', 'submit', array('label'=>'Save'))
 		->addEventListener(
             FormEvents::PRE_SUBMIT,

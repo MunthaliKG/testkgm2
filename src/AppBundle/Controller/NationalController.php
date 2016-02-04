@@ -53,12 +53,30 @@ class NationalController extends Controller{
                     $options = array(); //list of options to pass to the template
                    
                     $dataConverter = $this->get('data_converter');
-                    $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone');
-                    $sntLastYr = $sntLatestYr['yr'] - 1;
-                    $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone');
-                    $lwdLastYr = $lwdLatestYr['yr'] - 1;
-                    $options['chaka'] = $lwdLatestYr['yr'];
-                    
+                    $dataConverter = $this->get('data_converter');
+                        $session = $request->getSession();
+                        $year;
+                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                        if ($session->has('school_year')){
+                            $year = $session->get('school_year');
+                        } else {
+                            return $this->redirectToRoute('national_snl', 301);
+                        }
+                        $sntLatestYr['yr'] = $year;
+                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+                        $sntLastYr = $sntLatestYr['yr'] - 1;
+                        $lwdLatestYr['yr'] = $year;
+                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
+                        $options['chaka'] = $year;
+//                    $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school NATURAL JOIN zone');
+//                    $sntLastYr = $sntLatestYr['yr'] - 1;
+//                    $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone');
+//                    $lwdLastYr = $lwdLatestYr['yr'] - 1;
+//                    $options['chaka'] = $lwdLatestYr['yr'];
+//                    
                     //schools in a Malawi
                     $schoolsInMalawi = $connection->fetchAll('select emiscode from school');                               
                     $options['numOfSchools'] = count($schoolsInMalawi);//get the number of schools		
@@ -338,11 +356,29 @@ class NationalController extends Controller{
                         //schools in a district
                                
                         $dataConverter = $this->get('data_converter');
-                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school');
+                        $dataConverter = $this->get('data_converter');
+                        $session = $request->getSession();
+                        $year;
+                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                        if ($session->has('school_year')){
+                            $year = $session->get('school_year');
+                        } else {
+                            return $this->redirectToRoute('national_custom_snl', 301);
+                        }
+                        $sntLatestYr['yr'] = $year;
+                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $sntLastYr = $sntLatestYr['yr'] - 1;
-                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school');
+                        $lwdLatestYr['yr'] = $year;
+                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $lwdLastYr = $lwdLatestYr['yr'] - 1;
-                        $options['chaka'] = $lwdLatestYr['yr'];
+                        $options['chaka'] = $year;
+//                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school');
+//                        $sntLastYr = $sntLatestYr['yr'] - 1;
+//                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school');
+//                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
+//                        $options['chaka'] = $lwdLatestYr['yr'];
                         //schools in a District
                         $schoolsInMalawi = $connection->fetchAll('select emiscode, iddistrict from school');                               
                         $options['numOfSchools'] = count($schoolsInMalawi);
@@ -370,7 +406,7 @@ class NationalController extends Controller{
                                     $options['snTeachers'] = true;
                                     //get teachers this year
                                     $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
-                                        s_sex, s_dob, qualification, speciality, year_started, teacher_type 
+                                        s_sex, qualification, speciality, year_started, teacher_type 
                                         FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school
                                         WHERE `year` = ?', 
                                             [$yearQuery['yr']]);				

@@ -102,7 +102,16 @@ class DistrictController extends Controller{
                     . " WHERE idlwd = ? ORDER BY year DESC", array($formData['learner']));
             $lwdBTSchool = new \AppBundle\Entity\LwdBelongsToSchool();
             $lwdBTSchool->setEmiscode($em->getReference('AppBundle:School', ['emiscode'=>$formData['schoolTo']]));
-            $lwdBTSchool->setYear($formData['year']->format('Y-m-d'));
+            $session = $request->getSession();
+            $year;
+            //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+            if ($session->has('school_year')){
+                $year = $session->get('school_year');
+                $lwdBTSchool->setYear($year);
+            } else {
+                return $this->redirectToRoute('learner_transfer',['iddistrict'=>$iddistrict], 301);
+            }
+            
             $lwdBTSchool->setDistanceToSchool($formData['distance_to_school']);
             $lwdBTSchool->setMeansToSchool($learnerPrevSchool['means_to_school']);
             $lwdBTSchool->setOtherMeans($learnerPrevSchool['other_means']);

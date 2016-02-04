@@ -57,18 +57,31 @@ class SchoolReportController extends Controller{
 
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
-                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
-                                . 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+                        
+                        $session = $request->getSession();
+                        $year;
+                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                        if ($session->has('school_year')){
+                            $year = $session->get('school_year');
+                        } else {
+                            return $this->redirectToRoute('school_reports',['emisCode'=>$emisCode], 301);
+                        }
+                        $sntLatestYr['yr'] = $year;
+                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $sntLastYr = $sntLatestYr['yr'] - 1;
-                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
-                                . 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+                        $lwdLatestYr['yr'] = $year;
+                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $lwdLastYr = $lwdLatestYr['yr'] - 1;
-                        $options['chaka'] = $lwdLatestYr['yr'];
+                        $options['chaka'] = $year;
 			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
 
-				//get the latest year from the lwd_belongs to school table
-				$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
-					WHERE emiscode = ?', [$emisCode]);
+                              
+                            //get the latest year from the lwd_belongs to school table
+				//$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
+					//WHERE emiscode = ?', [$emisCode]);
+                                $yearQuery['maxYear'] = $year;
 				//learner preliminary counts
 				$learners = $connection->fetchAll('SELECT DISTINCT(idlwd), sex, std, dob, round(datediff(?,dob)/365) as age
 				  FROM lwd NATURAL JOIN lwd_belongs_to_school 
@@ -346,10 +359,18 @@ class SchoolReportController extends Controller{
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
 			//if(in_array(1, $formData['enrollments']) || in_array(0, $formData['enrollments'])){
-
+                        $session = $request->getSession();
+                        $year;
+                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+                        if ($session->has('school_year')){
+                            $year = $session->get('school_year');
+                        } else {
+                            return $this->redirectToRoute('school_reports',['emisCode'=>$emisCode], 301);
+                        }
                         //get the latest year from the lwd_belongs to school table
-                        $yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
-                                WHERE emiscode = ?', [$emisCode]);
+                        //$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
+                        //        WHERE emiscode = ?', [$emisCode]);
+                        $yearQuery['maxYear'] = $year;
                         $gender = array('M'=>'M','F'=>'F');
                         $learnersBySex = array();
                         $total;
