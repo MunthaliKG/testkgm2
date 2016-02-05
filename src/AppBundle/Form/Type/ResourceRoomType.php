@@ -52,14 +52,15 @@ class ResourceRoomType extends AbstractType
         ->add('available', 'choice', array(
            'label' => 'Available',
             'placeholder' => '--Available resource--',
-           'choices' => array('No'=>'No','Yes'=>'Yes'),
+           'choices' => array('no'=>'No','yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
 			'multiple' => false,		
            ))
         ->add('provided_by','text', array(
             'label' => 'Provided By',
-            'constraints' => array(new NotBlank()),
+            'required' => false,
+            //'constraints' => array(new NotBlank()),
             ))
         ->add('save','submit', array(
 			'label' => 'save',
@@ -68,20 +69,53 @@ class ResourceRoomType extends AbstractType
             ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 			$material = $event->getData();
 			$form = $event->getForm();
-
-			if (!$material) {
+                        if(!$material){
                             return;
 			}
-                        $event->getForm()->add('idneed','choice', array(
-                            'placeholder' => 'Choose special need item',
-                            'label' => 'Special Needs Item',
-                            'choices' => $this->needs,
-                             'expanded' => false,
-                            'disabled' => false,
-                             'multiple' => false,
+                        if(isset($material['quantity_in_use']) || isset($material['quantity_available']) || isset($material['quantity_required'])){
+                            //$form->remove('cpd_training');
+                            $form->add('available', 'choice', array(
+                            'label' => 'Available',
+                             'placeholder' => '--Available resource--',
+                            'choices' => array('no'=>'No','yes'=>'Yes'),
+                                         //'constraints' => array(new NotBlank()),
+                                         'expanded' => false,
+                                         'multiple' => false,		
+                            ));
+                        }
+            
+                        if (isset($material['available'])) {
+                            $form->add('quantity_available', 'integer', array(
+                            'label' => 'Quantity Available',
+                            //'constraints' => array(
+//                                 new NotBlank(),
+//                                 new Range(array('min'=> 0))
                              ));
-		});
-    }
+                            $form->add('quantity_required', 'integer', array(
+                            'label' => 'Quantity Required',
+                            //'constraints' => array(
+                                 //new NotBlank(),
+                                 //new Range(array('min'=> 1))
+                             ));
+                            $form->add('quantity_in_use', 'integer', array(
+                            'label' => 'Quantity In Use',
+//                            'constraints' => array(
+//                                 new NotBlank(),
+//                                 new Range(array('min'=> 0))
+                             ));
+                        }
+                        });
+
+			
+//                        $event->getForm()->add('idneed','choice', array(
+//                            'placeholder' => 'Choose special need item',
+//                            'label' => 'Special Needs Item',
+//                            'choices' => $this->needs,
+//                             'expanded' => false,
+//                            'disabled' => false,
+//                             'multiple' => false,
+//                             ));
+    }	
     public function getName()
     {
         return 'resourceRoom';

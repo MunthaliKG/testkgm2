@@ -76,9 +76,9 @@ class ResourceRoom
      */
     private $quantity_required;
     /**
-     * @var integer
+     * @var string
      *
-     * @ORM\Column(name="available", type="integer", nullable=false)
+     * @ORM\Column(name="available", type="string", nullable=false)
      * 
      */
     private $available;

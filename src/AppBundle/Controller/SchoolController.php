@@ -153,7 +153,6 @@ class SchoolController extends Controller{
         public function editResourceAction(Request $request, $needId, $emisCode){
             $connection = $this->get('database_connection');
             $defaultData = array();
-            $itemBeingEdited = '';
             if($needId != 'new'){/*if we are not adding a new material, fill the form fields with
             	the data of the selected learner.*/
             	$needs = $connection->fetchAll('SELECT school_has_need.*, needname FROM school_has_need NATURAL JOIN need
@@ -221,6 +220,7 @@ class SchoolController extends Controller{
                 $need->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')
                         ->findOneByEmiscode($emisCode));
                 $need->setAvailable($formData['available']);
+                //echo $formData['available']; exit;
                 $need->setProvidedBy($formData['provided_by']);
                 $need->setQuantityInUse($formData['quantity_in_use']);
                 $need->setQuantityAvailable($formData['quantity_available']);
@@ -264,8 +264,7 @@ class SchoolController extends Controller{
       	return $this->render('school/materials/edit_resource_material.html.twig', array(
       		'form1'=>$form1->createView(),
       		'readonly' => $readonly,
-                'display' => $display,
-                'itemBeingEdited' => $itemBeingEdited,
+                'display' => $display,            
                 'disabled' => $disabled));
                 //'disabled' => $disabled,'empty_data' => $empty_data));
       }
