@@ -350,7 +350,7 @@ class ZoneReportController extends Controller{
                 if ($session->has('school_year')){
                     $year = $session->get('school_year');
                 } else {
-                    return $this->redirectToRoute('zone_custom_snl',['emisCode'=>$emisCode], 301);
+                    return $this->redirectToRoute('zone_custom_snl',['idzone'=>$idzone], 301);
                 }
                 //get the latest year from the lwd_belongs to school table
 //                            $yearQuery = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN zone '

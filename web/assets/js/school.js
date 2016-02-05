@@ -129,7 +129,7 @@ $(document).ready(function(){
 		}
 	});
         
-        //listen for change in the teacher type field
+        //listen for change in the teacher type field and hide some field (for snt or regular teacher)
         $('#teacher_teacher_type_0').change(function(event){//SNT option selected
 
 		if($(this).val() == "snt"){
@@ -162,7 +162,33 @@ $(document).ready(function(){
                     $('#teacher_no_of_visits').prop('disabled','disabled'); 
                 }
 	});
-
+        
+        //listen on resource form field to hide either available field or the quantity fields
+        $('#resourceRoom_available').change(function(event){ //check snt type
+            $('#resourceRoom_quantity_required').prop('disabled','disabled');
+            $('#resourceRoom_quantity_available').prop('disabled','disabled');
+            $('#resourceRoom_quantity_in_use').prop('disabled','disabled');
+	});
+        $('#resourceRoom_quantity_available').change(function(event){ //check snt type
+            $('#resourceRoom_available').prop('disabled','disabled');            
+	});
+        $('#resourceRoom_quantity_in_use').change(function(event){ //check snt type
+            $('#resourceRoom_available').prop('disabled','disabled');            
+	});
+        $('#resourceRoom_quantity_required').change(function(event){ //check snt type
+            $('#resourceRoom_available').prop('disabled','disabled');            
+	});
+        
+        // disabled some fields depending on prefilled data values of resources
+        if(($('#resourceRoom_quantity_required').val() !== '') || ($('#resourceRoom_quantity_available').val() !== '') || ($('#resourceRoom_quantity_in_use').val() !== '')){
+                $('#resourceRoom_available').prop('disabled','disabled');
+	}
+        if($('#resourceRoom_available').val() !== ''){
+	$('#resourceRoom_quantity_required').prop('disabled','disabled');
+            $('#resourceRoom_quantity_available').prop('disabled','disabled');
+            $('#resourceRoom_quantity_in_use').prop('disabled','disabled');
+	}
+        
 //code that hides/shows "other means" field depending on the value of the "means of travelling to school" field
 	if($('#learner_personal_means_to_school').val() !== 'other'){
 		$('#other_means').hide();
