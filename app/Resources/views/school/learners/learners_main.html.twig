@@ -29,8 +29,16 @@
 	<hr>
 	<div class="row">
 		<div class="col-sm-12">
-			
-			
+
+			{% set learnerExitMessage = app.session.flashbag.get('learnerNotFound') %}
+			{% if learnerExitMessage is not empty %}
+				{% for message in learnerExitMessage %}
+					<div class="alert alert-danger alert-dismissible" alert="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						{{ message }}
+					</div>
+				{% endfor %}
+			{% endif %}
 			{% block form_container %}
 				{% set learnerExitMessage = app.session.flashbag.get('exitMessage') %}
 				{% if learnerExitMessage is not empty %}

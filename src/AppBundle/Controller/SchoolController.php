@@ -402,12 +402,13 @@ class SchoolController extends Controller{
             'action' => $this->generateUrl('find_learner_form', ['emisCode'=>$emisCode])))
         ->add('learner','choice', array(
             'label' => 'Choose Learner',
+            'required' => false,
             'placeholder'=>'Choose Learner',
             'choices'=> $choices,
             ))
         ->add('idlwd', 'text', array(
             'label' => 'Learner Identification Number',
-            'attr' => array('placeholder'=>'Learner Id. No. (LIN)'),
+            'attr' => array('placeholder'=>'LIN'),
             'required' => false
         ))
         ->add('find', 'submit')
@@ -416,9 +417,23 @@ class SchoolController extends Controller{
         $form->handleRequest($request);
 
         if($form->isValid()){
-                    $formData = $form->getData();
-                    $learnerId = $formData['learner'];
-                    return $this->redirectToRoute('edit_learner_personal',array('emisCode'=>$emisCode,'learnerId'=>$learnerId));
+            $formData = $form->getData();
+
+            if($formData['learner'] != ''){
+                $learnerId = $formData['learner'];
+                return $this->redirectToRoute('edit_learner_personal',array('emisCode'=>$emisCode,'learnerId'=>$learnerId));
+            }
+            elseif($formData['idlwd'] != ''){
+                $learner = $connection->fetchAssoc("SELECT idlwd FROM lwd_belongs_to_school WHERE idlwd = ? ORDER BY year DESC",
+                    array($formData['idlwd']));
+                if(!$learner || count($learner) == 0){
+                    $this->addFlash('learnerNotFound', 'Learner with id '.$formData['idlwd'].' was not found');
+                    return $this->redirectToRoute('school_learners', array('emisCode'=>$emisCode), 301);
+                }else{
+                    return $this->redirectToRoute('edit_learner_personal',array('emisCode'=>$emisCode,'learnerId'=>$formData['idlwd']));
+                }
+            }
+
         }
         return $this->render('school/learners/findlearnerform.html.twig', array(
             'form' => $form->createView()));
