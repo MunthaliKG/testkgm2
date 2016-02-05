@@ -60,7 +60,7 @@ class NationalController extends Controller{
                         if ($session->has('school_year')){
                             $year = $session->get('school_year');
                         } else {
-                            return $this->redirectToRoute('national_snl', 301);
+                            return $this->redirectToRoute('national_snl',[], 301);
                         }
                         $sntLatestYr['yr'] = $year;
                         //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
@@ -363,7 +363,7 @@ class NationalController extends Controller{
                         if ($session->has('school_year')){
                             $year = $session->get('school_year');
                         } else {
-                            return $this->redirectToRoute('national_custom_snl', 301);
+                            return $this->redirectToRoute('national_custom_snl',[], 301);
                         }
                         $sntLatestYr['yr'] = $year;
                         //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
