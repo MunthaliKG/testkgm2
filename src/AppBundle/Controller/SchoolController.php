@@ -378,12 +378,11 @@ class SchoolController extends Controller{
 //            . 'SELECT idsnt,sfirst_name,slast_name, year '
 //            . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?',
 //            array($emisCode, $year-1,$emisCode, $year,$emisCode, $year));
-        $allExited = "SELECT idlwd FROM lwd_belongs_to_school lbts WHERE emiscode=? (lbts.idlwd IN school_exit WHERE ".
-            "school_exit.year >= lbts.year) ";
-        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  (lwd NATURAL JOIN lwd_belongs_to_school'.
+        $allExited = "SELECT idlwd FROM school_exit WHERE emiscode = ?";
+        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school'.
         ' WHERE emiscode = ? and year = ? AND idlwd NOT IN (SELECT idlwd FROM lwd_belongs_to_school WHERE emiscode = ? AND year = ?)'.
-        " UNION (SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school WHERE emiscode = ? and year = ?))".
-        " WHERE idlwd NOT IN $allExited", array($emisCode, $thisYear-1, $emisCode, $thisYear, $emisCode, $thisYear, $emisCode));
+        " AND idlwd NOT IN ($allExited) UNION (SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school WHERE emiscode = ? and year = ? AND idlwd NOT IN ($allExited))"
+        , array($emisCode, $thisYear-1, $emisCode, $thisYear, $emisCode, $emisCode, $thisYear, $emisCode));
 
 
 //        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  lwd NATURAL JOIN lwd_belongs_to_school lbts
