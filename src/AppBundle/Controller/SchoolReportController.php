@@ -2,6 +2,7 @@
 /*this is the controller for producing reports for the school section*/
 namespace AppBundle\Controller;
 
+use AppBundle\Helpers\ExportXLS;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -536,6 +537,63 @@ class SchoolReportController extends Controller{
                                 exit;
                             }
 			}else{
+//                $obj = new PHPExcel();
+//
+//                // Set some meta data relative to the document
+//                $obj->getProperties()->setCreator("creator_name");
+//                $obj->getProperties()->setLastModifiedBy("modifier_name");
+//                $obj->getProperties()->setTitle("document_title");
+//                $obj->getProperties()->setSubject("document_subject");
+//                $obj->getProperties()->setDescription("document_description");
+//                $obj->getProperties()->setKeywords("document_keywords");
+//                $obj->getProperties()->setCategory("document_category");
+//
+//                // Set the active excel sheet
+//                $obj->setActiveSheetIndex(0);
+//                $obj->getActiveSheet()->setTitle('sheet_name');
+//
+//                // Get the data that we want to display in the excel sheet
+//                $data = $options['learnersBCG'];
+//
+//                // Set relavant indexes
+//                $nRows = $data->count();
+//                $nColumns = 'A';
+//
+//                // The keys of the $data[0]->toArray() array are the field names of the table
+//                $fields = isset($data[0])? array_keys($data[0]->toArray()): array();
+//
+//                // NOTE: $column = 'A'; $column + 1 == 1; $column++ == 'B'; True story.
+//                // Get the final column index and create the excel column to table field map
+//                $fieldsCount = count($fields);
+//                $excelMap = array();
+//                for($i = 0; $i < $fieldsCount; $i++){
+//                    $excelMap[$nColumns] = $fields[$i];
+//                    $nColumns++;
+//                }
+//
+//                // Set the first row as the table's field names
+//                for($j = 'A'; $j < $nColumns; $j++){
+//                    $obj->getActiveSheet()->setCellValue($j.'1', $excelMap[$j]);
+//                }
+//
+//                // Fill the rest of the excel sheet with data
+//                $nRows += 1;
+//                for($i = 2; $i <= $nRows; $i++){
+//                    for($j = 'A'; $j < $nColumns; $j++){
+//                        $obj->getActiveSheet()->setCellValue($j.$i, $data[$i - 2][$excelMap[$j]]);
+//                    }
+//                }
+//
+//                // Output the excel data to a file
+//                $filePath = realpath('.') . DIRECTORY_SEPARATOR . 'excel.xlsx';
+//                $writer = PHPExcel_IOFactory::createWriter($obj, 'Excel2007');
+//                $writer->save($filePath);
+//
+//                // Redirect request to the outputed file
+//                $this->getResponse()->setHttpHeader('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+//                $this->redirect('excel.xlsx');
+//
+//
 //                            $dataConverter = $this->get('data_converter');
 //                            $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, 
 //                                        distance_to_school, gfirst_name, glast_name, gsex, occupation 

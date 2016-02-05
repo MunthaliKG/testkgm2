@@ -1,11 +1,11 @@
 <?php 
 namespace AppBundle\Helpers;
-
 use AppBundle\Form\Type\SchoolFinderType;
 use AppBundle\Form\Type\EmisSchoolFinderType;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+
 
 /*This class creates the two form for selecting a school either by typing in an EMIS code
 or by selecting a district and then a school
