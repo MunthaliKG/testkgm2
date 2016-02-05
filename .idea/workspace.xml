@@ -4,14 +4,8 @@
     <list default="true" id="402cb30d-5b1a-4f50-bc83-6c5597f55f37" name="Default" comment="">
       <change type="DELETED" beforePath="$PROJECT_DIR$/src/AppBundle/Entity/District.php.bak" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Resources/views/admin/settings/admin_disabilities.html.twig" afterPath="$PROJECT_DIR$/app/Resources/views/admin/settings/admin_disabilities.html.twig" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Resources/views/admin/settings/admin_settings_main.html.twig" afterPath="$PROJECT_DIR$/app/Resources/views/admin/settings/admin_settings_main.html.twig" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Resources/views/admin/settings/edit_disability.html.twig" afterPath="$PROJECT_DIR$/app/Resources/views/admin/settings/edit_disability.html.twig" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Resources/views/base.html.twig" afterPath="$PROJECT_DIR$/app/Resources/views/base.html.twig" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Controller/AdminController.php" afterPath="$PROJECT_DIR$/src/AppBundle/Controller/AdminController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Controller/SettingsController.php" afterPath="$PROJECT_DIR$/src/AppBundle/Controller/SettingsController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Form/Type/DisabilityType.php" afterPath="$PROJECT_DIR$/src/AppBundle/Form/Type/DisabilityType.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/assets/js/admin_disability.js" afterPath="$PROJECT_DIR$/web/assets/js/admin_disability.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Controller/SchoolReportController.php" afterPath="$PROJECT_DIR$/src/AppBundle/Controller/SchoolReportController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Helpers/FindDistrictForm.php" afterPath="$PROJECT_DIR$/src/AppBundle/Helpers/FindDistrictForm.php" />
     </list>
     <ignored path="LWD.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -36,8 +30,8 @@
       <file leaf-file-name="AdminController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/AdminController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-17.692308">
-              <caret line="126" column="0" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+            <state vertical-scroll-proportion="-13.076923">
+              <caret line="120" column="53" selection-start-line="120" selection-start-column="53" selection-end-line="120" selection-end-column="53" />
               <folding>
                 <marker date="1454620953074" expanded="true" signature="2460:2553" placeholder="SELECT id, u..fos_user$..." />
                 <marker date="1454620953074" expanded="true" signature="2903:2931" placeholder="SELECT enabl..fos_user..." />
@@ -53,20 +47,20 @@
       <file leaf-file-name="SettingsController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SettingsController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.3584905">
-              <caret line="167" column="79" selection-start-line="167" selection-start-column="79" selection-end-line="167" selection-end-column="79" />
+            <state vertical-scroll-proportion="-57.320755">
+              <caret line="168" column="71" selection-start-line="168" selection-start-column="71" selection-end-line="168" selection-end-column="71" />
               <folding>
                 <element signature="e#149#181#0#PHP" expanded="true" />
-                <marker date="1454623106448" expanded="true" signature="973:1025" placeholder="SELECT iddis..disability..." />
-                <marker date="1454623106448" expanded="true" signature="2228:2296" placeholder="SELECT iddis..disability_category..." />
-                <marker date="1454623106448" expanded="true" signature="2356:2389" placeholder="SELECT idnee..need..." />
-                <marker date="1454623106448" expanded="true" signature="2580:2617" placeholder="SELECT idlev..level..." />
-                <marker date="1454623106448" expanded="true" signature="2836:2886" placeholder="SELECT * FRO..disability..." />
-                <marker date="1454623106448" expanded="true" signature="3074:3138" placeholder="SELECT idnee..disability_has_need..." />
-                <marker date="1454623106448" expanded="true" signature="3267:3332" placeholder="SELECT idlev..disability_has_level..." />
-                <marker date="1454623106448" expanded="true" signature="4797:4878" placeholder="DELETE FROM ..." />
-                <marker date="1454623106448" expanded="true" signature="5575:5654" placeholder="DELETE FROM ..." />
-                <marker date="1454623106448" expanded="true" signature="6850:6891" placeholder="INSERT INTO `level`..." />
+                <marker date="1454625129568" expanded="true" signature="973:1025" placeholder="SELECT iddis..disability..." />
+                <marker date="1454625129568" expanded="true" signature="2228:2296" placeholder="SELECT iddis..disability_category..." />
+                <marker date="1454625129568" expanded="true" signature="2356:2389" placeholder="SELECT idnee..need..." />
+                <marker date="1454625129568" expanded="true" signature="2610:2647" placeholder="SELECT idlev..level..." />
+                <marker date="1454625129568" expanded="true" signature="2881:2931" placeholder="SELECT * FRO..disability..." />
+                <marker date="1454625129568" expanded="true" signature="3119:3183" placeholder="SELECT idnee..disability_has_need..." />
+                <marker date="1454625129568" expanded="true" signature="3312:3377" placeholder="SELECT idlev..disability_has_level..." />
+                <marker date="1454625129568" expanded="true" signature="4842:4923" placeholder="DELETE FROM ..." />
+                <marker date="1454625129568" expanded="true" signature="5620:5699" placeholder="DELETE FROM ..." />
+                <marker date="1454625129568" expanded="true" signature="6895:6936" placeholder="INSERT INTO `level`..." />
               </folding>
             </state>
           </provider>
@@ -75,9 +69,10 @@
       <file leaf-file-name="SchoolController.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SchoolController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-8.145454">
-              <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="32" />
+            <state vertical-scroll-proportion="-3.581818">
+              <caret line="945" column="46" selection-start-line="945" selection-start-column="35" selection-end-line="945" selection-end-column="46" />
               <folding>
+                <element signature="e#133#192#0#PHP" expanded="true" />
                 <marker date="1454614356848" expanded="true" signature="1589:1688" placeholder="SELECT * FRO..school..." />
                 <marker date="1454614356848" expanded="true" signature="1755:1812" placeholder="SELECT year ..." />
                 <marker date="1454614356848" expanded="true" signature="1842:2025" placeholder="SELECT count..lwd..." />
@@ -123,41 +118,57 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="admin_disabilities.html.twig" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Resources/views/admin/settings/admin_disabilities.html.twig">
+      <file leaf-file-name="learners_main.html.twig" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Resources/views/school/learners/learners_main.html.twig">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-9.056603">
-              <caret line="36" column="75" selection-start-line="36" selection-start-column="75" selection-end-line="36" selection-end-column="75" />
+            <state vertical-scroll-proportion="0.61538464">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="base.html.twig" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/Resources/views/base.html.twig">
+      <file leaf-file-name="ExportXLS.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/AppBundle/Helpers/ExportXLS.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.37732658">
-              <caret line="77" column="77" selection-start-line="77" selection-start-column="77" selection-end-line="77" selection-end-column="77" />
-              <folding />
+            <state vertical-scroll-proportion="-6.6792455">
+              <caret line="147" column="28" selection-start-line="147" selection-start-column="28" selection-end-line="147" selection-end-column="28" />
+              <folding>
+                <element signature="e#35#692#0#PHP" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="admin_disability.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/assets/js/admin_disability.js">
+      <file leaf-file-name="SchoolReportController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SchoolReportController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-19.25926">
-              <caret line="26" column="7" selection-start-line="26" selection-start-column="7" selection-end-line="26" selection-end-column="7" />
-              <folding />
+            <state vertical-scroll-proportion="0.5483871">
+              <caret line="586" column="50" selection-start-line="586" selection-start-column="50" selection-end-line="586" selection-end-column="50" />
+              <folding>
+                <element signature="e#111#143#0#PHP" expanded="true" />
+                <marker date="1454632949747" expanded="true" signature="1951:2096" placeholder="SELECT emisc..school..." />
+                <marker date="1454632949747" expanded="true" signature="3960:4120" placeholder="SELECT DISTI..lwd..." />
+                <marker date="1454632949747" expanded="true" signature="4684:4752" placeholder="SELECT MAX(y..school_has_snt..." />
+                <marker date="1454632949747" expanded="true" signature="4808:4894" placeholder="SELECT * FRO..school_has_snt..." />
+                <marker date="1454632949747" expanded="true" signature="5388:5535" placeholder="SELECT std, ..lwd_belongs_to_school..." />
+                <marker date="1454632949747" expanded="true" signature="5840:5991" placeholder="SELECT room_..room_state..." />
+                <marker date="1454632949747" expanded="true" signature="9224:9402" placeholder="SELECT sex, ..." />
+                <marker date="1454632949747" expanded="true" signature="11100:11133" placeholder="select * fro..disability_category..." />
+                <marker date="1454632949747" expanded="true" signature="20780:20836" placeholder="SELECT * FRO..room_state..." />
+                <marker date="1454632949747" expanded="true" signature="23920:24065" placeholder="SELECT emisc..school..." />
+                <marker date="1454632949747" expanded="true" signature="28977:29045" placeholder="SELECT iddis..disability_category..." />
+                <marker date="1454632949747" expanded="true" signature="32970:33022" placeholder="SELECT iddis..disability..." />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="global.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/web/assets/js/global.js">
+      <file leaf-file-name="LiuggioExcelBundle.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/vendor/liuggio/ExcelBundle/Liuggio/ExcelBundle/LiuggioExcelBundle.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="28" column="22" selection-start-line="18" selection-start-column="20" selection-end-line="28" selection-end-column="22" />
+            <state vertical-scroll-proportion="-0.0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -181,13 +192,16 @@
         <option value="$PROJECT_DIR$/app/Resources/views/school/materials/edit_resource_material.html.twig" />
         <option value="$PROJECT_DIR$/src/AppBundle/Form/Type/DisabilityType.php" />
         <option value="$PROJECT_DIR$/app/Resources/views/admin/settings/admin_settings_main.html.twig" />
-        <option value="$PROJECT_DIR$/app/Resources/views/admin/settings/edit_disability.html.twig" />
         <option value="$PROJECT_DIR$/src/AppBundle/Controller/AdminController.php" />
         <option value="$PROJECT_DIR$/web/assets/js/admin.js" />
         <option value="$PROJECT_DIR$/web/assets/js/admin_disability.js" />
         <option value="$PROJECT_DIR$/app/Resources/views/admin/settings/admin_disabilities.html.twig" />
-        <option value="$PROJECT_DIR$/src/AppBundle/Controller/SettingsController.php" />
         <option value="$PROJECT_DIR$/app/Resources/views/base.html.twig" />
+        <option value="$PROJECT_DIR$/src/AppBundle/Controller/SettingsController.php" />
+        <option value="$PROJECT_DIR$/app/Resources/views/admin/settings/edit_disability.html.twig" />
+        <option value="$PROJECT_DIR$/src/AppBundle/Helpers/FindDistrictForm.php" />
+        <option value="$PROJECT_DIR$/src/AppBundle/Helpers/ExportXLS.php" />
+        <option value="$PROJECT_DIR$/src/AppBundle/Controller/SchoolReportController.php" />
       </list>
     </option>
   </component>
@@ -273,7 +287,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="web" />
+              <option name="myItemId" value="vendor" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -287,11 +301,23 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="web" />
+              <option name="myItemId" value="vendor" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="assets" />
+              <option name="myItemId" value="liuggio" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ExcelBundle" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Liuggio" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ExcelBundle" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -306,24 +332,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="LWD" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="LWD" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="AppBundle" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -344,10 +352,6 @@
               <option name="myItemId" value="AppBundle" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Controller" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -407,7 +411,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
+              <option name="myItemId" value="school" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -433,11 +437,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="admin" />
+              <option name="myItemId" value="school" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="settings" />
+              <option name="myItemId" value="learners" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -553,9 +557,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.59354836">
           <caret line="45" column="32" selection-start-line="45" selection-start-column="32" selection-end-line="45" selection-end-column="32" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#2;n#!!top" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -621,27 +623,116 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/AccessController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.0048387097">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/UserController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.5516129">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1446811364495" expanded="true" signature="1190:1236" placeholder="SELECT iddis..district..." />
+            <marker date="1446811364495" expanded="true" signature="3598:3644" placeholder="SELECT iddis..district..." />
+            <marker date="1446811364495" expanded="true" signature="3689:3812" placeholder="SELECT ufirs..fos_user..." />
+            <marker date="1446811364495" expanded="true" signature="7258:7289" placeholder="SELECT * FRO..${$accessLevel}..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Resources/views/base.html.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.0545454">
+          <caret line="77" column="77" selection-start-line="77" selection-start-column="77" selection-end-line="77" selection-end-column="77" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/AdminController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-13.076923">
+          <caret line="120" column="53" selection-start-line="120" selection-start-column="53" selection-end-line="120" selection-end-column="53" />
+          <folding>
+            <marker date="1454620953074" expanded="true" signature="2460:2553" placeholder="SELECT id, u..fos_user$..." />
+            <marker date="1454620953074" expanded="true" signature="2903:2931" placeholder="SELECT enabl..fos_user..." />
+            <marker date="1454620953074" expanded="true" signature="3635:3662" placeholder="SELECT emisc..school..." />
+            <marker date="1454620953074" expanded="true" signature="3700:3723" placeholder="SELECT idzon..zone..." />
+            <marker date="1454620953074" expanded="true" signature="3768:3803" placeholder="SELECT iddis..disability..." />
+            <marker date="1454620953074" expanded="true" signature="3846:3899" placeholder="SELECT iddis..disability_category..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SettingsController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-57.320755">
+          <caret line="168" column="71" selection-start-line="168" selection-start-column="71" selection-end-line="168" selection-end-column="71" />
+          <folding>
+            <element signature="e#149#181#0#PHP" expanded="true" />
+            <marker date="1454625129568" expanded="true" signature="973:1025" placeholder="SELECT iddis..disability..." />
+            <marker date="1454625129568" expanded="true" signature="2228:2296" placeholder="SELECT iddis..disability_category..." />
+            <marker date="1454625129568" expanded="true" signature="2356:2389" placeholder="SELECT idnee..need..." />
+            <marker date="1454625129568" expanded="true" signature="2610:2647" placeholder="SELECT idlev..level..." />
+            <marker date="1454625129568" expanded="true" signature="2881:2931" placeholder="SELECT * FRO..disability..." />
+            <marker date="1454625129568" expanded="true" signature="3119:3183" placeholder="SELECT idnee..disability_has_need..." />
+            <marker date="1454625129568" expanded="true" signature="3312:3377" placeholder="SELECT idlev..disability_has_level..." />
+            <marker date="1454625129568" expanded="true" signature="4842:4923" placeholder="DELETE FROM ..." />
+            <marker date="1454625129568" expanded="true" signature="5620:5699" placeholder="DELETE FROM ..." />
+            <marker date="1454625129568" expanded="true" signature="6895:6936" placeholder="INSERT INTO `level`..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/Resources/views/admin/settings/edit_disability.html.twig">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.9780776">
-          <caret line="29" column="107" selection-start-line="29" selection-start-column="107" selection-end-line="29" selection-end-column="107" />
+        <state vertical-scroll-proportion="0.7225807">
+          <caret line="41" column="93" selection-start-line="41" selection-start-column="93" selection-end-line="41" selection-end-column="93" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Resources/views/admin/settings/admin_disabilities.html.twig">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.056603">
+        <state vertical-scroll-proportion="0.87096775">
           <caret line="36" column="75" selection-start-line="36" selection-start-column="75" selection-end-line="36" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Resources/views/school/learners/learners_main.html.twig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.61538464">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Form/Type/DisabilityType.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.4905663">
+          <caret line="43" column="16" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Helpers/FindDistrictForm.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.7692308">
+          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SchoolController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-8.145454">
-          <caret line="34" column="0" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="32" />
+        <state vertical-scroll-proportion="-3.581818">
+          <caret line="945" column="46" selection-start-line="945" selection-start-column="35" selection-end-line="945" selection-end-column="46" />
           <folding>
+            <element signature="e#133#192#0#PHP" expanded="true" />
             <marker date="1454614356848" expanded="true" signature="1589:1688" placeholder="SELECT * FRO..school..." />
             <marker date="1454614356848" expanded="true" signature="1755:1812" placeholder="SELECT year ..." />
             <marker date="1454614356848" expanded="true" signature="1842:2025" placeholder="SELECT count..lwd..." />
@@ -676,75 +767,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/AppBundle/Form/Type/DisabilityType.php">
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Helpers/ExportXLS.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.4905663">
-          <caret line="43" column="16" selection-start-line="43" selection-start-column="16" selection-end-line="43" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/AdminController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-17.692308">
-          <caret line="126" column="0" selection-start-line="126" selection-start-column="0" selection-end-line="126" selection-end-column="0" />
+        <state vertical-scroll-proportion="-6.6792455">
+          <caret line="147" column="28" selection-start-line="147" selection-start-column="28" selection-end-line="147" selection-end-column="28" />
           <folding>
-            <marker date="1454620953074" expanded="true" signature="2460:2553" placeholder="SELECT id, u..fos_user$..." />
-            <marker date="1454620953074" expanded="true" signature="2903:2931" placeholder="SELECT enabl..fos_user..." />
-            <marker date="1454620953074" expanded="true" signature="3635:3662" placeholder="SELECT emisc..school..." />
-            <marker date="1454620953074" expanded="true" signature="3700:3723" placeholder="SELECT idzon..zone..." />
-            <marker date="1454620953074" expanded="true" signature="3768:3803" placeholder="SELECT iddis..disability..." />
-            <marker date="1454620953074" expanded="true" signature="3846:3899" placeholder="SELECT iddis..disability_category..." />
+            <element signature="e#35#692#0#PHP" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SettingsController.php">
+    <entry file="file://$PROJECT_DIR$/vendor/phpoffice/phpexcel/Classes/PHPExcel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.3584905">
-          <caret line="167" column="79" selection-start-line="167" selection-start-column="79" selection-end-line="167" selection-end-column="79" />
-          <folding>
-            <element signature="e#149#181#0#PHP" expanded="true" />
-            <marker date="1454623106448" expanded="true" signature="973:1025" placeholder="SELECT iddis..disability..." />
-            <marker date="1454623106448" expanded="true" signature="2228:2296" placeholder="SELECT iddis..disability_category..." />
-            <marker date="1454623106448" expanded="true" signature="2356:2389" placeholder="SELECT idnee..need..." />
-            <marker date="1454623106448" expanded="true" signature="2580:2617" placeholder="SELECT idlev..level..." />
-            <marker date="1454623106448" expanded="true" signature="2836:2886" placeholder="SELECT * FRO..disability..." />
-            <marker date="1454623106448" expanded="true" signature="3074:3138" placeholder="SELECT idnee..disability_has_need..." />
-            <marker date="1454623106448" expanded="true" signature="3267:3332" placeholder="SELECT idlev..disability_has_level..." />
-            <marker date="1454623106448" expanded="true" signature="4797:4878" placeholder="DELETE FROM ..." />
-            <marker date="1454623106448" expanded="true" signature="5575:5654" placeholder="DELETE FROM ..." />
-            <marker date="1454623106448" expanded="true" signature="6850:6891" placeholder="INSERT INTO `level`..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/AccessController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.0048387097">
+        <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/UserController.php">
+    <entry file="file://$PROJECT_DIR$/vendor/liuggio/ExcelBundle/Liuggio/ExcelBundle/LiuggioExcelBundle.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.5516129">
+        <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1446811364495" expanded="true" signature="1190:1236" placeholder="SELECT iddis..district..." />
-            <marker date="1446811364495" expanded="true" signature="3598:3644" placeholder="SELECT iddis..district..." />
-            <marker date="1446811364495" expanded="true" signature="3689:3812" placeholder="SELECT ufirs..fos_user..." />
-            <marker date="1446811364495" expanded="true" signature="7258:7289" placeholder="SELECT * FRO..${$accessLevel}..." />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Resources/views/base.html.twig">
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SchoolReportController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.37732658">
-          <caret line="77" column="77" selection-start-line="77" selection-start-column="77" selection-end-line="77" selection-end-column="77" />
-          <folding />
+        <state vertical-scroll-proportion="0.5483871">
+          <caret line="586" column="50" selection-start-line="586" selection-start-column="50" selection-end-line="586" selection-end-column="50" />
+          <folding>
+            <element signature="e#111#143#0#PHP" expanded="true" />
+            <marker date="1454632949747" expanded="true" signature="1951:2096" placeholder="SELECT emisc..school..." />
+            <marker date="1454632949747" expanded="true" signature="3960:4120" placeholder="SELECT DISTI..lwd..." />
+            <marker date="1454632949747" expanded="true" signature="4684:4752" placeholder="SELECT MAX(y..school_has_snt..." />
+            <marker date="1454632949747" expanded="true" signature="4808:4894" placeholder="SELECT * FRO..school_has_snt..." />
+            <marker date="1454632949747" expanded="true" signature="5388:5535" placeholder="SELECT std, ..lwd_belongs_to_school..." />
+            <marker date="1454632949747" expanded="true" signature="5840:5991" placeholder="SELECT room_..room_state..." />
+            <marker date="1454632949747" expanded="true" signature="9224:9402" placeholder="SELECT sex, ..." />
+            <marker date="1454632949747" expanded="true" signature="11100:11133" placeholder="select * fro..disability_category..." />
+            <marker date="1454632949747" expanded="true" signature="20780:20836" placeholder="SELECT * FRO..room_state..." />
+            <marker date="1454632949747" expanded="true" signature="23920:24065" placeholder="SELECT emisc..school..." />
+            <marker date="1454632949747" expanded="true" signature="28977:29045" placeholder="SELECT iddis..disability_category..." />
+            <marker date="1454632949747" expanded="true" signature="32970:33022" placeholder="SELECT iddis..disability..." />
+          </folding>
         </state>
       </provider>
     </entry>
