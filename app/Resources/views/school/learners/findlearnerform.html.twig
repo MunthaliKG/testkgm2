@@ -1,5 +1,15 @@
 
 {{ form_start(form, {'attr':{'class':'form-inline', 'role':'form', 'id':'learnerPersonalForm'}}) }}
 {{ form_label(form.learner, null, {'label_attr':{'class':'sr-only'}}) }}
-{{ form_widget(form.learner, {'attr':{'class':'form-control input-sm'}}) }}
+{{ form_widget(form.learner, {'attr':{'class':'form-control input-sm'}}) }}<br>
+<div class="input-group input-group-sm">
+    {{ form_errors(form.idlwd)}}
+    {{ form_widget(form.idlwd, {'attr':{'class':'form-control'}})}}
+    <div class="input-group-btn">
+        {{ form_widget(form.find,{'attr':{'class':'btn btn-sm'}})
+        }}
+    </div>
+</div>
+{{ form_label(form.idlwd, null, {'label_attr':{'class':'sr-only'}}) }}
+{{ form_widget(form.idlwd, {'attr':{'class':'form-control input-sm'}}) }}<br>
 {{ form_end(form) }}

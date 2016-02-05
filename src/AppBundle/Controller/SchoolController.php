@@ -364,11 +364,32 @@ class SchoolController extends Controller{
      */
     public function findLearnerFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
         $connection = $this->get('database_connection');
-        $thisYear = date('Y');
-        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  lwd NATURAL JOIN lwd_belongs_to_school lbts
-            LEFT JOIN school_exit ON lwd.idlwd = school_exit.idlwd AND lbts.emiscode = school_exit.emiscode AND 
-            lbts.year <= school_exit.year WHERE school_exit.idlwd IS NULL AND
-            school_exit.emiscode IS NULL AND lbts.emiscode = ?', array($emisCode));
+        $thisYear;
+        if($request->getSession()->has('school_year')){
+            $thisYear = $request->getSession()->get('school_year');
+        }
+        else{
+            return $this->redirectToRoute('school_learners',array('emisCode'=>$emisCode), 301);
+        }
+//        $teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name, year '
+//            . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ? AND '
+//            . 'idsnt NOT IN (SELECT idsnt FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?) '
+//            . 'UNION '
+//            . 'SELECT idsnt,sfirst_name,slast_name, year '
+//            . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?',
+//            array($emisCode, $year-1,$emisCode, $year,$emisCode, $year));
+        $allExited = "SELECT idlwd FROM lwd_belongs_to_school lbts WHERE emiscode=? (lbts.idlwd IN school_exit WHERE ".
+            "school_exit.year >= lbts.year) ";
+        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  (lwd NATURAL JOIN lwd_belongs_to_school'.
+        ' WHERE emiscode = ? and year = ? AND idlwd NOT IN (SELECT idlwd FROM lwd_belongs_to_school WHERE emiscode = ? AND year = ?)'.
+        " UNION (SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school WHERE emiscode = ? and year = ?))".
+        " WHERE idlwd NOT IN $allExited", array($emisCode, $thisYear-1, $emisCode, $thisYear, $emisCode, $thisYear, $emisCode));
+
+
+//        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM  lwd NATURAL JOIN lwd_belongs_to_school lbts
+//            LEFT JOIN school_exit ON lwd.idlwd = school_exit.idlwd AND lbts.emiscode = school_exit.emiscode AND
+//            lbts.year <= school_exit.year WHERE school_exit.idlwd IS NULL AND
+//            school_exit.emiscode IS NULL AND lbts.emiscode = ?', array($emisCode));
 
         //create the associative array to be used for the select list
         $choices = array();
@@ -385,6 +406,12 @@ class SchoolController extends Controller{
             'placeholder'=>'Choose Learner',
             'choices'=> $choices,
             ))
+        ->add('idlwd', 'text', array(
+            'label' => 'Learner Identification Number',
+            'attr' => array('placeholder'=>'Learner Id. No. (LIN)'),
+            'required' => false
+        ))
+        ->add('find', 'submit')
         ->getForm();
 
         $form->handleRequest($request);
