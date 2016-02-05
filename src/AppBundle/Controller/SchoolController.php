@@ -440,7 +440,7 @@ class SchoolController extends Controller{
         if($form->isValid()){
             $formData = $form->getData();
             $teacherId = $formData['teacher'];
-            return $this->redirectToRoute('add_teacher',array('emisCode'=>$emisCode,'teacherId'=>$teacherId));
+            return $this->redirectToRoute('add_teacher',array('emisCode'=>$emisCode,'teacherId'=>$teacherId),301);
         }
 
         return $this->render('school/specialist_teacher/findteacherform.html.twig', array(
