@@ -283,7 +283,12 @@ class DefaultController extends Controller
      *@Route("/set_year/{year}", name="set_year", condition="request.isXmlHttpRequest()", options={"expose"= true})
      */
     public function setYearAction(Request $request, $year){
-        $request->getSession()->set('school_year', $year);
-        return new \Symfony\Component\HttpFoundation\JsonResponse(array('result'=>'success'));
+        $thisYear = date('Y');
+        $result = 'invalid';
+        if(preg_match('#\d{4}#', $year) == 1 && $year <= $thisYear){
+            $request->getSession()->set('school_year', $year);
+            $result = 'success';
+        }
+        return new \Symfony\Component\HttpFoundation\JsonResponse(array('result'=>$result));
     }
 }
