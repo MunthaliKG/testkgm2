@@ -20,53 +20,47 @@ class RoomStateType extends AbstractType
 		)		
                 ->add('enough_light', 'choice', array(
 			'label' => 'Enough Lighting',
-                    'placeholder' => '--Lighting--',
 			'choices' => array('no'=>'No','yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => false,
+			'expanded' => true,
 			'multiple' => false,
 			)
                 )
 		->add('enough_space', 'choice', array(
 			'label' => 'Enough Space',
-                    'placeholder' => '--Space--',
 			'choices' => array('no'=>'No','yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => false,
+			'expanded' => true,
 			'multiple' => false,
 			)
                 )
                 ->add('noise_free', 'choice', array(
 			'label' => 'Noise free',
 			'choices' => array('no'=>'No','yes'=>'Yes'),
-                    'placeholder' => '--Noise free--',
 			'constraints' => array(new NotBlank()),
-			'expanded' => false,
+			'expanded' => true,
 			'multiple' => false,
 			)
                 )
                 ->add('adaptive_chairs', 'choice', array(
 			'label' => 'Adaptive Chairs',
-                    'placeholder' => '--Chairs--',
                         'choices' => array('no'=>'No','yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => false,
+			'expanded' => true,
 			'multiple' => false,		
 			)
                 )
                 ->add('access', 'choice', array(
 			'label' => 'Accessible',
 			'choices' => array('no'=>'No','yes'=>'Yes'),
-                    'placeholder' => '--Accessibility--',
 			'constraints' => array(new NotBlank()),
-			'expanded' => false,
+			'expanded' => true,
 			'multiple' => false,
 			)
                 )
                 ->add('room_type', 'choice', array(
 			'label' => 'Room Type',
 			'choices' => array('Open air'=>'Open air','Permanent'=>'Permanent', 'Temporary'=>'Temporary'),
-                    'placeholder' => '--Room type--',
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,
 			'multiple' => false,
@@ -74,10 +68,9 @@ class RoomStateType extends AbstractType
                 )
                 ->add('enough_ventilation', 'choice', array(
 			'label' => 'Enough Ventilation',
-                    'placeholder' => '--Ventilation--',
 			'choices' => array('no'=>'No','yes'=>'Yes'),
 			'constraints' => array(new NotBlank()),
-			'expanded' => false,
+			'expanded' => true,
 			'multiple' => false,
 			)
                 )                
