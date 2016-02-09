@@ -244,6 +244,10 @@ class SchoolController extends Controller{
                             ->add('resourceUpdated', 'Education support item ('.$defaultData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
                         return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$defaultData['idneed_2']], 301);
                     }
+                } else {
+                    $request->getSession()->getFlashBag()
+                           ->add('resourceExists', 'Resource with id ('.$formData['idneed'].') already exists');
+                    return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>'new'], 301);
                 }
             }
             //if this is a not new need being added, we want to make the id field uneditable
