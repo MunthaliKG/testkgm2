@@ -201,13 +201,13 @@ class SchoolController extends Controller{
 
                 
                 //If idneed is disabled do the right thing
-                if ($needId == 'new'){
-                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
-                            ->findOneByIdneed($formData['idneed']));
-                }else{//pass hidden value if idneed is hidden                   
-                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
-                            ->findOneByIdneed($defaultData['idneed_2']));
-                }
+//                if ($needId == 'new'){
+//                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
+//                            ->findOneByIdneed($formData['idneed']));
+//                }else{//pass hidden value if idneed is hidden                   
+//                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
+//                            ->findOneByIdneed($defaultData['idneed_2']));
+//                }
                 //$need->setDateProcured($formData['date_procured']);
                 $session = $request->getSession();
                 //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
@@ -244,6 +244,10 @@ class SchoolController extends Controller{
                             ->add('resourceUpdated', 'Education support item ('.$defaultData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
                         return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$defaultData['idneed_2']], 301);
                     }
+                } else {
+                    $request->getSession()->getFlashBag()
+                           ->add('resourceExists', 'Resource with id ('.$formData['idneed'].') already exists');
+                    return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>'new'], 301);
                 }
             }
             //if this is a not new need being added, we want to make the id field uneditable
@@ -568,7 +572,7 @@ class SchoolController extends Controller{
                     $schoolHasSnt->setSntType($formData['snt_type']);
                 } 
                 if ($formData['teacher_type'] == 'regular') {//insert CPD training data if teacher is regular
-                    //$schoolHasSnt->setSntType(null);
+                    $schoolHasSnt->setSntType(null);
                     $schoolHasSnt->setNoOfVisits(null);
                 }
                 if ($formData['snt_type'] == 'Itinerant') {//insert number of visits if SNT is itinerant

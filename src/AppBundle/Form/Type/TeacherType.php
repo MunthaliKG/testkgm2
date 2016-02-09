@@ -95,7 +95,7 @@ class TeacherType extends AbstractType
 			'label' => 'save',
 			)
 		)
-                //remoe some form field before submiting
+                //remove some form fields before submiting
                 ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 			$teacher = $event->getData();
 			$form = $event->getForm();
@@ -114,6 +114,14 @@ class TeacherType extends AbstractType
                                     //'constraints' => array(new NotBlank()),
                                     'multiple' => false,)
                             );
+                            if($teacher['snt_type'] == 'Stationed'){
+                            $form->add('no_of_visits', 'integer', array(
+                                    'label' => 'No of Visits',
+                                    'attr' => array('min'=>0),
+                                    'required' => false,
+                                    )
+                            );
+                        }
                         } 
                         if($teacher['teacher_type'] == 'regular') {
                             //$form->remove('year_started');
@@ -157,15 +165,7 @@ class TeacherType extends AbstractType
                                 //'constraints' => array(new NotBlank()),
                                 )
                             );
-                        }
-                        if($teacher['snt_type'] == 'Stationed'){
-                            $form->add('no_of_visits', 'integer', array(
-                                    'label' => 'No of Visits',
-                                    'attr' => array('min'=>0),
-                                    'required' => false,
-                                    )
-                            );
-                        }
+                        }                        
 		});
 	}
 	public function getName()

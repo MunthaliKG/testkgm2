@@ -92,7 +92,8 @@ class LearnerPersonalType extends AbstractType
                 'placeholder' => '--status of parent--',               
                 'choices' => array(
                         'living' => 'Living',
-                        'deceased' => 'Deceased'
+                        'deceased' => 'Deceased',
+                        'unknown' => 'Unknown'
                         ),
                 'constraints' => array(new NotBlank()),
                 ))
