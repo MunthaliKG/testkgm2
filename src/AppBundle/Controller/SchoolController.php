@@ -516,14 +516,15 @@ class SchoolController extends Controller{
         if($form2->isValid()){
             $formData = $form2->getData();
             $teacher;
-            $schoolHasSnt = new SchoolHasSnt();
+            
             //check if this record is being edited or created anew
             if($teacherId == 'new'){
-                    $teacher = new Snt();                    
+                $teacher = new Snt();
+                $schoolHasSnt = new SchoolHasSnt();
             }else{
                 //if it is being edited, then update the records that already exist 
                 $teacher = $this->getDoctrine()->getRepository('AppBundle:Snt')->findOneByIdsnt($teacherId);
-                //$schoolHasSnt = $this->getDoctrine()->getRepository('AppBundle:SchoolHasSnt')->findOneBy(array('idsnt'=>$teacherId, 'emiscode'=>$emisCode, 'year'=>$defaultData['year']->format('Y')));
+                $schoolHasSnt = $this->getDoctrine()->getRepository('AppBundle:SchoolHasSnt')->findOneBy(array('idsnt'=>$teacherId, 'emiscode'=>$emisCode, 'year'=>$defaultData['year']->format('Y')));
             }
 
             //set the fields for teacher
