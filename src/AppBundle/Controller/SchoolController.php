@@ -573,7 +573,7 @@ class SchoolController extends Controller{
                     $schoolHasSnt->setSntType($formData['snt_type']);
                 } 
                 if ($formData['teacher_type'] == 'regular') {//insert CPD training data if teacher is regular
-                    //$schoolHasSnt->setSntType(null);
+                    $schoolHasSnt->setSntType(null);
                     $schoolHasSnt->setNoOfVisits(null);
                 }
                 if ($formData['snt_type'] == 'Itinerant') {//insert number of visits if SNT is itinerant
