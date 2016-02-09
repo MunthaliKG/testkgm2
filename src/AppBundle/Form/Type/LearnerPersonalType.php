@@ -60,7 +60,7 @@ class LearnerPersonalType extends AbstractType
 		)
 		->add('distance_to_school', 'choice', array(
 			'label' => 'Estimated distance to school (Km)',
-			'choices' => array('<5'=>'Less than 5km', '1-5'=>'between 1 and 5km', '>5'=>'More than 5km'),
+			'choices' => array('<1'=>'Less than 1km', '1-5'=>'between 1 and 5km', '>5'=>'More than 5km'),
 			'constraints' => array(new NotBlank()),
 			)
 		)
