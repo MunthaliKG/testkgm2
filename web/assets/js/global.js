@@ -13,7 +13,7 @@ $(document).ready(function(e){
 		//function to display modal box prompting the user for the school year
 		var getYear = function(message){
 			bootbox.prompt(message, function(response){
-				if(response === null){
+				if(response === null || response.trim() === ""){
 					getYear("Please enter the school year:");
 				}else{
 					$.ajax({
