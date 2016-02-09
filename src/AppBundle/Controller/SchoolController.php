@@ -201,13 +201,13 @@ class SchoolController extends Controller{
 
                 
                 //If idneed is disabled do the right thing
-                if ($needId == 'new'){
-                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
-                            ->findOneByIdneed($formData['idneed']));
-                }else{//pass hidden value if idneed is hidden                   
-                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
-                            ->findOneByIdneed($defaultData['idneed_2']));
-                }
+//                if ($needId == 'new'){
+//                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
+//                            ->findOneByIdneed($formData['idneed']));
+//                }else{//pass hidden value if idneed is hidden                   
+//                    $need->setIdneed($this->getDoctrine()->getRepository('AppBundle:Need')
+//                            ->findOneByIdneed($defaultData['idneed_2']));
+//                }
                 //$need->setDateProcured($formData['date_procured']);
                 $session = $request->getSession();
                 //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
