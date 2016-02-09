@@ -87,6 +87,7 @@ class TeacherType extends AbstractType
                 ->add('no_of_visits', 'integer', array(
 			'label' => 'No of Visits',
 			'attr' => array('min'=>0),
+                        'required' => false,
 			'constraints' => array(new NotBlank()),
 			)
 		)
@@ -156,7 +157,15 @@ class TeacherType extends AbstractType
                                 //'constraints' => array(new NotBlank()),
                                 )
                             );
-                        }			
+                        }
+                        if($teacher['snt_type'] == 'Stationed'){
+                            $form->add('no_of_visits', 'integer', array(
+                                    'label' => 'No of Visits',
+                                    'attr' => array('min'=>0),
+                                    'required' => false,
+                                    )
+                            );
+                        }
 		});
 	}
 	public function getName()
