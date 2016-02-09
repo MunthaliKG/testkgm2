@@ -23,8 +23,11 @@ $(document).ready(function(e){
 			            if(data.result === 'success'){
 			            	bootbox.alert('The school year has been set');
 			            }
+                        else if(data.result === 'invalid'){
+                            getYear("Please enter a valid school year:");
+                        }
 			            else{
-			            	alert('there was an error setting the school year. Please try again. \n if the problem persists, contact the administrator');
+			            	bootbox.alert('there was an error setting the school year. Please try again. \n if the problem persists, contact the administrator');
 			            }
 			        })
 			        .fail(function (jqXHR, textStatus, errorThrown) {
