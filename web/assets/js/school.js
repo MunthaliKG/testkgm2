@@ -163,28 +163,36 @@ $(document).ready(function(){
                 }
 	});
         
-        //listen on resource form field to hide either available field or the quantity fields
-        $('#resourceRoom_available').change(function(event){ //check snt type
-            $('#resourceRoom_quantity_required').prop('disabled','disabled');
-            $('#resourceRoom_quantity_available').prop('disabled','disabled');
-            $('#resourceRoom_quantity_in_use').prop('disabled','disabled');
+	//listen on resource form field to hide either available field or the quantity fields
+	$('#resourceRoom_available').change(function(event){ //check snt type
+        var targets =
+            $('#resourceRoom_quantity_required, #resourceRoom_quantity_available, #resourceRoom_quantity_in_use');
+		if($(this).val().trim() !== ''){
+			targets.prop('disabled','disabled');
+		}
+        else{
+            targets.prop('disabled','');
+        }
 	});
-        $('#resourceRoom_quantity_available').change(function(event){ //check snt type
-            $('#resourceRoom_available').prop('disabled','disabled');            
-	});
-        $('#resourceRoom_quantity_in_use').change(function(event){ //check snt type
-            $('#resourceRoom_available').prop('disabled','disabled');            
-	});
-        $('#resourceRoom_quantity_required').change(function(event){ //check snt type
-            $('#resourceRoom_available').prop('disabled','disabled');            
+	$('#resourceRoom_quantity_available, #resourceRoom_quantity_in_use, #resourceRoom_quantity_required')
+			.change(function(event){ //check snt type
+                if($(this).val().trim() !== ''){
+                    $('#resourceRoom_available').prop('disabled','disabled');
+				}
+                else if($('#resourceRoom_quantity_available').val().trim() === ''
+                && $('#resourceRoom_quantity_in_use').val().trim() === ''
+                && $('#resourceRoom_quantity_required').val().trim() === ''){
+                    $('#resourceRoom_available').prop('disabled','');
+                }
+
 	});
         
-        // disabled some fields depending on prefilled data values of resources
-        if(($('#resourceRoom_quantity_required').val() !== '') || ($('#resourceRoom_quantity_available').val() !== '') || ($('#resourceRoom_quantity_in_use').val() !== '')){
-                $('#resourceRoom_available').prop('disabled','disabled');
+    // disabled some fields depending on prefilled data values of resources
+    if(($('#resourceRoom_quantity_required').val() !== '') || ($('#resourceRoom_quantity_available').val() !== '') || ($('#resourceRoom_quantity_in_use').val() !== '')){
+            $('#resourceRoom_available').prop('disabled','disabled');
 	}
-        if($('#resourceRoom_available').val() !== ''){
-	$('#resourceRoom_quantity_required').prop('disabled','disabled');
+    if($('#resourceRoom_available').val() !== ''){
+	        $('#resourceRoom_quantity_required').prop('disabled','disabled');
             $('#resourceRoom_quantity_available').prop('disabled','disabled');
             $('#resourceRoom_quantity_in_use').prop('disabled','disabled');
 	}

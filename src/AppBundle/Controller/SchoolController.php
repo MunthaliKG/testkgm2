@@ -41,7 +41,7 @@ class SchoolController extends Controller{
     public function schoolMainAction($emisCode, Request $request){
 
             $connection = $this->get('database_connection');
-            $schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
+            $schools =  $connection->fetchAll('SELECT school_name, address, emiscode, zone_name, district_name FROM school NATURAL JOIN zone
                     NATURAL JOIN district WHERE emiscode = ?',array($emisCode));
 
             $year = $connection->fetchAssoc("SELECT year FROM lwd_belongs_to_school ORDER BY year DESC");
@@ -385,13 +385,7 @@ class SchoolController extends Controller{
         else{
             return $this->redirectToRoute('school_learners',array('emisCode'=>$emisCode), 301);
         }
-//        $teachers = $connection->fetchAll('SELECT idsnt,sfirst_name,slast_name, year '
-//            . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ? AND '
-//            . 'idsnt NOT IN (SELECT idsnt FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?) '
-//            . 'UNION '
-//            . 'SELECT idsnt,sfirst_name,slast_name, year '
-//            . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?',
-//            array($emisCode, $year-1,$emisCode, $year,$emisCode, $year));
+
         $allExited = "SELECT idlwd FROM school_exit WHERE emiscode = ?";
         $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school'.
         ' WHERE emiscode = ? and year = ? AND idlwd NOT IN (SELECT idlwd FROM lwd_belongs_to_school WHERE emiscode = ? AND year = ?)'.
@@ -433,11 +427,7 @@ class SchoolController extends Controller{
         if($form->isValid()){
             $formData = $form->getData();
 
-            if($formData['learner'] != ''){
-                $learnerId = $formData['learner'];
-                return $this->redirectToRoute('edit_learner_personal',array('emisCode'=>$emisCode,'learnerId'=>$learnerId));
-            }
-            elseif($formData['idlwd'] != ''){
+            if($form->get('find')->isClicked() && $formData['idlwd'] != ''){
                 $learner = $connection->fetchAssoc("SELECT idlwd FROM lwd_belongs_to_school WHERE idlwd = ? ORDER BY year DESC",
                     array($formData['idlwd']));
                 if(!$learner || count($learner) == 0){
@@ -447,6 +437,11 @@ class SchoolController extends Controller{
                     return $this->redirectToRoute('edit_learner_personal',array('emisCode'=>$emisCode,'learnerId'=>$formData['idlwd']));
                 }
             }
+            elseif($formData['learner'] != ''){
+                $learnerId = $formData['learner'];
+                return $this->redirectToRoute('edit_learner_personal',array('emisCode'=>$emisCode,'learnerId'=>$learnerId));
+            }
+
 
         }
         return $this->render('school/learners/findlearnerform.html.twig', array(

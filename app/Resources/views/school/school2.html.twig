@@ -20,7 +20,7 @@
                 {% set schoolInfo = app.session.get('schoolInfo') %}
                 <b>Selected School: </b>
                 {% if schoolInfo is not null %}
-                     {{ schoolInfo.school_name }} | {{ schoolInfo.zone_name }} Zone | {{ schoolInfo.district_name }}   
+                     {{ schoolInfo.school_name }} ({{ schoolInfo.emiscode }}) | {{ schoolInfo.zone_name }} Zone | {{ schoolInfo.district_name }}
                 {% endif %}    
                 
             {% endblock %}
