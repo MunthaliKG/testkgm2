@@ -386,10 +386,16 @@ class SchoolController extends Controller{
             return $this->redirectToRoute('school_learners',array('emisCode'=>$emisCode), 301);
         }
 
-        $allExited = "SELECT idlwd FROM school_exit WHERE emiscode = ?";
-        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school'.
-        ' WHERE emiscode = ? and year = ? AND idlwd NOT IN (SELECT idlwd FROM lwd_belongs_to_school WHERE emiscode = ? AND year = ?)'.
-        " AND idlwd NOT IN ($allExited) UNION (SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school WHERE emiscode = ? and year = ? AND idlwd NOT IN ($allExited)) ORDER by first_name ASC"
+        $allExited = "SELECT school_exit.idlwd FROM school_exit, lwd_belongs_to_school WHERE school_exit.emiscode = ? "               
+                . "AND lwd_belongs_to_school.year <= school_exit.year";
+        $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name '
+                . 'FROM lwd NATURAL JOIN lwd_belongs_to_school'.
+        ' WHERE emiscode = ? and year = ? AND idlwd NOT IN '
+                . '(SELECT idlwd FROM lwd_belongs_to_school WHERE emiscode = ? AND year = ?)'.
+        " AND idlwd NOT IN ($allExited) "
+                . "UNION "
+                . "(SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school "
+                . "WHERE emiscode = ? and year = ? AND idlwd NOT IN ($allExited)) ORDER by first_name ASC"
         , array($emisCode, $thisYear-1, $emisCode, $thisYear, $emisCode, $emisCode, $thisYear, $emisCode));
 
 
