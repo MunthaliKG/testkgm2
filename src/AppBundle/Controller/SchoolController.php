@@ -46,14 +46,23 @@ class SchoolController extends Controller{
 
             $year = $connection->fetchAssoc("SELECT year FROM lwd_belongs_to_school ORDER BY year DESC");
 
-            $sumquery = 'SELECT count(iddisability) FROM lwd 
-            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-            WHERE emiscode = ? AND year = ?';
+            $sumquery = 'SELECT count(iddisability) FROM lwd NATURAL JOIN lwd_has_disability '
+                    . 'NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school '
+                    . 'WHERE emiscode = ? AND year = ? AND idlwd '
+                    . 'NOT IN (select idlwd from school_exit WHERE emiscode = ? '
+                    . 'AND lwd_belongs_to_school.year <= school_exit.year)';
+//                    'SELECT count(iddisability) FROM lwd 
+//            NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
+//            WHERE emiscode = ? AND year = ?';
             //get the latest year recorded for learners
     
-            $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability) as num_learners,($sumquery) as total 
-                    FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN lwd_belongs_to_school
-                    WHERE emiscode = ? AND year = ? GROUP BY iddisability", array($emisCode,$year['year'],$emisCode,$year['year']));
+            $disabilities = $connection->fetchAll("SELECT disability_name, count(iddisability)as num_learners,($sumquery) as total 
+                FROM lwd NATURAL JOIN lwd_has_disability NATURAL JOIN disability 
+                NATURAL JOIN lwd_belongs_to_school
+                    WHERE emiscode = ? AND year = ? 
+                    AND idlwd NOT IN (select idlwd from school_exit WHERE emiscode = ? AND lwd_belongs_to_school.year <= school_exit.year) 
+                    GROUP BY iddisability", 
+                    array($emisCode,$year['year'],$emisCode,$emisCode,$year['year'],$emisCode));
             $session = $request->getSession();
             //keep the emiscode of the selected school in the session so we can always redirect to it until the next school is chosen
             $session->set('emiscode', $emisCode);
@@ -85,11 +94,12 @@ class SchoolController extends Controller{
      */
         public function findResourceFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
     $connection = $this->get('database_connection');
-        $needs = $connection->fetchAll('SELECT * FROM need n NATURAL JOIN school_has_need s WHERE s.emiscode = ?', array($emisCode));
+        $needs = $connection->fetchAll('SELECT * FROM need n NATURAL JOIN school_has_need s WHERE s.emiscode = ? ORDER by needname ASC', array($emisCode));
                    
         $choices = array();
         foreach ($needs as $key => $row) {
-            $choices[$row['idneed']] = $row['idneed'].': '.$row['needname'];
+            $choices[$row['idneed']] = $row['needname'];
+                    //$row['idneed'].': '.$row['needname'];
         }
 
         //create the form for choosing an existing student to edit
@@ -118,7 +128,7 @@ class SchoolController extends Controller{
      */
         public function findMaterialFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
     $connection = $this->get('database_connection');
-        $materials = $connection->fetchAll('SELECT room_id, year FROM room_state WHERE emiscode = ?', array($emisCode));
+        $materials = $connection->fetchAll('SELECT room_id, year FROM room_state WHERE emiscode = ? ORDER by room_id ASC', array($emisCode));
                    //room_id, year, enough_light, enough_space, adaptive_chairs, accessible, enough_ventilation, other_observations
         //create the associative array to be used for the select list
         $choices = array();
@@ -168,7 +178,7 @@ class SchoolController extends Controller{
             $whereClause = '';
             if($needId == 'new'){
                 $paramList[] = $emisCode;
-                $whereClause = 'WHERE (idneed) NOT IN (SELECT idneed FROM school_has_need where emiscode = ?)';
+                $whereClause = 'WHERE (idneed) NOT IN (SELECT idneed FROM school_has_need where emiscode = ?) ORDER by idneed ASC';
             }
             $needs2 = $connection->fetchAll("SELECT idneed, needname FROM need $whereClause", $paramList);
             
@@ -385,7 +395,7 @@ class SchoolController extends Controller{
         $allExited = "SELECT idlwd FROM school_exit WHERE emiscode = ?";
         $students = $connection->fetchAll('SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school'.
         ' WHERE emiscode = ? and year = ? AND idlwd NOT IN (SELECT idlwd FROM lwd_belongs_to_school WHERE emiscode = ? AND year = ?)'.
-        " AND idlwd NOT IN ($allExited) UNION (SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school WHERE emiscode = ? and year = ? AND idlwd NOT IN ($allExited))"
+        " AND idlwd NOT IN ($allExited) UNION (SELECT lwd.idlwd,first_name,last_name FROM lwd NATURAL JOIN lwd_belongs_to_school WHERE emiscode = ? and year = ? AND idlwd NOT IN ($allExited)) ORDER by first_name ASC"
         , array($emisCode, $thisYear-1, $emisCode, $thisYear, $emisCode, $emisCode, $thisYear, $emisCode));
 
 
@@ -457,7 +467,7 @@ class SchoolController extends Controller{
                     . 'idsnt NOT IN (SELECT idsnt FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?) '
                     . 'UNION '
                     . 'SELECT idsnt,sfirst_name,slast_name, year '
-                    . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ?', 
+                    . 'FROM snt NATURAL JOIN school_has_snt WHERE emiscode = ? AND year = ? ORDER BY sfirst_name ASC', 
                     array($emisCode, $year-1,$emisCode, $year,$emisCode, $year));
         } else {
             return $this->redirectToRoute('find_teacher_form',['emisCode'=>$emisCode], 301);
@@ -466,7 +476,8 @@ class SchoolController extends Controller{
 
         $choices = array();
         foreach ($teachers as $key => $row) {
-            $choices[$row['idsnt']] = $row['year'].': '.$row['sfirst_name'].' '.$row['slast_name'];
+            $choices[$row['idsnt']] = $row['sfirst_name'].' '.$row['slast_name'];
+                    //$row['year'].': '.$row['sfirst_name'].' '.$row['slast_name'];
         }
 
         //create the form for choosing an existing teacher to edit      
@@ -985,7 +996,7 @@ class SchoolController extends Controller{
      */
     public function populateSchoolsAction($districtId){
         $connection = $this->get('database_connection');
-        $schools = $connection->fetchAll("SELECT emiscode, school_name FROM school WHERE iddistrict = ?", array($districtId));
+        $schools = $connection->fetchAll("SELECT emiscode, school_name FROM school WHERE iddistrict = ? ORDER BY school_name ASC", array($districtId));
         $html = '';
         if($schools){
             $this->get('session')->getFlashBag()->set('schools', $schools);
@@ -1000,7 +1011,7 @@ class SchoolController extends Controller{
      */
     public function populateLearnersAction($schoolId){
         $connection = $this->get('database_connection');
-        $learners = $connection->fetchAll("SELECT idlwd, first_name, last_name FROM lwd_belongs_to_school NATURAL JOIN lwd WHERE emiscode = ?", array($schoolId));
+        $learners = $connection->fetchAll("SELECT idlwd, first_name, last_name FROM lwd_belongs_to_school NATURAL JOIN lwd WHERE emiscode = ? ORDER BY first_name ASC", array($schoolId));
         $html = '';
         if($learners){
             $this->get('session')->getFlashBag()->set('learners', $learners);
@@ -1017,7 +1028,7 @@ class SchoolController extends Controller{
     public function populateLevelsAction($disabilityId){
         $connection = $this->get('database_connection');
         $levels = $connection->fetchAll("SELECT idlevel, level_name FROM disability_has_level NATURAL JOIN level 
-                        WHERE iddisability = ?", array($disabilityId));
+                        WHERE iddisability = ? ORDER BY level_name ASC", array($disabilityId));
         $html = '';
         if($levels){
             $this->get('session')->getFlashBag()->set('levels', $levels);
