@@ -41,7 +41,7 @@ class SchoolController extends Controller{
     public function schoolMainAction($emisCode, Request $request){
 
             $connection = $this->get('database_connection');
-            $schools =  $connection->fetchAll('SELECT * FROM school NATURAL JOIN zone
+            $schools =  $connection->fetchAll('SELECT school_name, address, emiscode, zone_name, district_name FROM school NATURAL JOIN zone
                     NATURAL JOIN district WHERE emiscode = ?',array($emisCode));
 
             $year = $connection->fetchAssoc("SELECT year FROM lwd_belongs_to_school ORDER BY year DESC");
