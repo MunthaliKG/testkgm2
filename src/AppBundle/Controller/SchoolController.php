@@ -957,10 +957,10 @@ class SchoolController extends Controller{
                 $this->addFlash('exitMessage', 'Exit of student '.$formData['idlwd'].$schoolName.' recorded');
             }
             catch(DBALException $e){
-                if(strpos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
+                if(stripos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
                     $error = 'An exit record for a learner with LIN '.$formData['idlwd'].' has already been entered';
                 }
-                elseif(strpos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
+                elseif(stripos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
                     $error =  "A student with the LIN ".$formData['idlwd']." does not exist at this school";
                 }
                 else{
