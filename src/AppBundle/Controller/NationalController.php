@@ -144,7 +144,8 @@ class NationalController extends Controller{
                                 $options['rmAdaptiveChairs'] = $dataConverter->countArray($rooms, 'adaptive_chairs', 'Yes');
                                 $options['rmAccessible'] = $dataConverter->countArray($rooms, 'access', 'Yes');
                                 $options['rmTemporary'] = $dataConverter->countArray($rooms, 'room_type', 'Temporary');
-                                $options['rmPermanent'] = $options['rmTotal'] - $options['rmTemporary'];			
+                                $options['rmPermanent'] = $dataConverter->countArray($rooms, 'room_type', 'Permanent');
+				$options['rmOpenair'] = $options['rmTotal'] - $options['rmTemporary'] - $options['rmPermanent'];			
 
                                 
 			}

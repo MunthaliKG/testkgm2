@@ -25,7 +25,7 @@ class ResourceRoom
 
     /**
      * @var \AppBundle\Entity\Need
-     *
+     * 
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\OneToOne(targetEntity="AppBundle\Entity\Need")
@@ -176,28 +176,6 @@ class ResourceRoom
     {
         return $this->provided_by;
     }
-    /**
-     * Set quantity
-     *
-     * @param integer $quantity
-     * @return ResourceRoom
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    /**
-     * Get quantity
-     *
-     * @return integer 
-     */
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
     
     /**
      * Set quantity_in_use
@@ -275,20 +253,20 @@ class ResourceRoom
      * @param integer $available
      * @return ResourceRoom
      */
-    public function setAvailable($avalaible)
+    public function setAvailable($available)
     {
-        $this->avalaible = $avalaible;
+        $this->available = $available;
 
         return $this;
     }
 
     /**
-     * Get avalaible
+     * Get available
      *
      * @return integer 
      */
     public function getAvailable()
     {
-        return $this->avalaible;
+        return $this->available;
     }
 }
