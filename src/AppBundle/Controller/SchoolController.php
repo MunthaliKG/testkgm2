@@ -904,7 +904,8 @@ class SchoolController extends Controller{
                     $this->addFlash('disabilityAddedMessage', $message);
                 }
                 catch(DBALException $e){
-                    $message = "There was an error recording the disability. Please try again.
+
+                    $message = "There was an error adding the disability. Please try again.
                     If the problem persists, please contact the administrator";
                     $this->addFlash('dbWriteError', $message);
                 }
@@ -956,8 +957,16 @@ class SchoolController extends Controller{
                 $this->addFlash('exitMessage', 'Exit of student '.$formData['idlwd'].$schoolName.' recorded');
             }
             catch(DBALException $e){
-                $error = 'There was an error writing to the database. Either a student with the id '.$formData['idlwd']
-                .' does not exist or this record has already been entered';
+                if(strpos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
+                    $error = 'An exit record for a learner with LIN '.$formData['idlwd'].' has already been entered';
+                }
+                elseif(strpos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
+                    $error =  "A student with the LIN ".$formData['idlwd']." does not exist at this school";
+                }
+                else{
+                    $error = "There was an error writing to the database. Please try again. If the problem persists, ".
+                        "please contact the administrator";
+                }
                 $this->addFlash('outcome','danger');
             }
             
