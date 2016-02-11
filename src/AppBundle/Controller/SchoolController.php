@@ -884,10 +884,6 @@ class SchoolController extends Controller{
         if($newForm->isValid()){
             $formData = $newForm->getData();
 
-            //check if disability already exists in db
-            $lwdDisability = $this->getDoctrine()->getRepository('AppBundle:LwdHasDisability')
-                    ->findOneBy(array('idlwd'=>$learnerId,'iddisability'=>$formData['iddisability']));
-            if (!$lwdDisability){//if disability does not exist
                 $columnName = '';
                 $placeHolder = '';
                 $parameterArray = array($learnerId, $formData['iddisability']);
@@ -904,16 +900,18 @@ class SchoolController extends Controller{
                     $this->addFlash('disabilityAddedMessage', $message);
                 }
                 catch(DBALException $e){
-
-                    $message = "There was an error adding the disability. Please try again.
-                    If the problem persists, please contact the administrator";
+                    if(stripos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
+                        $message = "This disability/special need record already exists for learner ".$learnerId;
+                    }
+                    elseif(stripos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
+                        $message = "A student with id ".$learnerId." does not exist at this school";
+                    }
+                    else{
+                        $message = "There was an error adding the disability. Please try again. If the problem persists, please contact the administrator";
+                    }
                     $this->addFlash('dbWriteError', $message);
                 }
-            } else {
-                $message = "This disability/special need record already exists for learner ".$learnerId;
-                $this->addFlash('disabilityExists', $message);
-            }
-            return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
+                return $this->redirectToRoute('edit_learner_disability', ['learnerId'=>$learnerId,'emisCode'=>$emisCode], 301);
         }
 
         //create a view of each of the forms
