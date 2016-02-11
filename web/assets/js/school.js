@@ -184,7 +184,6 @@ $(document).ready(function(){
                 && $('#resourceRoom_quantity_required').val().trim() === ''){
                     $('#resourceRoom_available').prop('disabled','');
                 }
-
 	});
         
     // disabled some fields depending on prefilled data values of resources

@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Doctrine\ORM\EntityRepository;
 
 //this class build the form that is used to select a school using district name and school name
 class SchoolFinderType extends AbstractType
@@ -20,6 +21,9 @@ class SchoolFinderType extends AbstractType
 		$builder
 		->add('district', 'entity', array(
 			'label' => 'district',
+            'query_builder' => function(EntityRepository $repository) {
+                return $repository->createQueryBuilder('u')->orderBy('u.districtName', 'ASC');
+            },
 			'class' => 'AppBundle:District',
 			'choice_label' => 'districtName',
 			'placeholder' => 'District Name',

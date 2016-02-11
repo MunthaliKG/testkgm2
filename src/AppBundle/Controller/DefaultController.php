@@ -24,8 +24,9 @@ class DefaultController extends Controller
     public function listSchoolsAction(Request $request){//this method will only be called through ajax
         $id = $request->query->get('id');
         $connection = $this->get('database_connection');
-        $schools = $this->getDoctrine()->getRepository('AppBundle:School')->findByIddistrict($id);
-        //$schools = $connection->fetchAll("SELECT DISTINCT emiscode, school_name 
+        $schools = $this->getDoctrine()->getRepository('AppBundle:School')->findBy(array('iddistrict'=>$id),
+            array('schoolName'=>'ASC'));
+        //$schools = $connection->fetchAll("SELECT DISTINCT emiscode, school_name
             //FROM school WHERE iddistrict = ?", array($id));
         /*add the list of schools to the session
         The reason we want to do this is because select lists populated using ajax always cause $form->isValid()
