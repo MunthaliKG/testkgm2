@@ -60,7 +60,7 @@ class SchoolReportController extends Controller{
 			$dataConverter = $this->get('data_converter');
                         
                         $session = $request->getSession();
-                        $year;
+                        $year = '';
                         //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
                         if ($session->has('school_year')){
                             $year = $session->get('school_year');
@@ -329,7 +329,7 @@ class SchoolReportController extends Controller{
 		        $response->headers->set('Cache-Control', 'maxage=1');
 		        $response->headers->set('Content-Disposition', $dispositionHeader);
 
-		        return $response; 
+		        return $response;
 		    } 		
 			
 		}
@@ -337,18 +337,15 @@ class SchoolReportController extends Controller{
 		return $this->render('school/reports/reports_basic.html.twig', array('form' => $form->createView()));
 	}
         
-        /**
+    /**
 	 *@Route("/school/{emisCode}/reports/custom", name="school_custom_reports", requirements={"emisCode":"\d+"})
 	 */
 	public function schoolCustomReportAction($emisCode, Request $request){
-
 		//create the form for choosing which sub-form to include and the format of the final report
 		$form = $this->createForm(new CustomReportType());			
 
 		$form->handleRequest($request);
-               
-                //$formData = $form->getData();
-                
+
 		if($form->isValid()){
 			$connection = $this->get('database_connection');
 			$formData = $form->getData();
@@ -362,7 +359,7 @@ class SchoolReportController extends Controller{
 			$dataConverter = $this->get('data_converter');
 			//if(in_array(1, $formData['enrollments']) || in_array(0, $formData['enrollments'])){
                         $session = $request->getSession();
-                        $year;
+                        $year = '';
                         //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
                         if ($session->has('school_year')){
                             $year = $session->get('school_year');
@@ -399,7 +396,7 @@ class SchoolReportController extends Controller{
                                             [$emisCode, $yearQuery['maxYear']]);				
                                     $options['snTeachers'] = $employed;    
 				}
-                        
+                       
                         if(in_array(0, $formData['enrollments'])){//if by class and sex option was checked
                             $options['lwdBCG'] = true;
                             //get students enrolled this year
@@ -541,7 +538,6 @@ class SchoolReportController extends Controller{
                             $options['learnersBD'] = $learnersByDisability;
                             $options['learnersBDG'] = $learnersByDisabilitySex;    
                         }
-						
 			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
 			if($formData['format'] == 'html' || $formData['format'] == 'pdf'){
@@ -561,96 +557,44 @@ class SchoolReportController extends Controller{
                                 exit;
                             }
 			}else{
-//                $obj = new PHPExcel();
-//
-//                // Set some meta data relative to the document
-//                $obj->getProperties()->setCreator("creator_name");
-//                $obj->getProperties()->setLastModifiedBy("modifier_name");
-//                $obj->getProperties()->setTitle("document_title");
-//                $obj->getProperties()->setSubject("document_subject");
-//                $obj->getProperties()->setDescription("document_description");
-//                $obj->getProperties()->setKeywords("document_keywords");
-//                $obj->getProperties()->setCategory("document_category");
-//
-//                // Set the active excel sheet
-//                $obj->setActiveSheetIndex(0);
-//                $obj->getActiveSheet()->setTitle('sheet_name');
-//
-//                // Get the data that we want to display in the excel sheet
-//                $data = $options['learnersBCG'];
-//
-//                // Set relavant indexes
-//                $nRows = $data->count();
-//                $nColumns = 'A';
-//
-//                // The keys of the $data[0]->toArray() array are the field names of the table
-//                $fields = isset($data[0])? array_keys($data[0]->toArray()): array();
-//
-//                // NOTE: $column = 'A'; $column + 1 == 1; $column++ == 'B'; True story.
-//                // Get the final column index and create the excel column to table field map
-//                $fieldsCount = count($fields);
-//                $excelMap = array();
-//                for($i = 0; $i < $fieldsCount; $i++){
-//                    $excelMap[$nColumns] = $fields[$i];
-//                    $nColumns++;
-//                }
-//
-//                // Set the first row as the table's field names
-//                for($j = 'A'; $j < $nColumns; $j++){
-//                    $obj->getActiveSheet()->setCellValue($j.'1', $excelMap[$j]);
-//                }
-//
-//                // Fill the rest of the excel sheet with data
-//                $nRows += 1;
-//                for($i = 2; $i <= $nRows; $i++){
-//                    for($j = 'A'; $j < $nColumns; $j++){
-//                        $obj->getActiveSheet()->setCellValue($j.$i, $data[$i - 2][$excelMap[$j]]);
-//                    }
-//                }
-//
-//                // Output the excel data to a file
-//                $filePath = realpath('.') . DIRECTORY_SEPARATOR . 'excel.xlsx';
-//                $writer = PHPExcel_IOFactory::createWriter($obj, 'Excel2007');
-//                $writer->save($filePath);
-//
-//                // Redirect request to the outputed file
-//                $this->getResponse()->setHttpHeader('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-//                $this->redirect('excel.xlsx');
-//
-//
-//                            $dataConverter = $this->get('data_converter');
-//                            $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, 
-//                                        distance_to_school, gfirst_name, glast_name, gsex, occupation 
-//                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school 
-//                                        WHERE emiscode = ? AND `year` = ?', 
-//                                            [$emisCode, $yearQuery['maxYear']]);
-                            //$dataConverter->excelDownload($enrolled);
-                            //$dataConverter->countArrayMultipleBool($learners)
-			/*	
-                            $xml = $this->renderView('school/reports/aggregate_custom.xml.twig', $options);
-				$temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
-                                file_put_contents($temporary_file_name, $xml);
-
-                                $reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
-                                $excelSheet = $reader->load($temporary_file_name);
-                                $writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
-
-                                // create the response
-                                $response = $this->get('phpexcel')->createStreamedResponse($writer);
-                                // adding headers
-                                $dispositionHeader = $response->headers->makeDisposition(
-                                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                                    'stream-file.xlsx'
-                                );
-                                $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
-                                $response->headers->set('Pragma', 'public');
-                                $response->headers->set('Cache-Control', 'maxage=1');
-                                $response->headers->set('Content-Disposition', $dispositionHeader);
-
-                                return $response;
-                         * 
-                         */
-                        } 		
+                ob_clean();
+                $phpExcelObject = $this->get('phpexcel')->createPHPExcelObject();
+                $phpExcelObject->getProperties()->setCreator("liuggio")
+                    ->setLastModifiedBy("Giulio De Donato")
+                    ->setTitle("Office 2005 XLSX Test Document")
+                    ->setSubject("Office 2005 XLSX Test Document")
+                    ->setDescription("Test document for Office 2005 XLSX, generated using PHP classes.")
+                    ->setKeywords("office 2005 openxml php")
+                    ->setCategory("Test result file");
+                $phpExcelObject->setActiveSheetIndex(0);
+                $phpExcelObject->getActiveSheet()->setTitle('Simple');
+                // Set active sheet index to the first sheet, so Excel opens this as the first sheet
+                $phpExcelObject->getActiveSheet()->fromArray(array(
+                    array('Std'),
+                    array('Male'),
+                    array('Female'),
+                ), null, 'A1');
+                $phpExcelObject->getActiveSheet()->fromArray(array(
+                    1,2,3,4,5,6,7,8
+                ), null, 'B1');
+                $phpExcelObject->getActiveSheet()->fromArray($options['learnersBCG'], null, 'B2');
+                $phpExcelObject->setActiveSheetIndex(0);
+                // create the writer
+                $writer = $this->get('phpexcel')->createWriter($phpExcelObject, 'Excel5');
+                // create the response
+                $response = $this->get('phpexcel')->createStreamedResponse($writer);
+                // adding headers
+                $dispositionHeader = $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    'stream-file.xls'
+                );
+                $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+                $response->headers->set('Pragma', 'public');
+                $response->headers->set('Cache-Control', 'max-age=1');
+                $response->headers->set('Content-Disposition', $dispositionHeader);
+                return $response;
+                exit;
+            }
 			
 		}
 

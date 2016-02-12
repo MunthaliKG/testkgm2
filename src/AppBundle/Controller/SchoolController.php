@@ -763,7 +763,7 @@ class SchoolController extends Controller{
                         $update = ',other_means = VALUES(other_means)';
                     }
                     $connection->executeQuery("INSERT INTO lwd_belongs_to_school (idlwd, emiscode, `year`, `std`, distance_to_school,
-                     means_to_school $columnName) VALUES (?,?,?,?,?,? $placeHolder) ON DUPLICATE KEY UPDATE `year`= VALUES(`year`),
+                     means_to_school $columnName) VALUES (?,?,?,?,?,? $placeHolder) ON DUPLICATE KEY UPDATE
                       `std`= VALUES(`std`), means_to_school = VALUES(means_to_school), distance_to_school = VALUES(distance_to_school) $update", $parameters);              
                     
                     if ($lwdId){//Acknowledge update
