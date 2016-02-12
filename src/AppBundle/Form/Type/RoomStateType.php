@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 //this class build the form that is used to select a school using district name and school name
 class RoomStateType extends AbstractType
@@ -15,8 +16,10 @@ class RoomStateType extends AbstractType
 		$builder
 		->add('room_id','text', array(
 			'label' => 'Room Id',
-			'constraints' => array(new NotBlank()),
+                    'constraints' => array(new NotBlank(),
+                                                new Regex('/^[^\s]+$/'))
 			)
+                  //[^a-zA-Z1-9]+   /^\S\z/   ^[^\s]+ ^[^\s]+$
 		)		
                 ->add('enough_light', 'choice', array(
 			'label' => 'Enough Lighting',

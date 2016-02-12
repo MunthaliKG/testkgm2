@@ -238,7 +238,8 @@ class SchoolController extends Controller{
                 
                 $resource = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')
                         ->findOneBy(array('idneed'=>$formData['idneed'],'emiscode'=>$emisCode));
-                if ((!$resource) || ($resource && ($needId != 'new'))){
+                //if ((!$resource) || ($resource && ($needId != 'new'))){
+                try {  
                     $em = $this->getDoctrine()->getManager();
                     $em->persist($need);
                     $em->flush();                                                   
@@ -254,10 +255,20 @@ class SchoolController extends Controller{
                             ->add('resourceUpdated', 'Education support item ('.$defaultData['idneed_2'].': '.$needname[0]['needname'].') updated successfully');
                         return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>$defaultData['idneed_2']], 301);
                     }
-                } else {
+                } catch(DBALException $e){
+                    if(stripos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
+                        $message = $formData['idneed']. " resource record already exists for learner ";
+                    }
+                    elseif(stripos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
+                        $message = "A resource with id ".$formData['idneed_2']." does not exist at this school";
+                    }
+                    else{
+                        $message = "There was an error adding the resource. Please try again. If the problem persists, please contact the administrator";
+                    }
+                    //$this->addFlash('dbWriteError', $message);
                     $request->getSession()->getFlashBag()
-                           ->add('resourceExists', 'Resource with id ('.$formData['idneed'].') already exists');
-                    return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>'new'], 301);
+                           ->add('resourceExist', $message);
+                    return $this->redirectToRoute('edit_resource_material',['emisCode'=>$emisCode, 'needId'=>'new'], 301);               
                 }
             }
             //if this is a not new need being added, we want to make the id field uneditable
@@ -338,7 +349,9 @@ class SchoolController extends Controller{
                 
                 $roomState = $this->getDoctrine()->getRepository('AppBundle:RoomState')
                         ->findOneBy(array('roomId'=>$formData['room_id'],'emiscode'=>$emisCode));
-                if ((!$roomState) || ($roomState && ($materialId != 'new'))){
+                
+                //if ((!$roomState) || ($roomState && ($materialId != 'new'))){
+                try {
                     //if object already exists but is being edited ie not new
                     $em->persist($material);
                     $em->flush();
@@ -350,11 +363,26 @@ class SchoolController extends Controller{
                             ->add('roomAdded', 'Room with id ('.$formData['room_id'].') added successfully');
                     }
                     return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>$id_room], 301);
-                }else {
+                } catch(DBALException $e){
+                    if(stripos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
+                        $message = $formData['room_id']. " school material already exists";
+                    }
+                    elseif(stripos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
+                        $message = "A school material with ".$formData['room_id']." does not exist at this school";
+                    }
+                    else{
+                        $message = "There was an error adding the disability. Please try again. If the problem persists, please contact the administrator";
+                    }
+                    //$this->addFlash('dbWriteError', $message);
                     $request->getSession()->getFlashBag()
-                           ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');
+                           ->add('roomExists', $message);
                     return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>'new'], 301);
-                }                          
+                }
+//                else {
+//                    $request->getSession()->getFlashBag()
+//                           ->add('roomExists', 'Room with id ('.$formData['room_id'].') already exists');
+//                    return $this->redirectToRoute('edit_school_material',['emisCode'=>$emisCode, 'materialId'=>'new'], 301);
+//                }                          
             }
             //if this is a new learner being added, we want to make the id field uneditable
         if($materialId != 'new'){

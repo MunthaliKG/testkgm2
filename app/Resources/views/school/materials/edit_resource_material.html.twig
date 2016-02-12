@@ -9,6 +9,15 @@
 {% endblock %}
 
 {% block form_container %}
+      {% if app.session.flashBag.has('resourceExist') %}       
+            {% for msg in app.session.flashBag.get('resourceExist') %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    {{ msg }}
+                </div>
+            {% endfor %}        
+    {% endif %}
     {% if app.session.flashBag.has('resourceUpdated') %}       
             {% for msg in app.session.flashBag.get('resourceUpdated') %}
                 <div class="alert alert-success alert-dismissible" role="alert">
