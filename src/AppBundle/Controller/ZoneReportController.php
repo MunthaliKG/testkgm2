@@ -308,42 +308,42 @@ class ZoneReportController extends Controller{
 	public function zoneCustomReportAction($idzone, Request $request){
 
 		//sub-reports to include in the report
-		$reports = [0=>"SN Learners' details",1=>"SN Teachers details"];
-                $enrollments = [0=>"Class & Gender", 1=>"Disability Category & Gender", 2=>"Disability & Gender"];
-		//available formats for the report
-		$formats = [
-			'html'=>'html', 
-			'pdf'=>'pdf', 
-			'excel'=>'excel'
-			];
-
-		//create the form for choosing which sub-form to include and the format of the fina report
-		$form = $this->createFormBuilder()
-			->add('reports','choice', array(
-				'label' => 'Include',
-				'expanded' => true,
-				'multiple' => true,
-				'choices'=> $reports,
-				'constraints' => array(new NotBlank(["message"=>"Please select atleast one option"])),
-				))
-                        ->add('enrollments','choice', array(
-				'label' => 'Enrollement by:',
-				'expanded' => true,
-				'multiple' => true,
-				'choices'=> $enrollments,
-				'constraints' => array(new NotBlank(["message"=>"Please select atleast one option"])),
-				))
-			->add('format','choice', array(
-				'label' => 'Format',
-				'expanded' => true,
-				'multiple' => false,
-				'choices'=> $formats,
-				'data' => 0,
-				'constraints' => array(new NotBlank(["message"=>"Please select a format"])),
-				))
-			->add('produce','submit', array('label' => "Produce report"))
-			->getForm();
-
+//		$reports = [0=>"SN Learners' details",1=>"SN Teachers details"];
+//                $enrollments = [0=>"Class & Gender", 1=>"Disability Category & Gender", 2=>"Disability & Gender"];
+//		//available formats for the report
+//		$formats = [
+//			'html'=>'html', 
+//			'pdf'=>'pdf', 
+//			'excel'=>'excel'
+//			];
+//
+//		//create the form for choosing which sub-form to include and the format of the fina report
+//		$form = $this->createFormBuilder()
+//			->add('reports','choice', array(
+//				'label' => 'Include',
+//				'expanded' => true,
+//				'multiple' => true,
+//				'choices'=> $reports,
+//				'constraints' => array(new NotBlank(["message"=>"Please select atleast one option"])),
+//				))
+//                        ->add('enrollments','choice', array(
+//				'label' => 'Enrollement by:',
+//				'expanded' => true,
+//				'multiple' => true,
+//				'choices'=> $enrollments,
+//				'constraints' => array(new NotBlank(["message"=>"Please select atleast one option"])),
+//				))
+//			->add('format','choice', array(
+//				'label' => 'Format',
+//				'expanded' => true,
+//				'multiple' => false,
+//				'choices'=> $formats,
+//				'data' => 0,
+//				'constraints' => array(new NotBlank(["message"=>"Please select a format"])),
+//				))
+//			->add('produce','submit', array('label' => "Produce report"))
+//			->getForm();
+                $form = $this->createForm(new CustomReportType());
 		$form->handleRequest($request);  
                 $session = $request->getSession();
                 $year;
@@ -370,9 +370,10 @@ class ZoneReportController extends Controller{
                         $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);                               
                         $options['numOfSchools'] = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools
 
-			$learners = array();			
-			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
+			$learners = array();
                         $options['chaka'] = $year;
+			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
+                        
                            
 
 //                                                       		

@@ -47,10 +47,10 @@
                 {% if lwdBDG is defined %}
                     {% include 'school/reports/learners_disability_sex.html.twig' %}
 		{% endif %}
-                {#{% if snLearners is defined %}
-                    {% include 'school/reports/sn_learner.html.twig' %}
-		{% endif %}
+                {% if snLearners is defined %}
+                    {% include 'zone/reports/zone_sn_learners.html.twig' %}
+                {% endif %}
                 {% if snTeachers is defined %}
-			{% include 'school/reports/sn_teachers.html.twig' %}
-		{% endif %}#}
+                    {% include 'zone/reports/zone_sn_teachers.html.twig' %}
+                {% endif %}
 	{% endblock %}

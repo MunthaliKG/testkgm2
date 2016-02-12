@@ -376,7 +376,30 @@ class SchoolReportController extends Controller{
                         $gender = array('M'=>'M','F'=>'F');
                         $learnersBySex = array();
                         $total;
-                        /*SN learners' details section*/
+                        $options['chaka'] = $year;
+                        
+                          /*SN learners' details section*/
+                            if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
+                                    $options['snLearners'] = true;
+                                    //get students enrolled this year
+                                    $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, 
+                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, household_type 
+                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
+                                        WHERE emiscode = ? AND `year` = ?', 
+                                            [$emisCode, $yearQuery['maxYear']]);				
+                                    $options['snLearners'] = $enrolled;    
+				}
+                            if(in_array(1, $formData['reports'])){//if the SN teachers' details option was checked
+                                    $options['snTeachers'] = true;
+                                    //get teachers this year
+                                    $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
+                                        s_sex, qualification, speciality, year_started, teacher_type 
+                                        FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school
+                                        WHERE emiscode = ? AND `year` = ?', 
+                                            [$emisCode, $yearQuery['maxYear']]);				
+                                    $options['snTeachers'] = $employed;    
+				}
+                        
                         if(in_array(0, $formData['enrollments'])){//if by class and sex option was checked
                             $options['lwdBCG'] = true;
                             //get students enrolled this year
