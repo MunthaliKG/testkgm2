@@ -78,7 +78,7 @@ class SchoolController extends Controller{
                             'year' => $year['year'])
                     );
     }
-        /**
+    /**
      *@Route("/school/{emisCode}/materials/{link}", name="school_materials", requirements = {"emisCode":"\d+", "link":"fresh|resource|room"}, options={"expose"= true})
      */
         public function materialsAction($emisCode, $link, Request $request){
@@ -89,7 +89,7 @@ class SchoolController extends Controller{
                 return $this->render('school/materials/materials_main.html.twig');
             }
         }
-         /**
+    /**
      *@Route("/findResourceForm/{emisCode}", name="find_need_materials")
      */
         public function findResourceFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
@@ -123,7 +123,7 @@ class SchoolController extends Controller{
             return $this->render('school/materials/findresourceform.html.twig', array(
                 'form' => $form->createView()));
         }
-        /**
+    /**
      *@Route("/findMaterialForm/{emisCode}", name="find_school_materials")
      */
         public function findMaterialFormAction($emisCode, Request $request){//this controller will return the form used for selecting a learner
@@ -157,7 +157,7 @@ class SchoolController extends Controller{
             return $this->render('school/materials/findmaterialform.html.twig', array(
                 'form' => $form->createView()));
         }
-         /**
+        /**
         * @Route("/school/{emisCode}/needs/{needId}", name="edit_resource_material", requirements={"needId":"new|\d+"})
         */
         public function editResourceAction(Request $request, $needId, $emisCode){
