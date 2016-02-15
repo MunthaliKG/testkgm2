@@ -25,7 +25,7 @@ class CustomReportType extends AbstractType
                         //'constraints' => array(new NotBlank(["message"=>"Please select atleast one option"])),
                         ))
         ->add('enrollments','choice', array(
-				'label' => 'Enrollement by:',
+				'label' => 'Enrollment by:',
 				'expanded' => true,
 				'multiple' => true,
 				'choices'=> $enrollments,

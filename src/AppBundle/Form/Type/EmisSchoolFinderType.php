@@ -16,6 +16,7 @@ class EmisSchoolFinderType extends AbstractType
 		->add('emiscode', 'integer', array(
 			'label' => 'School EMIS Code',
 			'constraints' => array(new NotBlank(), new Type(array('type'=>'integer', 'message'=>'Please enter a valid EMIS code'))),
+			'attr' => array('min'=>500001)
 			)
 		)
 		->add('findschool', 'submit', array('label'=>'Find School')); 

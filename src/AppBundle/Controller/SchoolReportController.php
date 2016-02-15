@@ -59,23 +59,23 @@ class SchoolReportController extends Controller{
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
                         
-                        $session = $request->getSession();
-                        $year = '';
-                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
-                        if ($session->has('school_year')){
-                            $year = $session->get('school_year');
-                        } else {
-                            return $this->redirectToRoute('school_reports',['emisCode'=>$emisCode], 301);
-                        }
-                        $sntLatestYr['yr'] = $year;
-                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
-                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
-                        $sntLastYr = $sntLatestYr['yr'] - 1;
-                        $lwdLatestYr['yr'] = $year;
-                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
-                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
-                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
-                        $options['chaka'] = $year;
+            $session = $request->getSession();
+            $year = '';
+            //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+            if ($session->has('school_year')){
+                $year = $session->get('school_year');
+            } else {
+                return $this->redirectToRoute('school_reports',['emisCode'=>$emisCode], 301);
+            }
+            $sntLatestYr['yr'] = $year;
+            //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                    //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+            $sntLastYr = $sntLatestYr['yr'] - 1;
+            $lwdLatestYr['yr'] = $year;
+            //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
+                    //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
+            $lwdLastYr = $lwdLatestYr['yr'] - 1;
+            $options['chaka'] = $year;
 			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
 
                               
@@ -396,33 +396,33 @@ class SchoolReportController extends Controller{
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
 			//if(in_array(1, $formData['enrollments']) || in_array(0, $formData['enrollments'])){
-                        $session = $request->getSession();
-                        $year = '';
-                        //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
-                        if ($session->has('school_year')){
-                            $year = $session->get('school_year');
-                        } else {
-                            return $this->redirectToRoute('school_reports',['emisCode'=>$emisCode], 301);
-                        }
-                        //get the latest year from the lwd_belongs to school table
-                        //$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school 
-                        //        WHERE emiscode = ?', [$emisCode]);
-                        $yearQuery['maxYear'] = $year;
-                        $gender = array('M'=>'M','F'=>'F');
-                        $learnersBySex = array();
-                        $total;
-                        $options['chaka'] = $year;
-                        
-                          /*SN learners' details section*/
-                            if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
-                                    $options['snLearners'] = true;
-                                    //get students a this year
-                                    $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob,
-                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, household_type
-                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
-                                        WHERE emiscode = ? AND `year` = ?',
-                                            [$emisCode, $yearQuery['maxYear']]);				
-                                    $options['snLearners'] = $enrolled;    
+            $session = $request->getSession();
+            $year = '';
+            //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
+            if ($session->has('school_year')){
+                $year = $session->get('school_year');
+            } else {
+                return $this->redirectToRoute('school_reports',['emisCode'=>$emisCode], 301);
+            }
+            //get the latest year from the lwd_belongs to school table
+            //$yearQuery = $connection->fetchAssoc('SELECT MAX(`year`) as maxYear FROM lwd_belongs_to_school
+            //        WHERE emiscode = ?', [$emisCode]);
+            $yearQuery['maxYear'] = $year;
+            $gender = array('M'=>'M','F'=>'F');
+            $learnersBySex = array();
+            $total;
+            $options['chaka'] = $year;
+
+              /*SN learners' details section*/
+                if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
+                        $options['snLearners'] = true;
+                        //get students a this year
+                        $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob,
+                            distance_to_school, gfirst_name, glast_name, gsex, occupation, household_type
+                            FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
+                            WHERE emiscode = ? AND `year` = ?',
+                                [$emisCode, $yearQuery['maxYear']]);
+                        $options['snLearners'] = $enrolled;
 				}
                             if(in_array(1, $formData['reports'])){//if the SN teachers' details option was checked
                                     $options['snTeachers'] = true;
@@ -450,10 +450,10 @@ class SchoolReportController extends Controller{
                              //initialise arrays
                             foreach ($gender as $key => $gValue) {
                                 foreach ($stds as $key => $std) {                                                                                    
-                                    $learnersByClassSex[$gValue][$std] = 0;
-                                    $learnersByClass[$std] = 0;
+                                    $learnersByClassSex[$gValue][$std] = '0';
+                                    $learnersByClass[$std] = '0';
                                 }
-                                $learnersBySex[$gValue] = 0;
+                                $learnersBySex[$gValue] = '0';
                             }                             
                             //loop through the selection list counting the gender, std combinations                                   
                             foreach ($gender as $key => $gValue) {
@@ -500,10 +500,10 @@ class SchoolReportController extends Controller{
                              //initialise array
                             foreach ($categories as $key => $category) {
                                 foreach ($gender as $key => $gValue) {                                                                                                                    
-                                    $learnersByCategorySex[$category][$gValue] = 0;
-                                    $learnersBySex[$gValue] = 0; 
+                                    $learnersByCategorySex[$category][$gValue] = '0';
+                                    $learnersBySex[$gValue] = '0';
                                 }
-                                $learnersByCategory[$category] =0;
+                                $learnersByCategory[$category] = '0';
                             }                            
                             //loop through the selection list counting the gender, std combinations                                   
                            foreach ($categories as $key => $category) {
@@ -549,10 +549,10 @@ class SchoolReportController extends Controller{
                              //initialise arrays
                             foreach ($disabilities as $key => $disability) {
                                 foreach ($gender as $key => $gValue) {                                                                                                                    
-                                    $learnersByDisabilitySex[$disability][$gValue] = 0;
-                                    $learnersBySex[$gValue] = 0; 
+                                    $learnersByDisabilitySex[$disability][$gValue] = '0';
+                                    $learnersBySex[$gValue] = '0';
                                 }
-                                $learnersByDisability[$disability] = 0;
+                                $learnersByDisability[$disability] = '0';
                             }
 
                             //loop through the selection list counting the gender, std combinations                                   
@@ -597,13 +597,13 @@ class SchoolReportController extends Controller{
 			}else{
                 ob_clean();
                 $phpExcelObject = $this->get('phpexcel')->createPHPExcelObject();
-                $phpExcelObject->getProperties()->setCreator("liuggio")
-                    ->setLastModifiedBy("Giulio De Donato")
-                    ->setTitle("Office 2005 XLSX Test Document")
-                    ->setSubject("Office 2005 XLSX Test Document")
-                    ->setDescription("Test document for Office 2005 XLSX, generated using PHP classes.")
-                    ->setKeywords("office 2005 openxml php")
-                    ->setCategory("Test result file");
+                $phpExcelObject->getProperties()->setCreator("Inclusive Education Database")
+                    ->setLastModifiedBy("IED")
+                    ->setTitle("Inclusive Education Database Report")
+                    ->setSubject("IED Custom Report for ".$year)
+                    ->setDescription("Excel Report generated by the Inclusive Education Database.")
+                    ->setKeywords("report custom inclusive education")
+                    ->setCategory("Report File");
                 $phpExcelObject->setActiveSheetIndex(0);
                 $phpExcelObject->getActiveSheet()->setTitle('Simple');
                 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
@@ -615,7 +615,7 @@ class SchoolReportController extends Controller{
                 $phpExcelObject->getActiveSheet()->fromArray(array(
                     1,2,3,4,5,6,7,8
                 ), null, 'B1');
-                $phpExcelObject->getActiveSheet()->fromArray($options['learnersBCG'], null, 'B2');
+                $phpExcelObject->getActiveSheet()->fromArray($options['learnersBCG'], null, 'B2', true);
                 $phpExcelObject->setActiveSheetIndex(0);
                 // create the writer
                 $writer = $this->get('phpexcel')->createWriter($phpExcelObject, 'Excel5');
@@ -624,7 +624,7 @@ class SchoolReportController extends Controller{
                 // adding headers
                 $dispositionHeader = $response->headers->makeDisposition(
                     ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    'IED-Report-'.date('d-m-Y').'.xlsx'
+                    'IED-Report-'.date('d-m-Y').'.xls'
                 );
                 $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
                 $response->headers->set('Pragma', 'public');
