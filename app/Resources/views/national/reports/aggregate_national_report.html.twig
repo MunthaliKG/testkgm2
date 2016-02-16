@@ -26,13 +26,13 @@
     </table>
 
    {% if preliminary is defined %}
-        {% include 'zone/reports/zone_preliminary.html.twig' %}
+        {% include 'school/reports/preliminary.html.twig' %}
     {% endif %}
     {% if specialNeeds is defined %}
-        {% include 'zone/reports/zone_special_needs.html.twig' %}
+        {% include 'school/reports/special_needs.html.twig' %}
     {% endif %}
     {% if learningMaterials is defined %}
-        {% include 'zone/reports/zone_teaching_materials.html.twig' %}
+        {% include 'school/reports/teaching_materials.html.twig' %}
     {% endif %}
     
 {% endblock %}

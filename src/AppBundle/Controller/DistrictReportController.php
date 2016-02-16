@@ -67,219 +67,247 @@ class DistrictReportController extends Controller{
                             return $this->redirectToRoute('district_snl',['iddistrict'=>$iddistrict], 301);
                         }
                         $sntLatestYr['yr'] = $year;
-                        //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
-                                //. 'FROM school_has_snt NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $sntLastYr = $sntLatestYr['yr'] - 1;
                         $lwdLatestYr['yr'] = $year;
-                        //$lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
-                                //. 'FROM lwd_belongs_to_school NATURAL JOIN school WHERE emiscode = ?',[$emisCode]);
                         $lwdLastYr = $lwdLatestYr['yr'] - 1;
                         $options['chaka'] = $year;
                         
-                        
-//                        $sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
-//                        $sntLastYr = $sntLatestYr['yr'] - 1;
-//                        $lwdLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ?',[$iddistrict]);
-//                        $lwdLastYr = $lwdLatestYr['yr'] - 1;
-//                        $options['chaka'] = $lwdLatestYr['yr'];
                         //schools in a District
                         $schoolsInDistrict = $connection->fetchAll('select emiscode, iddistrict from school where iddistrict =?', [$iddistrict]);                               
                         $options['numOfSchools'] = $dataConverter->countArray($schoolsInDistrict, 'iddistrict', $iddistrict);//get the number of schools                        
-			/*Preliminary counts section*/
+
+                        /*Preliminary counts section*/
 			$learners = array();
+                        $yearQuery['maxYear'] = $year;
+                        //learner preliminary counts
+                        $learners = $connection->fetchAll('SELECT DISTINCT(idlwd), sex, std, dob, round(datediff(?,dob)/365) as age
+                          FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
+                                WHERE iddistrict = ? AND `year`=?', [$yearQuery['maxYear'].'-01-01', $iddistrict, $yearQuery['maxYear']]);
+
 			
-			if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
-				$options['preliminary'] = true;
+                        if(in_array(0, $formData['reports'])){ //if the preliminary counts option was checked
+                            $options['preliminary'] = true;
 
-                                //learner preliminary counts                                                               
-                                $learnersLatestYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
-                                   . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '
-                                    . 'WHERE iddistrict = ? and year = ?', [$iddistrict, $lwdLatestYr['yr']]);
+                            $options['learnersTotal'] = count($learners);
+                            $options['numBoys'] = $dataConverter->countArray($learners, 'sex', "M");//get the number of boys
+                            $options['numGirls'] = $options['learnersTotal'] - $options['numBoys'];//get the number of girls
 
-                                $learnersLastYr = $connection->fetchAll('SELECT * FROM lwd_has_disability '
-                                    . 'NATURAL JOIN lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school '                                    . 'WHERE iddistrict = ? and year = ?', [$iddistrict, $lwdLastYr]);
-				
-                                //Learners by sex
-                                $options['numBoys'] = $dataConverter->countArray($learnersLatestYr, 'sex', 'M');//get the number of boys
-				$options['numGirls'] = $dataConverter->countArray($learnersLatestYr, 'sex', 'F');//get the number of girls
-                                
-                                $options['numBoysLY'] = $dataConverter->countArray($learnersLastYr, 'sex', 'M');//get the number of boys
-				$options['numGirlsLY'] = $dataConverter->countArray($learnersLastYr, 'sex', 'F');//get the number of girls
+                            //snt preliminary counts
+                            $latestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr FROM school_has_snt NATURAL JOIN school 
+                                    WHERE iddistrict = ?',[$iddistrict]);
+                            $teachers = $connection->fetchAll('SELECT * FROM school_has_snt NATURAL JOIN snt NATURAL JOIN school
+                                    WHERE `year` = ? AND iddistrict = ?', [$latestYr['yr'], $iddistrict]);
+                            $options['sntTotal'] = count($teachers);
+                            $options['sntMale'] = $dataConverter->countArray($teachers, 's_sex', 'M');
+                            $options['sntFemale'] = $options['sntTotal'] - $options['sntMale'];
+                            $options['sntItinerant'] = $dataConverter->countArray($teachers, 'snt_type', 'Itinerant');
+                            $options['sntResident'] = $options['sntTotal'] - $options['sntItinerant'];
 
-                                //total enrolments
-				$options['totalEnrolled'] = $options['numBoys'] + $options['numGirls'];
-                                $options['totalEnrolledLastYear'] = $options['numBoysLY'] + $options['numGirlsLY'];
-                        
-                                //snt preliminary counts
-                                $teachers = $connection->fetchAll('SELECT * FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school WHERE iddistrict = ? and year = ?', [$iddistrict, $sntLatestYr['yr']]);				
-                                
-				$options['sntMale'] = $dataConverter->countArray($teachers, 's_sex', 'M');
-				$options['sntFemale'] = $dataConverter->countArray($teachers, 's_sex', 'F');
-                                
-                                $options['degree'] = $dataConverter->countArray($teachers, 'qualification', 'degree');
-                                $options['certificate'] = $dataConverter->countArray($teachers, 'qualification', 'certificate');
-                                $options['diploma'] = $dataConverter->countArray($teachers, 'qualification', 'diploma');
-                                
-                                $options['VI'] = $dataConverter->countArray($teachers, 'speciality', 'VI');
-                                $options['HI'] = $dataConverter->countArray($teachers, 'speciality', 'HI');
-                                $options['LD'] = $dataConverter->countArray($teachers, 'speciality', 'LD');
-                                
-                                $options['sntResident'] = $dataConverter->countArray($teachers, 'snt_type', 'Resident');
-                                $options['sntItinerant'] = $dataConverter->countArray($teachers, 'snt_type', 'Itinerant');
-                                
-                                //classroom preliminary counts                                
-                                $classPopulations = $connection->fetchAll('SELECT std, COUNT(DISTINCT(idlwd)) as numLearners '
-                                        . 'FROM lwd_belongs_to_school NATURAL JOIN lwd NATURAL JOIN school '
-                                        . 'WHERE iddistrict = ? AND `year` = ? GROUP BY std', [$iddistrict, $lwdLatestYr['yr']]);
-                            
-                                $options['maxLearners'] = $dataConverter->findArrayMax($classPopulations, 'numLearners');
-                                $options['minLearners'] = $dataConverter->findArrayMin($classPopulations, 'numLearners');
+                            //classroom min/max preliminary counts
+                            $classPopulations = $connection->fetchAll('SELECT std, COUNT(DISTINCT(idlwd)) as numLearners FROM lwd_belongs_to_school 
+                                    NATURAL JOIN lwd NATURAL JOIN school WHERE iddistrict = ? AND `year` = ? GROUP BY std', [$iddistrict, $yearQuery['maxYear']]);
+                            $options['maxLearners'] = $dataConverter->findArrayMax($classPopulations, 'numLearners');
+                            $options['minLearners'] = $dataConverter->findArrayMin($classPopulations, 'numLearners');
 
-                                //room state preliminary counts
-                                 $rooms = $connection->fetchAll('SELECT room_id,enough_light,enough_space,enough_ventilation,adaptive_chairs,room_type,`access` '
-                                         . 'FROM room_state NATURAL JOIN school '
-                                         . 'WHERE iddistrict = ? AND `year` = ?', [$iddistrict, $lwdLatestYr['yr']]);
-//                            
-                                $options['rmTotal'] = count($rooms);
-                                $options['rmEnoughLight'] = $dataConverter->countArray($rooms, 'enough_light', 'Yes');
-                                $options['rmEnoughSpace'] = $dataConverter->countArray($rooms, 'enough_space', 'Yes');
-                                $options['rmEnoughVent'] = $dataConverter->countArray($rooms, 'enough_ventilation', 'Yes');
-                                $options['rmAdaptiveChairs'] = $dataConverter->countArray($rooms, 'adaptive_chairs', 'Yes');
-                                $options['rmAccessible'] = $dataConverter->countArray($rooms, 'access', 'Yes');
-                                $options['rmTemporary'] = $dataConverter->countArray($rooms, 'room_type', 'Temporary');
-                                $options['rmPermanent'] = $dataConverter->countArray($rooms, 'room_type', 'Permanent');
-				$options['rmOpenair'] = $options['rmTotal'] - $options['rmTemporary'] - $options['rmPermanent'];			
-
-                                
-			}
+                            //room state preliminary counts
+                            $rooms = $connection->fetchAll('SELECT room_id,enough_light,enough_space,enough_ventilation,adaptive_chairs,room_type,`access`, noise_free
+                                    FROM room_state NATURAL JOIN school WHERE iddistrict = ? AND `year` = ?', [$iddistrict, $yearQuery['maxYear']]);
+                            $options['rmTotal'] = count($rooms);
+                            $options['rmEnoughLight'] = $dataConverter->countArray($rooms, 'enough_light', 'yes');
+                            $options['rmEnoughSpace'] = $dataConverter->countArray($rooms, 'enough_space', 'yes');
+                            $options['rmEnoughVent'] = $dataConverter->countArray($rooms, 'enough_ventilation', 'yes');
+                            $options['rmAdaptiveChairs'] = $dataConverter->countArray($rooms, 'adaptive_chairs', 'yes');
+                            $options['rmAccessible'] = $dataConverter->countArray($rooms, 'access', 'yes');
+                            $options['rmNoiseFree'] = $dataConverter->countArray($rooms, 'noise_free', 'yes');
+                            $options['rmTemporary'] = $dataConverter->countArray($rooms, 'room_type', 'Temporary');
+                            $options['rmPermanent'] = $dataConverter->countArray($rooms, 'room_type', 'Permanent');
+                            $options['rmOpenair'] = $options['rmTotal'] - $options['rmTemporary'] - $options['rmPermanent'];			
+                        }
 			/*End of preliminary counts section*/
                         
-                        /*Start of Summary of learners with special needs*/
-                        if(in_array(1, $formData['reports'])){ //if the Summary of learners with special needs option was checked
-                            $options['specialNeeds'] = true;
-                            $learnersTransOut = $connection->fetchall('select trans.* '
-                                        . 'from (SELECT lastYr.* '
-                                            . 'from (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ? and year = ?) as lastYr '
-                                            . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ? and year = ?) as thisYr '
-                                            . 'on (lastYr.idlwd = thisYr.idlwd) where thisYr.idlwd IS NULL) as trans '
-                                        . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in school_exit
-                                        . 'on (trans.idlwd = exits.idlwd) '
-                                        . 'where exits.idlwd IS NULL', [$iddistrict, $lwdLastYr, $iddistrict, $lwdLatestYr['yr'],$lwdLatestYr['yr']]);
-                                
-                                $learnersTransIn = $connection->fetchall('select trans.* '
-                                        . 'from (SELECT lastYr.* '
-                                            . 'from (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ? and year = ?) as lastYr '
-                                            . 'left outer join (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school WHERE iddistrict = ? and year = ?) as thisYr '
-                                            . 'on (lastYr.idlwd = thisYr.idlwd) where thisYr.idlwd IS NULL) as trans '
-                                        . 'left outer join (select * from school_exit where year = ?) as exits ' //check if learner exists in school_exit
-                                        . 'on (trans.idlwd = exits.idlwd) '
-                                        . 'where exits.idlwd IS NULL', [$iddistrict, $lwdLatestYr['yr'], $iddistrict, $lwdLastYr, $lwdLatestYr['yr']]);
-                                
-                                $learnersDropouts = $connection->fetchall('select dropouts.* from 
-                                    (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school  
-                                        WHERE iddistrict = ? and year = ?) as dropouts, school_exit as exits
-                                    where dropouts.idlwd = exits.idlwd and exits.reason <> \'completed\' and exits.year = ?',[$iddistrict, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
-                                
-                                $learnersCompleted = $connection->fetchall('select dropouts.* from 
-                                    (SELECT * FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school  
-                                        WHERE iddistrict = ? and year = ?) as dropouts, school_exit as exits
-                                    where dropouts.idlwd = exits.idlwd and exits.reason = \'completed\' and exits.year = ?',[$iddistrict, $lwdLatestYr['yr'], $lwdLatestYr['yr']]);
-                                
-                            //transfers out
-                                $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
-                                $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
-                                $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
-                                
-                                //transfer in
-                                $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
-                                $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
-                                $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
-                                
-                                //dropouts
-                                $options['numBoysDO'] = $dataConverter->countArray($learnersDropouts, 'sex', 'M'); 
-                                $options['numGirlsDO'] = $dataConverter->countArray($learnersDropouts, 'sex', 'F');
-                                $options['totalDropouts'] =  $options['numBoysDO'] + $options['numGirlsDO'];
-                                
-                                //completed
-                                $options['numBoysC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'M'); 
-                                $options['numGirlsC'] = $dataConverter->countArray($learnersCompleted, 'sex', 'F');
-                                $options['totalCompleted'] =  $options['numBoysC'] + $options['numGirlsC'];                                                      
-                                      
-                            //learners by std, sex and age - STARTS HERE                            
-                                $learnersBySexAgeStd = array();
-                                $learnersBy = array();
-                                $totalStdSexAge = array();
-                                $gender = array('M'=>'M','F'=>'F');
-                                $ages = array('<6'=>5, '6'=>6, '7'=>7, 
-                                    '8'=>8, '9'=>9, '10'=>10,'11'=>11,'12'=>12,
-                                    '13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'>17'=>18);
-                                $stds = array('1'=>1, '2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8);
-                                $learnersBySexAgeStd = $connection->fetchAll('select DISTINCT idlwd, iddistrict, iddistrict, sex, dob, round(datediff(?,dob)/365) as age, std, emiscode, year '
-                                    .'from lwd NATURAL JOIN performance NATURAL JOIN school '
-                                    .'where iddistrict = ? and year = ?', [$lwdLatestYr['yr'].'-01-01', $iddistrict,$lwdLatestYr['yr']]);
-                                
-                                $counterStdSex = array();
-                                $counterStdBySex = array();
-                                
-                                //obtain the counter and sums for age by sex
-                                foreach ($ages as $key => $age) {
-                                    $counterAgeBySex[$key]['M'] = 0;
-                                    $counterAgeBySex[$key]['F'] = 0;
-                                    foreach ($stds as $std) {                                                                            
-                                        foreach ($gender as $sex) {
-                                            if ($key == '<6'){
-                                                $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learnersBySexAgeStd, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);                                                   
-                                            }elseif($key == '>17'){                                              
-                                                $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learnersBySexAgeStd, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
-                                            }else{                                                    
-                                                $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultiple($learnersBySexAgeStd, ['age'=>$age, 'std'=>$std, 'sex'=>$sex]);
-                                            }
-                                            //get totals for across age and standards by sex
-                                            if ($sex == 'M'){
-                                                $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
-                                            }else {
-                                                $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
-                                            }
-                                        }                                     
+                        /*Summary of learners with special needs section*/
+				if(in_array(1, $formData['reports'])){//if the summary of learners with special needs option was checked
+                                    $options['specialNeeds'] = true;
+                                    $learnersTransOut = $connection->fetchAll("SELECT
+                                        lwd_belongs_to_school.idlwd,
+                                        lwd_belongs_to_school.emiscode,
+                                        lwd_belongs_to_school.year,
+                                        lwd.sex
+                                    FROM
+                                        school NATURAL JOIN lwd
+                                        INNER JOIN lwd_belongs_to_school
+                                         ON lwd.idlwd = lwd_belongs_to_school.idlwd
+                                    WHERE
+                                        year = ?
+                                        AND iddistrict = ?
+                                        AND lwd_belongs_to_school.idlwd IN (SELECT
+                                                        lwd_belongs_to_school.idlwd
+                                                     FROM
+                                                        lwd_belongs_to_school NATURAL JOIN school
+                                                     WHERE
+                                                        year = ?
+                                                        AND iddistrict != ?)", [$lwdLastYr, $iddistrict, $lwdLatestYr['yr'], $iddistrict]);
+                                   $learnersTransIn = $connection->fetchAll("SELECT
+                                        lwd_belongs_to_school.idlwd,
+                                        lwd_belongs_to_school.emiscode,
+                                        lwd_belongs_to_school.year,
+                                        lwd.sex
+                                    FROM
+                                        school NATURAL JOIN lwd
+                                        INNER JOIN lwd_belongs_to_school
+                                         ON lwd.idlwd = lwd_belongs_to_school.idlwd
+                                    WHERE
+                                        year = ?
+                                        AND iddistrict = ?
+                                        AND lwd_belongs_to_school.idlwd IN (SELECT
+                                                        lwd_belongs_to_school.idlwd
+                                                     FROM
+                                                        lwd_belongs_to_school NATURAL JOIN school
+                                                     WHERE
+                                                        year = ?
+                                                        AND iddistrict != ?)", [$lwdLatestYr['yr'], $iddistrict, $lwdLastYr, $iddistrict]);
+                                    //get students enrolled this year
+                                    $enrolled = $connection->fetchAll('SELECT sex, year FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
+                                            WHERE iddistrict = ? GROUP BY idlwd HAVING COUNT(idlwd) = 1 AND `year` = ?',
+                                            [$iddistrict, $yearQuery['maxYear']]);
+                                    $options['enrolledTotal'] = count($enrolled);
+                                    $options['enrolledBoys'] = $dataConverter->countArray($enrolled, 'sex', 'M');
+                                    $options['enrolledGirls'] = $options['enrolledTotal'] - $options['enrolledBoys'];
+
+                                    //get students who exited the school
+                                    $exited = $connection->fetchAll('SELECT sex, reason, lwd_has_disability.*, disability.disability_name,disability_category.* '
+                                            . 'FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
+                                            . 'WHERE iddistrict = ? AND `year` = ?', [$iddistrict, $yearQuery['maxYear']]);
+
+                                    $exitedGrouped = $connection->fetchAll('SELECT COUNT(idlwd), disability_category.* '
+                                            . 'FROM lwd NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
+                                            . 'WHERE iddistrict = ? AND `year` = ? GROUP BY category_name', [$iddistrict, $yearQuery['maxYear']]);
+                                    //get disability category total from exitedGrouped above
+
+                                    //get SNE students by category of impairment and gender
+                                    $disabilitiesDB = $connection->fetchAll('select iddisability, disability_name from disability');
+                                    $gender = array('M'=>'M','F'=>'F');
+                                    $disabilities = array();
+                                    foreach ($disabilitiesDB as $key => $row) {
+                                        $disabilities[$row['iddisability']] = $row['disability_name'];
                                     }
-                                }
-                                //flip the array to sum downwards for std by sex
-                                foreach ($stds as $std) {                                    
-                                    $counterStdBySex[$std]['M'] = 0;
-                                    $counterStdBySex[$std]['F'] = 0;
-                                    foreach ($ages as $key => $age) {                                        
-                                        foreach ($gender as $sex) {                                            
-                                            //get totals for across age and standards by sex
-                                            if ($sex == 'M'){
-                                                $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
-                                            }else {
-                                                $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
+                                    //get dropouts and completed counts
+                                    $dropoutReason = ' != "completed"';
+                                    $completedReason = ' = "completed"';
+                                    $dCategoryCount = array();//dropouts count
+                                    $cCategoryCount = array();//completed count
+                                    $categoryCount = array(); //this is counting disabilities not categories of disbailities anymore
+                                    $dOrC = array('Dropouts'=>' != "completed"','Completed STD 8'=>' = "completed"');
+                                    foreach ($disabilities as $catKey => $category) {
+                                        foreach ($dOrC as $dcKey => $dc) {
+                                            $dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', $dc);
+                                            foreach ($gender as $genKey => $gen){
+
+                                                $dropoutCategories = $dataConverter->selectFromArrayBool($exited, 'disability_name', '= '.$category);
+                                                $categoryCount[$category][$dcKey][$gen] = $dataConverter->countArray($dropoutCategories, 'sex', $gen);
                                             }
-                                        }                                     
+                                        }
                                     }
+                                    $options['dOrCsKey'] = $disabilities[1];
+                                    $options['categoryCounts'] = $categoryCount;
+                                    //$options['cCategoryCounts'] = $cCategoryCount;
+
+                                    //get total number of dropouts
+                                    $dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', $dropoutReason);
+                                    $options['dropoutTotal'] = count($dropouts);
+                                    $options['dropoutBoys'] = $dataConverter->countArray($dropouts, 'sex', 'M');
+                                    $options['dropoutGirls'] = $options['dropoutTotal'] - $options['dropoutBoys'];
+
+                                    //transfers out
+                                    $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
+                                    $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
+                                    $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
+
+                                    //transfer in
+                                    $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
+                                    $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
+                                    $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
+
+                                    //get learners completed std 8
+                                    $completed = $dataConverter->selectFromArrayBool($exited, 'reason', $completedReason);
+                                    $options['completedTotal'] = count($completed);
+                                    $options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');
+                                    $options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
+
+                                    //
+
+                                    //lwds by class, age and sex
+                                    $learnersBySexAgeStd = array();
+                                    $learnersBy = array();
+                                    $totalStdSexAge = array();
+
+                                    $ages = array('<6'=>5, '6'=>6, '7'=>7,
+                                        '8'=>8, '9'=>9, '10'=>10,'11'=>11,'12'=>12,
+                                        '13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'>17'=>18);
+                                    $stds = array('1'=>1, '2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8);
+                                                        $counterStdSex = array();
+                                    $counterStdBySex = array();
+
+                                    //obtain the counter and sums for age by sex
+                                    foreach ($ages as $key => $age) {
+                                        $counterAgeBySex[$key]['M'] = 0;
+                                        $counterAgeBySex[$key]['F'] = 0;
+                                        foreach ($stds as $std) {
+                                            foreach ($gender as $sex) {
+                                                if ($key == '<6'){
+                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
+                                                }elseif($key == '>17'){
+                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
+                                                }else{
+                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultiple($learners, ['age'=>$age, 'std'=>$std, 'sex'=>$sex]);
+                                                }
+                                                //get totals for across age and standards by sex
+                                                if ($sex == 'M'){
+                                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
+                                                }else {
+                                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
+                                                }
+                                            }
+                                        }
+                                    }
+                                    //flip the array to sum downwards for std by sex
+                                    foreach ($stds as $std) {
+                                        $counterStdBySex[$std]['M'] = 0;
+                                        $counterStdBySex[$std]['F'] = 0;
+                                        foreach ($ages as $key => $age) {
+                                            foreach ($gender as $sex) {
+                                                //get totals for across age and standards by sex
+                                                if ($sex == 'M'){
+                                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
+                                                }else {
+                                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
+                                                }
+                                            }
+                                        }
+                                    }
+                                    $options['stdBySex'] = $counterStdBySex;
+                                    $options['ageBySex'] = $counterAgeBySex;
+                                    $options['learnersBy'] = $learnersBy;
+                                    /* end of lwds by age, sex and std*/
+
                                 }
-                               $options['stdBySex'] = $counterStdBySex;
-                                $options['ageBySex'] = $counterAgeBySex; 
-                               //learners by std, sex and age - ENDS HERE
-                            $options['learnersBy'] = $learnersBy;
-                        }
-                        /*End of Summary of learners with special needs*/
-                        
-                        /*Start of Teaching and learning materials*/
-                      /*Start of Teaching and learning materials*/
+                      /*End of Summary of learners with special needs*/
+                       
+                    /*Start of Teaching and learning materials*/
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
-                            $options['learningMaterials'] = true;                           
-//
+                            $options['learningMaterials'] = true;
                             //learners needs - STARTS HERE
-                            $learnersNeeds = $connection->fetchAll('SELECT needname, SUM(school_has_need.quantity_available) as quantity_available, '
-                                    . 'SUM(school_has_need.quantity_in_use) as quantity_in_use, '
-                                    . 'sum(school_has_need.quantity_required) as quantity_required '
+                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, school_has_need.* '
                                     . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need '
-                                    . 'WHERE iddistrict = ? and school_has_need.year_recorded = ? GROUP BY needname', [$iddistrict, $lwdLatestYr['yr']]);                                                               
+                                    . 'WHERE school.iddistrict = ? and school_has_need.year_recorded = ?', [$iddistrict, $lwdLatestYr['yr']]);                                                               
                             //learners needs by resource room or not - ENDS HERE
-                            $options['teachingNeeds'] = $learnersNeeds;                           
-                        }
+                            //roor state data starts here
+                            $learnersRooms = $connection->fetchAll('SELECT * FROM room_state NATURAL JOIN school where iddistrict = ? and year = ?', [$iddistrict, $lwdLatestYr['yr']]);
+                            $options['teachingNeeds'] = $learnersNeeds;
+                            $options['teachingRooms'] = $learnersRooms;
+                        }                       
                         /*End of Teaching and learning materials*/
+
                         $productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
 			if($formData['format'] == 'html' || $formData['format'] == 'pdf'){
