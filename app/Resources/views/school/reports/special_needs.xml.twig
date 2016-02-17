@@ -5,7 +5,7 @@
     <Cell ss:MergeRight="2" ss:StyleID="s3"><Data ss:Type="String">Enrollments Dropouts and Transfers</Data></Cell>
   </Row>
   <Row>
-    <Cell ss:MergeRight="2" ss:StyleID="s3"><Data ss:Type="String">LWD Enrolled this year</Data></Cell>  
+    <Cell ss:MergeRight="2" ss:StyleID="s3"><Data ss:Type="String">LWD Enrolled this year</Data></Cell>
     <Cell ss:MergeRight="2" ss:Index="4" ss:StyleID="s3"><Data ss:Type="String">Transfers in</Data></Cell>
     <Cell ss:MergeRight="2" ss:Index="4" ss:StyleID="s3"><Data ss:Type="String">Transfers out</Data></Cell>
     <Cell ss:MergeRight="2" ss:Index="7" ss:StyleID="s3"><Data ss:Type="String">Dropouts</Data></Cell>
@@ -32,11 +32,11 @@
   <Cell><Data ss:Type="Number">{{ enrolledBoys }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ enrolledGirls }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ enrolledTotal }}</Data></Cell>
- 
+
   <Cell><Data ss:Type="Number">{{ numBoysTRin }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ numGirlsTRin }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ totalTransferIn }}</Data></Cell>
-  
+
   <Cell><Data ss:Type="Number">{{ numBoysTRout }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ numGirlsTRout }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ totalTransferOut }}</Data></Cell>
@@ -44,19 +44,19 @@
   <Cell><Data ss:Type="Number">{{ dropoutBoys }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ dropoutGirls }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ dropoutTotal }}</Data></Cell>
-  
+
   <Cell><Data ss:Type="Number">{{ completedBoys }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ completedGirls }}</Data></Cell>
   <Cell><Data ss:Type="Number">{{ completedTotal }}</Data></Cell>
 </Row>
 <Row ss:Index="6">
   <Cell ss:StyleID="s3"><Data ss:Type="String">LWDs by Class, Sex and Age</Data></Cell>
-</Row> 
+</Row>
 <Row>
   <Cell ss:StyleID="s3" ss:MergeDown="1"><Data ss:Type="String">Age</Data></Cell>
   {% set index = 2 %}
     {% for counter in 1..8 %}
-      <Cell ss:StyleID="s3" ss:MergeRight="1" 
+      <Cell ss:StyleID="s3" ss:MergeRight="1"
       {% if index != 2 %}
         ss:Index="{{index}}"
       {% endif %}>
@@ -72,19 +72,19 @@
     <Cell ss:Index="{{index}}" ss:StyleID="s3"><Data ss:Type="String">M</Data></Cell>
     <Cell ss:Index="{{index + 1}}" ss:StyleID="s3"><Data ss:Type="String">F</Data></Cell>
     {% set index = index + 2 %}
-  {% endfor %}  
+  {% endfor %}
 </Row>
-{% for age,ages in learnersBy %}        
+{% for age,ages in learnersBy %}
   <Row>
     <Cell ss:StyleID="s16"><Data ss:Type="String">{{ age }} </Data></Cell>
-    {% for std,stds in ages %}            
+    {% for std,stds in ages %}
       <Cell ss:StyleID="s16"><Data ss:Type="Number">{{ stds.M }}</Data></Cell>
       <Cell ss:StyleID="s16"><Data ss:Type="Number">{{ stds.F }}</Data></Cell>
       {% if loop.last %}
         <Cell ss:StyleID="s16"><Data ss:Type="Number">{{ ageBySex[age].M }}</Data></Cell>
         <Cell ss:StyleID="s16"><Data ss:Type="Number">{{ ageBySex[age].F }}</Data></Cell>
       {% endif %}
-    {% endfor %}            
+    {% endfor %}
   </Row>
   {% if loop.last %}
     <Row>
