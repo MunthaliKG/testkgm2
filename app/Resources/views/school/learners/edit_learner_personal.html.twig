@@ -49,6 +49,7 @@
 			<div class="col-sm-6">
 				<fieldset>
 					<legend><small>Guardian Information</small></legend>
+					{{ form_row(form1.household_type) }}
 					{{ form_row(form1.guardian_relationship, {'label_attr':{'class':'radio-inline'}}) }}
 					<div id="non_relative">
 						{{ form_row(form1.non_relative) }}
