@@ -4,6 +4,15 @@
         <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
             <tr>
                 <td align="center" rowspan="2"><b>Item</b></td>
+                {% if isZone %}
+                         <td align="center"><b>Emis Code</b></td>
+                    {% endif %}
+                    {% if isDistrict %}
+                         <td align="center"><b>Zone Id</b></td>
+                    {% endif %}
+                    {% if isNational %}
+                         <td align="center"><b>District Id</b></td>
+                    {% endif %}
                 <td align="center" colspan="3"><b>Quantity</b></td>                
             </tr>
             <tr>
@@ -17,6 +26,15 @@
             {% for row,needs in teachingNeeds %}        
                 <tr>
                     <td align="center">{{ needs['needname'] }} </td>
+                    {% if isZone %}
+                        <td align="center">{{ rooms['emiscode'] }}</td>
+                    {% endif %}
+                    {% if isDistrict %}
+                        <td align="center">{{ rooms['idzone'] }}</td>
+                    {% endif %}
+                    {% if isNational %}
+                        <td align="center">{{ rooms['iddistrict'] }}</td>
+                    {% endif %}
                     <td align="center">{{ needs['quantity_available'] }}</td>
                     <td align="center">{{ needs['quantity_in_use'] }}</td>
                     <td align="center">{{ needs['quantity_required'] }}</td>

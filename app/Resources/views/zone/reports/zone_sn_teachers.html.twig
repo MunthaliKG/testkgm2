@@ -1,7 +1,16 @@
 <p>SPECIAL NEEDS TEACHERS ({{ chaka }})</p>
 <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
     <tr>
-        <td align="center"><b>Teacher Name</b></td>       
+        <td align="center"><b>Teacher Name</b></td>
+        {% if isZone %}
+            <td align="center"><b>Emis code</b></td>
+	{% endif %}
+        {% if isDistrict %}
+                         <td align="center"><b>Zone Id</b></td>
+                    {% endif %}
+                    {% if isNational %}
+                         <td align="center"><b>District Id</b></td>
+                    {% endif %}
         <td align="center"><b>Sex</b></td>
         <td align="center"><b>Qualification</b></td>
         <td align="center"><b>Specialty*</b></td>
@@ -12,6 +21,15 @@
     {% for teacher, teachers in snTeachers %}        
     <tr>
         <td align="center">{{ teachers.sfirst_name}} {{ teachers.slast_name }}</td>
+        {% if isZone %}
+            <td align="center">{{ teachers.emiscode }}</td>
+	{% endif %}
+        {% if isDistrict %}
+                        <td align="center">{{ teachers['idzone'] }}</td>
+                    {% endif %}
+                    {% if isNational %}
+                        <td align="center">{{ teachers['iddistrict'] }}</td>
+                    {% endif %}
         <td align="center">{{ teachers.s_sex }}</td>
         <td align="center">{{ teachers.qualification }}</td>      
         <td align="center">{{ teachers.speciality }}</td>

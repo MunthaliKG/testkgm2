@@ -2,6 +2,15 @@
 <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
     <tr>
         <td align="center"><b>Learner Name</b></td>
+        {% if isZone %}
+            <td align="center"><b>Emis code</b></td>
+	{% endif %}
+        {% if isDistrict %}
+                         <td align="center"><b>Zone Id</b></td>
+                    {% endif %}
+                    {% if isNational %}
+                         <td align="center"><b>District Id</b></td>
+                    {% endif %}
         <td align="center"><b>Address</b></td>
         <td align="center"><b>Sex</b></td>
         <td align="center"><b>Date of Birth</b></td>
@@ -15,6 +24,15 @@
     {% for learner, learners in snLearners %}        
     <tr>
         <td align="center">{{ learners.first_name}} {{ learners.last_name}}</td>
+        {% if isZone %}
+            <td align="center">{{ learners.emiscode}}</td>
+	{% endif %}
+        {% if isDistrict %}
+            <td align="center">{{ learners['idzone'] }}</td>
+        {% endif %}
+        {% if isNational %}
+            <td align="center">{{ learners['iddistrict'] }}</td>
+        {% endif %}
         <td align="center">{{ learners.home_address}}</td>
         <td align="center">{{ learners.sex}}</td>
         <td align="center">{{ learners.dob}}</td>
