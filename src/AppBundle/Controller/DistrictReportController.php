@@ -53,6 +53,7 @@ class DistrictReportController extends Controller{
                             . 'WHERE iddistrict = ?', [$iddistrict]);
                         
                         $options['district'] = $district[0];
+                        $options['isSchool'] = false;
                         $options['isZone'] = true;
                         $options['isDistrict'] = true;
                         $options['isNational'] = false;
@@ -300,11 +301,11 @@ class DistrictReportController extends Controller{
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                             $options['learningMaterials'] = true;
                             //learners needs - STARTS HERE
-                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, iddistrict, idzone, school_has_need.* '
+                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, SUM(quantity_available) as quantity_available, '
+                                    . 'SUM(quantity_in_use) as quantity_in_use, SUM(quantity_required) as quantity_required, '
+                                    . 'SUM(case when available = "yes" then 1 else 0 end) as available '
                                     . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need '
-                                    . 'WHERE school.iddistrict = ? and school_has_need.year_recorded = ?', [$iddistrict, $lwdLatestYr['yr']]);                                                               
-                            //learners needs by resource room or not - ENDS HERE
-                            //roor state data starts here
+                                    . 'WHERE school.iddistrict = ? and school_has_need.year_recorded = ? GROUP BY needname', [$iddistrict, $lwdLatestYr['yr']]);                                                               
                             $learnersRooms = $connection->fetchAll('SELECT * FROM room_state NATURAL JOIN school where iddistrict = ? and year = ?', [$iddistrict, $lwdLatestYr['yr']]);
                             $options['teachingNeeds'] = $learnersNeeds;
                             $options['teachingRooms'] = $learnersRooms;
@@ -388,6 +389,7 @@ class DistrictReportController extends Controller{
                             . 'WHERE iddistrict = ?', [$iddistrict]);
                         
                         $options['district'] = $district[0];
+                        $options['isSchool'] = false;
                         $options['isZone'] = true;
                         $options['isDistrict'] = true;
                         $options['isNational'] = false;
