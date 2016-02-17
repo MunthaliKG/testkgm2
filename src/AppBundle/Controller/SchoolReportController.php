@@ -55,6 +55,10 @@ class SchoolReportController extends Controller{
 				FROM school NATURAL JOIN district NATURAL JOIN zone WHERE emiscode = ?', [$emisCode]);
                         
 			$options['school'] = $school;
+                        $options['isSchool'] = true;
+                        $options['isZone'] = false;
+                        $options['isDistrict'] = false;
+                        $options['isNational'] = false;
 
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
@@ -371,6 +375,10 @@ class SchoolReportController extends Controller{
 				FROM school NATURAL JOIN district NATURAL JOIN zone WHERE emiscode = ?', [$emisCode]);
                         
 			$options['school'] = $school;
+                        $options['isSchool'] = true;
+                        $options['isZone'] = false;
+                        $options['isDistrict'] = false;
+                        $options['isNational'] = false;
 
 			$learners = array();
 			$dataConverter = $this->get('data_converter');
