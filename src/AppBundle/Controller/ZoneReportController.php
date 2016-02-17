@@ -57,6 +57,8 @@ class ZoneReportController extends Controller{
                       
                         $options['zone'] = $zone[0];
                         $options['isZone'] = true;
+                        $options['isDistrict'] = false;
+                        $options['isNational'] = false;
                        
 			//$options['school'] = $school;
                         $dataConverter = $this->get('data_converter');
@@ -367,23 +369,21 @@ class ZoneReportController extends Controller{
                             . 'WHERE iddistrict = district_iddistrict and idzone = ?', [$idzone]);
                         $dataConverter = $this->get('data_converter');
                         $options['zone'] = $zone[0];
+                        $options['isZone'] = true;
+                        $options['isDistrict'] = false;
+                        $options['isNational'] = false;
                         $schoolsInZone = $connection->fetchAll('select emiscode, idzone from school where idzone =?', [$idzone]);                               
                         $options['numOfSchools'] = $dataConverter->countArray($schoolsInZone, 'idzone', $idzone);//get the number of schools
 
 			$learners = array();
                         $options['chaka'] = $year;
 			if(in_array(1, $formData['reports']) || in_array(0, $formData['reports'])){
-                        
-                           
-
-//                                                       		
-        
                             /*SN learners' details section*/
                             if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
                                     $options['snLearners'] = true;
                                     //get students enrolled this year
                                     $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, 
-                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, household_type 
+                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, lwd_belongs_to_school.emiscode as emiscode, household_type 
                                         FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
                                         WHERE idzone = ? AND `year` = ?', 
                                             [$idzone, $yearQuery['maxYear']]);				
@@ -393,7 +393,7 @@ class ZoneReportController extends Controller{
                                     $options['snTeachers'] = true;
                                     //get teachers this year
                                     $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
-                                        s_sex, qualification, speciality, year_started, teacher_type 
+                                        s_sex, qualification, speciality, year_started, school_has_snt.emiscode as emiscode, teacher_type 
                                         FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school
                                         WHERE idzone = ? AND `year` = ?', 
                                             [$idzone, $yearQuery['maxYear']]);				

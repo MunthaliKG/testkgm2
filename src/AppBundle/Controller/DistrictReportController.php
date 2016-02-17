@@ -53,6 +53,9 @@ class DistrictReportController extends Controller{
                             . 'WHERE iddistrict = ?', [$iddistrict]);
                         
                         $options['district'] = $district[0];
+                        $options['isZone'] = true;
+                        $options['isDistrict'] = true;
+                        $options['isNational'] = false;
                        			
                         //schools in a district
                                
@@ -297,7 +300,7 @@ class DistrictReportController extends Controller{
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                             $options['learningMaterials'] = true;
                             //learners needs - STARTS HERE
-                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, school_has_need.* '
+                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, iddistrict, idzone, school_has_need.* '
                                     . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need '
                                     . 'WHERE school.iddistrict = ? and school_has_need.year_recorded = ?', [$iddistrict, $lwdLatestYr['yr']]);                                                               
                             //learners needs by resource room or not - ENDS HERE
@@ -385,6 +388,9 @@ class DistrictReportController extends Controller{
                             . 'WHERE iddistrict = ?', [$iddistrict]);
                         
                         $options['district'] = $district[0];
+                        $options['isZone'] = true;
+                        $options['isDistrict'] = true;
+                        $options['isNational'] = false;
                        			
                         //schools in a district
                                
@@ -429,7 +435,7 @@ class DistrictReportController extends Controller{
                             if(in_array(0, $formData['reports'])){//if the SN learners' details option was checked
                                     $options['snLearners'] = true;
                                     //get students enrolled this year
-                                    $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, distance_to_school, gfirst_name, glast_name, gsex, occupation, household_type 
+                                    $enrolled = $connection->fetchAll('SELECT * 
                                         FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
                                         WHERE iddistrict = ? AND `year` = ?', 
                                             [$iddistrict, $yearQuery['yr']]);				
@@ -438,8 +444,7 @@ class DistrictReportController extends Controller{
                             if(in_array(1, $formData['reports'])){//if the SN teachers' details option was checked
                                     $options['snTeachers'] = true;
                                     //get teachers this year
-                                    $employed = $connection->fetchAll('SELECT sfirst_name, employment_number,slast_name, 
-                                        s_sex, qualification, speciality, year_started, teacher_type 
+                                    $employed = $connection->fetchAll('SELECT * 
                                         FROM snt NATURAL JOIN school_has_snt NATURAL JOIN school
                                         WHERE iddistrict = ? AND `year` = ?', 
                                             [$iddistrict, $yearQuery['yr']]);				
