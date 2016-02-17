@@ -299,9 +299,10 @@ class SchoolReportController extends Controller{
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                             $options['learningMaterials'] = true;
                             //learners needs - STARTS HERE
-                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, school_has_need.* '
+                            $learnersNeeds = $connection->fetchAll('SELECT emiscode, needname, school_has_need.* '
                                     . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need '
-                                    . 'WHERE school.emiscode = ? and school_has_need.year_recorded = ?', [$emisCode, $lwdLatestYr['yr']]);                                                               
+                                    . 'WHERE school.emiscode = ? AND school_has_need.year_recorded = ?
+                                    AND (need_type="school only" OR need_type="both")', [$emisCode, $lwdLatestYr['yr']]);
                             //learners needs by resource room or not - ENDS HERE
                             //roor state data starts here
                             $learnersRooms = $connection->fetchAll('SELECT * FROM room_state where emiscode = ? and year = ?', [$emisCode, $lwdLatestYr['yr']]);

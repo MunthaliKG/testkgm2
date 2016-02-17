@@ -154,6 +154,19 @@ class LearnerPersonalType extends AbstractType
 			'multiple' => false,
 			)
 		)
+		->add('household_type', 'choice', array(
+						'label' => 'Household Type',
+						'placeholder' => '--household type--',
+						'choices' => array(
+								'male-headed'=>'Male-headed',
+								'female-headed'=>'Female-headed',
+								'child-headed' => 'Child-headed'
+						),
+						'constraints' => array(new NotBlank()),
+						'expanded' => false,
+						'multiple' => false,
+				)
+		)
 		->add('non_relative','text', array(
 			'label' => 'Specify Other Non-Relative',
 			'required' => false,

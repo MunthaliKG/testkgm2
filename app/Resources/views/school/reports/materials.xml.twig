@@ -1,0 +1,40 @@
+<Worksheet ss:Name="Teaching and Learning Materials">
+    <Table x:FullColumns="1" x:FullRows="1" ss:DefaultRowHeight="15">
+
+        <Row>
+            <Cell ss:MergeRight="2" ss:StyleID="s3"><Data ss:Type="String">School Rooms</Data></Cell>
+        </Row>
+        <Row>
+            <Cell><Data ss:Type="String">Room</Data></Cell>
+            <Cell><Data ss:Type="String">Enough Lighting</Data></Cell>
+            <Cell><Data ss:Type="String">Enough Space</Data></Cell>
+            <Cell><Data ss:Type="String">Adaptive Chairs</Data></Cell>
+            <Cell><Data ss:Type="String">Accessible</Data></Cell>
+            <Cell><Data ss:Type="String">Enough Ventilation</Data></Cell>
+            <Cell><Data ss:Type="String">Noise Free</Data></Cell>
+            <Cell><Data ss:Type="String">Room Type</Data></Cell>
+        </Row>
+
+        {% for room in teachingRooms %}
+            <Row>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.room_id }}</Data></Cell>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.enough_light }}</Data></Cell>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.enough_space }}</Data></Cell>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.adaptive_chairs }}</Data></Cell>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.access }}</Data></Cell>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.enough_ventilation }}</Data></Cell>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.noise_free }}</Data></Cell>
+                <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.room_type }}</Data></Cell>
+            </Row>
+        {% endfor %}
+    </Table>
+    <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+        <PageSetup>
+            <Header x:Margin="0.3"/>
+            <Footer x:Margin="0.3"/>
+            <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+        </PageSetup>
+        <ProtectObjects>False</ProtectObjects>
+        <ProtectScenarios>False</ProtectScenarios>
+    </WorksheetOptions>
+</Worksheet>
