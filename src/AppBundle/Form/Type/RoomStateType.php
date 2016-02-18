@@ -63,6 +63,7 @@ class RoomStateType extends AbstractType
                 )
                 ->add('room_type', 'choice', array(
 			'label' => 'Room Type',
+			'placeholder' => '--Select Room type--',
 			'choices' => array('Open air'=>'Open air','Permanent'=>'Permanent', 'Temporary'=>'Temporary'),
 			'constraints' => array(new NotBlank()),
 			'expanded' => false,

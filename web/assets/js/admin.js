@@ -1,7 +1,17 @@
+var userRole;
+var userActions;
+var userDomain;
+var userLevel;
+
 $(document).ready(function(){
 	$('#access_district_div').hide();
-	toggleUserRole($('#adduser_roles'), true);
-	toggleAccessLevel($('#adduser_access_level'));
+	userRole = $('#adduser_roles').val();
+	userActions = $('#adduser_allowed_actions').val();
+	userDomain = $('#adduser_access_domain').val();
+	userLevel = $('#adduser_access_level').val();
+
+ 	toggleUserRole($('#adduser_roles'), true);
+	toggleAccessLevel($('#adduser_access_level'), true);
 	
 	$('#access_district').change(function(event){
 		var accessDistrict = $(this).val();
@@ -43,19 +53,28 @@ function toggleUserRole(object, pageLoad){
 			$('#access_district_div').hide();
 			dependentFields.prop('disabled','disabled');
 		}else{
-			if(pageLoad !== true)//if this function has not been called while the page is loading
-				$('#adduser_access_level').val('');
+			if(pageLoad !== true) {//if this function has not been called while the page is loading
+                $('#adduser_access_level').val('');
+            }
+			else {
+                $('#adduser_access_level').val(userLevel);
+            }
 			dependentFields.prop('disabled','');
 		}
 	}
 	else{
-		dependentFields.val('');
-		$('#adduser_allowed_actions').val('');
-		$('#adduser_allowed_actions').prop('disabled','');
-		dependentFields.prop('disabled','');
+		if(pageLoad !== true){
+			dependentFields.val('');
+			$('#adduser_allowed_actions').val('');
+			$('#adduser_allowed_actions').prop('disabled','');
+			dependentFields.prop('disabled','');
+		}else{
+            $('#adduser_access_level').val(userLevel);
+        }
 	}
 }
-function toggleAccessLevel(object){
+function toggleAccessLevel(object, pageLoad){
+	pageLoad = (pageLoad === undefined)? false: pageLoad;
 	var level = object.val();
 	if(level !== '3' && level !== '4' && level !== ''){
 		$('#access_district_div').show();
@@ -71,6 +90,9 @@ function toggleAccessLevel(object){
 			})
 			.done(function(data) {
 				$('#adduser_access_domain').html(data);
+				if(pageLoad === true){
+					$('#adduser_access_domain').val(userDomain);
+				}
 			})
 		}
 		if(level === '4'){

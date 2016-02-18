@@ -15,6 +15,16 @@
 	{% for flashMessage in app.session.flashbag.get('message') %}
 		<p class="text-center">{{ flashMessage }}</p>
 	{% endfor %}
+    {#show a database error#}
+    {% if app.session.flashBag.has('dbWriteError') %}
+        {% for msg in app.session.flashBag.get('dbWriteError') %}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
 	
 	<div class="col-sm-7 col-sm-offset-2">
             <fieldset>

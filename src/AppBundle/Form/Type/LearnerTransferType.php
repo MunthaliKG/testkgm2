@@ -47,7 +47,7 @@ class LearnerTransferType extends AbstractType
                 $data = $event->getData();
 
                 if($data['district']){
-                    $zones = $connection->fetchAll('SELECT idzone, zone_name FROM zone WHERE district_iddistrict = ?',array($data['district']));                    
+                    $zones = $connection->fetchAll('SELECT idzone, zone_name FROM zone WHERE iddistrict = ?',array($data['district']));
                     $zone_choices = array();
                     foreach ($zones as $key => $row) {
                         $zone_choices[$row['idzone']] = $row['zone_name'];

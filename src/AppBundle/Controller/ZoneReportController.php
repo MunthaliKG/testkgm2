@@ -53,7 +53,7 @@ class ZoneReportController extends Controller{
 			$options = array(); //list of options to pass to the template
                         
                         $zone =  $connection->fetchAll('SELECT idzone, zone_name, iddistrict, district_name FROM zone, district '
-                            . 'WHERE iddistrict = district_iddistrict and idzone = ?', [$idzone]);
+                            . 'WHERE iddistrict = iddistrict and idzone = ?', [$idzone]);
                       
                         $options['zone'] = $zone[0];
                         $options['isZone'] = true;
@@ -366,7 +366,7 @@ class ZoneReportController extends Controller{
 			$formData = $form->getData();
 			$options = array(); //list of options to pass to the template
 			$zone =  $connection->fetchAll('SELECT idzone, zone_name, iddistrict, district_name FROM zone, district '
-                            . 'WHERE iddistrict = district_iddistrict and idzone = ?', [$idzone]);
+                            . 'WHERE iddistrict = iddistrict and idzone = ?', [$idzone]);
                         $dataConverter = $this->get('data_converter');
                         $options['zone'] = $zone[0];
                         $options['isZone'] = true;

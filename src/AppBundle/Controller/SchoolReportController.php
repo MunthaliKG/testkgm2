@@ -340,7 +340,7 @@ class SchoolReportController extends Controller{
 		        // adding headers
 		        $dispositionHeader = $response->headers->makeDisposition(
 		            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-		            'IED-Report-'.date('d-m-Y').'.xlsx'
+		            'IED-Report-Basic-'.date('d-m-Y').'.xlsx'
 		        );
 		        $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
 		        $response->headers->set('Pragma', 'public');
@@ -617,6 +617,26 @@ class SchoolReportController extends Controller{
                         ->getStyle('A1:A'.$maxCell['row'])->applyFromArray($columnHeadingStyle);
                     $activeSheetIndex += 1;
                 }
+                if(isset($options['lwdBIG'])){
+                    $phpExcelObject->createSheet();
+                    $phpExcelObject->setActiveSheetIndex($activeSheetIndex);
+                    foreach($options['learnersBIG'] as $key => &$array){
+                        array_unshift($array, $key);
+                    }
+                    $phpExcelObject->getActiveSheet()->fromArray(array(
+                        'Male', 'Female'
+                    ), null, 'B1', true);
+                    $phpExcelObject->getActiveSheet()->fromArray($options['learnersBIG'], null, 'A2', true);
+                    $phpExcelObject->getActiveSheet()->setTitle("Disability Category & Sex");
+                    $maxCell = $phpExcelObject->getActiveSheet()->getHighestRowAndColumn();
+                    $phpExcelObject->getActiveSheet()
+                        ->getStyle('A1:'. $maxCell['column'] . $maxCell['row'])->applyFromArray($styleArray);
+                    $phpExcelObject->getActiveSheet()
+                        ->getStyle('A1:'.$maxCell['column'].'1')->applyFromArray($columnHeadingStyle);
+                    $phpExcelObject->getActiveSheet()
+                        ->getStyle('A1:A'.$maxCell['row'])->applyFromArray($columnHeadingStyle);
+                    $activeSheetIndex += 1;
+                }
                 if(isset($options['lwdBDG'])){
                     $phpExcelObject->createSheet();
                     $phpExcelObject->setActiveSheetIndex($activeSheetIndex);
@@ -675,13 +695,13 @@ class SchoolReportController extends Controller{
                 // Set active sheet index to the first sheet, so Excel opens this as the first sheet
                 $phpExcelObject->setActiveSheetIndex(0);
                 // create the writer
-                $writer = $this->get('phpexcel')->createWriter($phpExcelObject, 'Excel5');
+                $writer = $this->get('phpexcel')->createWriter($phpExcelObject, 'Excel2007');
                 // create the response
                 $response = $this->get('phpexcel')->createStreamedResponse($writer);
                 // adding headers
                 $dispositionHeader = $response->headers->makeDisposition(
                     ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    'IED-Report-'.date('d-m-Y').'.xls'
+                    'IED-Report-Custom-'.date('d-m-Y').'.xlsx'
                 );
                 $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
                 $response->headers->set('Pragma', 'public');

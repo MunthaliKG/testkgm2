@@ -161,6 +161,7 @@ class SchoolController extends Controller{
         * @Route("/school/{emisCode}/needs/{needId}", name="edit_resource_material", requirements={"needId":"new|\d+"})
         */
         public function editResourceAction(Request $request, $needId, $emisCode){
+            $user = $this->get('security.token_storage')->getToken()->getUser();
             $connection = $this->get('database_connection');
             $defaultData = array();
             if($needId != 'new'){/*if we are not adding a new material, fill the form fields with
@@ -192,8 +193,14 @@ class SchoolController extends Controller{
             $form1 = $this->createForm(new ResourceRoomType($choices), $defaultData);
             
             $form1->handleRequest($request);
+
+            if($form1->isValid() && $user->getAllowedActions() == 1){
+                //use the resourceExist flash to send an access denied message
+                $request->getSession()->getFlashBag()
+                    ->add('resourceExist', 'Your access rights do not permit you to edit data');
+            }
                         
-            if($form1->isValid()){
+            if($form1->isValid() && $user->getAllowedActions() == 2){
                 $formData = $form1->getData();
                 $id_need = $formData['idneed'];
                 //print 'form data: '.$formData['idneed'];
@@ -207,7 +214,7 @@ class SchoolController extends Controller{
       		}else{//if it is being edited, then update the records that already exist 
                     $need = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')
                             ->findOneByIdneed($defaultData['idneed_2']);              
-   		}
+   		    }
 
                 
                 //If idneed is disabled do the right thing
@@ -257,7 +264,7 @@ class SchoolController extends Controller{
                     }
                 } catch(DBALException $e){
                     if(stripos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
-                        $message = $formData['idneed']. " resource record already exists for learner ";
+                        $message = $formData['idneed']. " resource record already exists ";
                     }
                     elseif(stripos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
                         $message = "A resource with id ".$formData['idneed_2']." does not exist at this school";
@@ -310,8 +317,16 @@ class SchoolController extends Controller{
             $form1 = $this->createForm(new RoomStateType(), $defaultData);
             
             $form1->handleRequest($request);
-                        
-            if($form1->isValid()){
+
+            //check if the user is allowed to edit
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+            if($form1->isValid() && $user->getAllowedActions() == 1){
+                //use the roomExists flash to send an access denied message
+                $request->getSession()->getFlashBag()
+                    ->add('roomExists', 'Your access rights do not permit you to edit data');
+            }
+
+            if($form1->isValid() && $user->getAllowedActions() == 2){
                 $formData = $form1->getData();
                 $id_room = $formData['room_id'];
                 $material;
@@ -557,7 +572,15 @@ class SchoolController extends Controller{
         $form2=  $this->createForm(new TeacherType(), $defaultData);
         $form2->handleRequest($request);
 
-        if($form2->isValid()){
+        //check if the user has edit rights
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        if($form2->isValid() && $user->getAllowedActions() == 1){
+            //use the sntExists flash to send an access denied message
+            $request->getSession()->getFlashBag()
+                ->add('sntExists', 'Your access rights do not permit you to edit data');
+        }
+
+        if($form2->isValid() && $user->getAllowedActions() == 2){
             $formData = $form2->getData();
             $teacher;
             
@@ -696,7 +719,13 @@ class SchoolController extends Controller{
         $form1 = $this->createForm(new LearnerPersonalType(), $defaultData);
         $form1->handleRequest($request);
 
-        if($form1->isValid()){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        if($form1->isValid() && $user->getAllowedActions() == 1){
+            $request->getSession()->getFlashBag()
+                ->add('lwdExists', 'Your access rights do not permit you to edit data');
+        }
+
+        if($form1->isValid() && $user->getAllowedActions() == 2){
             $formData = $form1->getData();
             $id_lwd = $formData['idlwd'];
             $id_guardian = $formData['idguardian'];
@@ -797,6 +826,7 @@ class SchoolController extends Controller{
      */
     public function editLearnerDisabilityAction(Request $request, $learnerId, $emisCode){
 
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         $forms = array(); //array to keep the forms: there could be more than one disability form for a learner
         $connection = $this->get('database_connection'); 
         $disabilities = $connection->fetchAll("SELECT * FROM disability");
@@ -849,7 +879,13 @@ class SchoolController extends Controller{
             $formCounter = 1;
             foreach($forms as $form){
                 $form->handleRequest($request);
-                if($form->isValid()){
+
+                //check if user is allowed to edit
+                if($form->isValid() && $user->getAllowedActions() == 1){
+                    $request->getSession()->getFlashBag()
+                        ->add('dbWriteError', 'Your access rights do not permit you to edit data');
+                }
+                if($form->isValid() && $user->getAllowedActions() == 2){
 
                     $formData = $form->getData();
                     $em = $this->getDoctrine()->getManager();
@@ -910,7 +946,14 @@ class SchoolController extends Controller{
         $newForm = $this->createForm(new LearnerDisabilityType($disabilities, $levels2, "", array(), false));
 
         $newForm->handleRequest($request);
-        if($newForm->isValid()){
+
+        //check if user is allowed to edit
+        if($newForm->isValid() && $user->getAllowedActions() == 1){
+            $request->getSession()->getFlashBag()
+                ->add('dbWriteError', 'Your access rights do not permit you to edit data');
+        }
+
+        if($newForm->isValid() && $user->getAllowedActions() == 2){
             $formData = $newForm->getData();
 
                 $columnName = '';
@@ -956,10 +999,16 @@ class SchoolController extends Controller{
      * @Route("/school/{emisCode}/learners/exit", name="learner_exit", requirements ={"emisCode":"\d+"})
      */
     public function learnerExitAction(Request $request, $emisCode){
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+
         $form = $this->createForm(new LearnerExitType);
         $form->handleRequest($request);
         $error = '';
-        if($form->isValid()){
+
+        if($form->isValid() && $user->getAllowedActions() == 1){
+            $error = 'Your access rights do not permit you to edit data';
+        }
+        if($form->isValid() && $user->getAllowedActions() == 2){
             try{
                 $em = $this->getDoctrine()->getManager();
                 $formData = $form->getData();
@@ -1108,28 +1157,49 @@ class SchoolController extends Controller{
         $form = $this->createForm(new LearnerPerformanceType(), $defaultData);
         $form->handleRequest($request);
 
-        if($form->isValid()){
+         //check if the user has edit rights
+         $user = $this->get('security.token_storage')->getToken()->getUser();
+         if($form->isValid() && $user->getAllowedActions() == 1){
+             //use the sntExists flash to send an access denied message
+             $request->getSession()->getFlashBag()
+                 ->add('dbWriteError', 'Your access rights do not permit you to edit data');
+         }
+        if($form->isValid() && $user->getAllowedActions() == 2){
             $formData = $form->getData();
 
-            $performanceRecord->setIdlwd($this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($learnerId));
-            $performanceRecord->setStd($formData['std']);
-            $performanceRecord->setYear($formData['year']->format('Y-m-d'));
-            $performanceRecord->setTerm($formData['term']);
-            $performanceRecord->setGrade($formData['grade']);
-            $performanceRecord->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
+            try{
+                $performanceRecord->setIdlwd($this->getDoctrine()->getRepository('AppBundle:Lwd')->findOneByIdlwd($learnerId));
+                $performanceRecord->setStd($formData['std']);
+                $performanceRecord->setYear($formData['year']->format('Y-m-d'));
+                $performanceRecord->setTerm($formData['term']);
+                $performanceRecord->setGrade($formData['grade']);
+                $performanceRecord->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($performanceRecord);
-            $em->flush();
-            $message = "Performance record ".$action;
-            $this->addFlash('message',$message);
-            return $this->redirectToRoute('edit_learner_performance', array(
-                'form' => $form,
-                'emisCode'=> $emisCode,
-                'learnerId' => $learnerId,
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($performanceRecord);
+                $em->flush();
+                $message = "Performance record ".$action;
+                $this->addFlash('message',$message);
+                return $this->redirectToRoute('edit_learner_performance', array(
+                    'form' => $form,
+                    'emisCode'=> $emisCode,
+                    'learnerId' => $learnerId,
                 ),
-            301
-            );
+                    301
+                );
+            }
+            catch(DBALException $e){
+                if(stripos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
+                    $message = "This performance record already exists for the learner ";
+                }
+                else{
+                    $message = "There was an error writing to the database. Please try again. If the problem persists, please contact the administrator";
+                }
+                //$this->addFlash('dbWriteError', $message);
+                $request->getSession()->getFlashBag()
+                    ->add('dbWriteError', $message);
+            }
+
         }
         return $this->render('school/learners/edit_learner_performance.html.twig',array(
             'form' => $form->createView(),

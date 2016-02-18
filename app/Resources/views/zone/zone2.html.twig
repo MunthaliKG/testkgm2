@@ -7,6 +7,21 @@
     <li><a href="#" class="{% block zonal_facility %}{% endblock %}"> Zone school facility reports </a></li>
 {%endblock%}
 
+{% block zone_select_form %}
+    {% embed 'info_bar.html.twig'%}
+        {% block slot1 %}
+            {% set zoneInfo = app.session.get('zoneInfo') %}
+            <b>Selected Zone: </b>
+            {% if zoneInfo is not null %}
+                {{ zoneInfo.zone_name }} ({{ zoneInfo.idzone }}) | {{ zoneInfo.district_name }}
+            {% endif %}
+
+        {% endblock %}
+        {% block slot5 %}
+            <a href="{{ path('zone_return') }}" class="btn btn-sm">Choose Another Zone</a>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-sm-1">                        

@@ -140,12 +140,14 @@ class UserController extends Controller{
 		unset($userArray['ufirst_name']);
 		unset($userArray['ulast_name']);
 		$userArray['roles'] =  unserialize($userArray['roles']);
-		if(empty($userArray['roles'])){
+
+		if($userArray['roles'][0] == ''){
 			$userArray['roles'] = 'ROLE_USER';
 		}
 		else{
 			$userArray['roles'] = $userArray['roles'][0];
 		}
+
 		$form = $this->createForm(new AddUserType($accessDomains, $isSuperAdmin, true), $userArray);
 
 		$form->handleRequest($request);

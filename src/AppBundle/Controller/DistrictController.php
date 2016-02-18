@@ -103,7 +103,7 @@ class DistrictController extends Controller{
             $lwdBTSchool = new \AppBundle\Entity\LwdBelongsToSchool();
             $lwdBTSchool->setEmiscode($em->getReference('AppBundle:School', ['emiscode'=>$formData['schoolTo']]));
             $session = $request->getSession();
-            $year;
+            $year = '';
             //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
             if ($session->has('school_year')){
                 $year = $session->get('school_year');

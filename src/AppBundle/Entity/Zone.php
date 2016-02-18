@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Zone
  *
- * @ORM\Table(name="zone", indexes={@ORM\Index(name="fk_zone_district1_idx", columns={"district_iddistrict"})})
+ * @ORM\Table(name="zone", indexes={@ORM\Index(name="fk_zone_district1_idx", columns={"iddistrict"})})
  * @ORM\Entity
  */
 class Zone
@@ -33,7 +33,7 @@ class Zone
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\District")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="district_iddistrict", referencedColumnName="iddistrict")
+     *   @ORM\JoinColumn(name="iddistrict", referencedColumnName="iddistrict")
      * })
      */
     private $districtdistrict;

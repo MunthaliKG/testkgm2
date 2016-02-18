@@ -95,20 +95,30 @@ class DefaultController extends Controller
                              );
     }
     /**
-     * @Route("/zone", name="zone_return")
+     * @Route("/zone_return", name="zone_return")
      */
-    public function zoneReturnAction(Request $request){      
-        return $this->render('zone/zone.html.twig');
+    public function zoneReturnAction(Request $request){
+        $session = $request->getSession();
+        $session->remove('zone_name');
+        $session->remove('idzone');
+        $session->remove('zoneInfo');
+        $session->save();
+
+        return $this->redirectToRoute('zone', array(), 301);
     }
     /**
      * @Route("/zone", name="zone")
      */
     public function zoneAction(Request $request){
         $session = $request->getSession();
+        $error = null;
+        if($session->getFlashBag()->has('errorMsg')){
+            $error = $request->getSession()->getFlashBag()->get('errorMsg')[0];
+        }
         if($session->has('idzone')){
             return $this->redirectToRoute('zone_main', array('idzone'=>$session->get('idzone')), 301);
         }
-        return $this->render('zone/zone.html.twig');
+        return $this->render('zone/zone.html.twig', array('error' => $error));
     }
     /**
      * @Route("/findZoneForm", name="find_zone_form")
@@ -143,7 +153,8 @@ class DefaultController extends Controller
         $learnerFinderForms->processForms();
         
         if($learnerFinderForms->areValid()){
-            return $this->redirectToRoute('district_transfer',array('iddistrict'=>$session->get('iddistrict'),'learnerId'=>$learnerFinderForms->getLearnerId()), 301);
+            return $this->redirectToRoute('district_transfer',array('iddistrict' => $request->getSession()->
+            get('iddistrict'),'learnerId'=>$learnerFinderForms->getLearnerId()), 301);
         }
         $learnerName = "";
         if($request->getSession()->has('idzone')){
@@ -194,14 +205,30 @@ class DefaultController extends Controller
         return $this->render('school/learners/learnerlist.html.twig', array('learners'=>$learners));
     }
     /**
+     * @Route("/district_return", name="district_return")
+     */
+    public function districtReturnAction(Request $request){
+        $session = $request->getSession();
+        $session->remove('district_name');
+        $session->remove('iddistrict');
+        $session->remove('districtInfo');
+        $session->save();
+
+        return $this->redirectToRoute('district', array(), 301);
+    }
+    /**
      * @Route("/district", name="district")
      */
     public function districtAction(Request $request){
         $session = $request->getSession();
         if($session->has('iddistrict')){
             return $this->redirectToRoute('district_main', array('iddistrict'=>$session->get('iddistrict')), 301);
-        }   
-        return $this->render('district/district.html.twig');
+        }
+        $error = null;
+        if($request->getSession()->getFlashBag()->has('errorMsg')){
+            $error = $request->getSession()->getFlashBag()->get('errorMsg')[0];
+        }
+        return $this->render('district/district.html.twig', array('error'=>$error));
     }
      /**
      * @Route("/findDistrictForm", name="find_district_form")
@@ -253,6 +280,16 @@ class DefaultController extends Controller
                     'numOfSchools' => $numOfSchools,
                     'year' => $year['year'])
                 );
+    }
+    /**
+     * @Route("/access_national_error", name="national_denied")
+     */
+    public function nationalDeniedAction(Request $request){
+        $error = null;
+        if($request->getSession()->getFlashBag()->has('errorMsg')){
+            $error = $request->getSession()->getFlashBag()->get('errorMsg')[0];
+        }
+        return $this->render('national/national.html.twig', array('error'=>$error));
     }
     public function removeTrailingSlashAction(Request $request){
         $pathInfo = $request->getPathInfo();

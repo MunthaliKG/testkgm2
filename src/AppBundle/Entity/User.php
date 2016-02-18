@@ -225,8 +225,10 @@ class User extends BaseUser
                     break;
         }
 
-        $result = $connection->fetchAll("SELECT $grantedLevelId FROM $requestedLevel NATURAL JOIN $grantedLevel 
-            WHERE $requestedLevelId = ? and $grantedLevelId = ?", [$id, $this->accessDomain]);
+        $query = "SELECT $requestedLevelId FROM $requestedLevel NATURAL JOIN $grantedLevel
+            WHERE $requestedLevelId = ? and $grantedLevelId = ?";
+        //echo $query; exit;
+        $result = $connection->fetchAll($query, [$id, $this->accessDomain]);
         if(empty($result)){
             return false;
         }

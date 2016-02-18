@@ -16,8 +16,8 @@ class ZoneController extends Controller{
     public function zoneMainAction($idzone, Request $request){
 
         $connection = $this->get('database_connection');
-        $zone =  $connection->fetchAll('SELECT * FROM zone, district '
-                . 'WHERE iddistrict = district_iddistrict and idzone = ?',array($idzone));
+        $zone =  $connection->fetchAll('SELECT * FROM zone NATURAL JOIN district '
+                . 'WHERE idzone = ?',array($idzone));
         
         //obtain the Emiscodes for the schools in this zone
         //$schools = array();

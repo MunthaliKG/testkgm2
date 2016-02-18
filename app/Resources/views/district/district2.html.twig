@@ -5,8 +5,24 @@
 {% block vertnav %}
     <li><a id="materials" district="{{ iddistrict }}" href="{{ path('district_snl',{"iddistrict": iddistrict,})}}" class="{% block district_snl %}{% endblock %}">District SNL reports</a></li>
     <li><a href="#" class="{% block district_facility %}{% endblock %}"> District school facility reports </a></li>
-
 {%endblock%}
+
+{% block district_select_form %}
+    {% embed 'info_bar.html.twig'%}
+        {% block slot1 %}
+            {% set districtInfo = app.session.get('districtInfo') %}
+            <b>Selected District: </b>
+            {% if districtInfo is not null %}
+                {{ districtInfo.district_name }} ({{ districtInfo.iddistrict }})
+            {% endif %}
+
+        {% endblock %}
+        {% block slot5 %}
+            <a href="{{ path('district_return') }}" class="btn btn-sm">Choose Another District</a>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-sm-1">                        

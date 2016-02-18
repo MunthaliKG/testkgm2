@@ -13,32 +13,36 @@
     {{ render(controller('AppBundle:Default:zoneSelectForm')) }}#}
     {% block national_info %} {% endblock %}
     <div class="row content">
-        {% block content %}
-            <div class="row">
-        <div class="col-sm-1">                        
-        </div>
-        <div class="col-sm-8">
-            <i class="text-center">Summary of learners with special needs in <b>{{year}}</b></i>
-            <table class="table">
-                <tr><td><b>Impairment</b></td><td align="center"><b>Number of learners</b></td></tr>
-                {% for disability in disabilities %}
-                    <tr>
-                        <td>{{disability.disability_name}}</td>
-                        <td align="center">{{disability.num_learners}}</td>
-                    </tr>
-                {% endfor %}
-                <tr>
-                    {% if disabilities is not empty %}
-                    <td><b>Total Number of Special Needs cases</b></td>
-                    <td align="center">					
-                        <b>{{ disabilities.0.total }}</b>				
-                    </td>
-                    {% endif %}
-                </tr>
-            </table>
-        </div>	
-    </div>                                    
-        {% endblock %}
+        {% if error is defined and error is not null %}
+            <h2 class="text-center"><small>{{ error }}</small></h2>
+        {% else %}
+            {% block content %}
+                <div class="row">
+                    <div class="col-sm-1">
+                    </div>
+                    <div class="col-sm-8">
+                        <i class="text-center">Summary of learners with special needs in <b>{{year}}</b></i>
+                        <table class="table">
+                            <tr><td><b>Impairment</b></td><td align="center"><b>Number of learners</b></td></tr>
+                            {% for disability in disabilities %}
+                                <tr>
+                                    <td>{{disability.disability_name}}</td>
+                                    <td align="center">{{disability.num_learners}}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                {% if disabilities is not empty %}
+                                    <td><b>Total Number of Special Needs cases</b></td>
+                                    <td align="center">
+                                        <b>{{ disabilities.0.total }}</b>
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endif %}
     </div>
 {% endblock %}
 {% block javascripts %}

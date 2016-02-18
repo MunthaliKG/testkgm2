@@ -1,10 +1,30 @@
 check_school_access:
-    path: /school/{emisCode}
+    path: /school/{emisCode}{url}
     defaults: { _controller: AppBundle:Access:checkSchoolAccess }
     requirements:
             emisCode: \d+ 
-#            url: /{0,1}.*
-    condition: "request.getSession().get('school_access') != null and context.getEmisCode() not in request.getSession().get('school_access')"
+            url: /{0,1}.*
+    condition: "request.getSession().get('school_access') == null or context.getEmisCode() not in request.getSession().get('school_access')"
+check_zone_access:
+    path: /zone/{zemisCode}{url}
+    defaults: { _controller: AppBundle:Access:checkZoneAccess }
+    requirements:
+            zemisCode: \d+
+            url: /{0,1}.*
+    condition: "request.getSession().get('zone_access') == null or context.getEmisCode() not in request.getSession().get('zone_access')"
+check_district_access:
+    path: /district/{demisCode}{url}
+    defaults: { _controller: AppBundle:Access:checkDistrictAccess }
+    requirements:
+            demisCode: \d+
+            url: /{0,1}.*
+    condition: "request.getSession().get('district_access') == null or context.getEmisCode() not in request.getSession().get('district_access')"
+check_national_access:
+    path: /national{url}
+    defaults: { _controller: AppBundle:Access:checkNationalAccess }
+    requirements:
+            url: /{0,1}.*
+    condition: "request.getSession().has('national_access') == false or request.getSession().get('national_access') == 'denied'"
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation

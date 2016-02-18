@@ -8,11 +8,17 @@
 {% block vertnav %}{%endblock%}
 {% block rightcolumn %}
     {# include the form used for selecting a district #}
-    {{ render(controller('AppBundle:Default:districtSelectForm')) }}
+    {% block district_select_form %}
+        {{ render(controller('AppBundle:Default:districtSelectForm')) }}
+    {% endblock %}
     {% block district_info %} {% endblock %}
     <div class="row content">
-        {% block content %}            
-                    <br><br><h2 class="text-center"><small>District not chosen</small></h2>
+        {% block content %}
+            {% if error is not null %}
+                <h2 class="text-center"><small>{{ error }}</small></h2>
+            {% else %}
+                <br><br><h2 class="text-center"><small>District not chosen</small></h2>
+            {% endif %}
         {% endblock %}
     </div>
 {% endblock %}

@@ -10,11 +10,17 @@
 {% block navzone %}active{% endblock %}  
 {% block rightcolumn %}
     {# include the form used for selecting a zone #}
-    {{ render(controller('AppBundle:Default:zoneSelectForm')) }}
+    {% block zone_select_form %}
+        {{ render(controller('AppBundle:Default:zoneSelectForm')) }}
+    {% endblock %}
     {% block zone_info %} {% endblock %}
     <div class="row content">
-        {% block content %}            
-                    <br><br><h2 class="text-center"><small>Zone not chosen</small></h2>
+        {% block content %}
+            {% if error is defined and error is not null %}
+                <h2 class="text-center"><small>{{ error }}</small></h2>
+            {% else %}
+                <br><br><h2 class="text-center"><small>Zone not chosen</small></h2>
+            {% endif %}
         {% endblock %}
     </div>
 {% endblock %}
