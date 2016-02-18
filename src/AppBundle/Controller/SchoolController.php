@@ -202,18 +202,19 @@ class SchoolController extends Controller{
                         
             if($form1->isValid() && $user->getAllowedActions() == 2){
                 $formData = $form1->getData();
+                $em = $this->getDoctrine()->getManager();
                 $id_need = $formData['idneed'];
                 //print 'form data: '.$formData['idneed'];
                 //print '; default data: '.$defaultData['idneed'].', idneed 2:'.$defaultData['idneed_2'];
                 //exit;
-                $need;
 
       		//check if this record is being edited or created anew
       		if($needId == 'new'){
-                    $need = new \AppBundle\Entity\ResourceRoom();  	
+                    $need = new \AppBundle\Entity\ResourceRoom();
+                    $need->setIdneed($em->getReference('AppBundle\Entity\Need', array('idneed'=>$formData['idneed'])));
       		}else{//if it is being edited, then update the records that already exist 
                     $need = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')
-                            ->findOneByIdneed($defaultData['idneed_2']);              
+                            ->findOneBy(array('idneed'=>$defaultData['idneed_2'], 'emiscode' => $emisCode));
    		    }
 
                 
@@ -242,12 +243,9 @@ class SchoolController extends Controller{
                 $need->setQuantityInUse($formData['quantity_in_use']);
                 $need->setQuantityAvailable($formData['quantity_available']);
                 $need->setQuantityRequired($formData['quantity_required']);
-                
-                $resource = $this->getDoctrine()->getRepository('AppBundle:ResourceRoom')
-                        ->findOneBy(array('idneed'=>$formData['idneed'],'emiscode'=>$emisCode));
+
                 //if ((!$resource) || ($resource && ($needId != 'new'))){
-                try {  
-                    $em = $this->getDoctrine()->getManager();
+                try {
                     $em->persist($need);
                     $em->flush();                                                   
                     //reproduce new entered details for validation and pass appropriate messages of acknowledgement
@@ -264,7 +262,7 @@ class SchoolController extends Controller{
                     }
                 } catch(DBALException $e){
                     if(stripos($e->getPrevious()->getMessage(), 'Duplicate') !== FALSE){
-                        $message = $formData['idneed']. " resource record already exists ";
+                        $message = $formData['idneed_2']. " resource record already exists ";
                     }
                     elseif(stripos($e->getPrevious()->getMessage(), 'foreign key') !== FALSE){
                         $message = "A resource with id ".$formData['idneed_2']." does not exist at this school";
@@ -333,13 +331,15 @@ class SchoolController extends Controller{
 //                $update = '';
       		//check if this record is being edited or created anew
       		if($materialId == 'new'){
-                    $material = new RoomState();  	
+                    $material = new RoomState();
+                    $material->setRoomId($formData['room_id']);
       		}else{//if it is being edited, then update the records that already exist 
-                    $material = $this->getDoctrine()->getRepository('AppBundle:RoomState')->findOneByRoomId($id_room);	
+                    $material = $this->getDoctrine()->getRepository('AppBundle:RoomState')
+                        ->findOneBy(array('roomId'=>$id_room, 'emiscode'=>$emisCode));
       		}
  
 		//set the fields for material
-                $material->setRoomId($formData['room_id']);
+
                 $material->setEmiscode($this->getDoctrine()->getRepository('AppBundle:School')->findOneByEmiscode($emisCode));
                 //get seesion variable
                 $session = $request->getSession();

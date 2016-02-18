@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="402cb30d-5b1a-4f50-bc83-6c5597f55f37" name="Default" comment="" />
+    <list default="true" id="402cb30d-5b1a-4f50-bc83-6c5597f55f37" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/AppBundle/Controller/SchoolController.php" afterPath="$PROJECT_DIR$/src/AppBundle/Controller/SchoolController.php" />
+    </list>
     <ignored path="LWD.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -22,10 +25,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="UserController.php" pinned="false" current-in-tab="false">
+      <file leaf-file-name="UserController.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/UserController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.7692308">
+            <state vertical-scroll-proportion="0.032258064">
               <caret line="149" column="0" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
               <folding>
                 <marker date="1455775413483" expanded="true" signature="1190:1236" placeholder="SELECT iddis..district..." />
@@ -37,46 +40,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SchoolController.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SchoolController.php">
+      <file leaf-file-name="ResourceRoom.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/AppBundle/Entity/ResourceRoom.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.18612522">
-              <caret line="216" column="12" selection-start-line="216" selection-start-column="12" selection-end-line="216" selection-end-column="12" />
-              <folding>
-                <element signature="e#133#192#0#PHP" expanded="true" />
-                <marker date="1455788437793" expanded="true" signature="1589:1743" placeholder="SELECT schoo..school..." />
-                <marker date="1455788437793" expanded="true" signature="1810:1867" placeholder="SELECT year ..." />
-                <marker date="1455788437793" expanded="true" signature="1897:2274" placeholder="SELECT count..lwd..." />
-                <marker date="1455788437793" expanded="true" signature="2149:2273" placeholder="select idlwd..school_exit..." />
-                <marker date="1455788437793" expanded="true" signature="2602:3050" placeholder="SELECT disab..lwd..." />
-                <marker date="1455788437793" expanded="true" signature="2907:3006" placeholder="select idlwd..school_exit..." />
-                <marker date="1455788437793" expanded="true" signature="4812:4906" placeholder="SELECT * FRO..need..." />
-                <marker date="1455788437793" expanded="true" signature="6414:6490" placeholder="SELECT room_..." />
-                <marker date="1455788437793" expanded="true" signature="8417:8538" placeholder="SELECT schoo..school_has_need..." />
-                <marker date="1455788437793" expanded="true" signature="9295:9329" placeholder="SELECT idnee..need..." />
-                <marker date="1455788437793" expanded="true" signature="13381:13423" placeholder="SELECT needn..need..." />
-                <marker date="1455788437793" expanded="true" signature="13907:13949" placeholder="SELECT needn..need..." />
-                <marker date="1455788437793" expanded="true" signature="16805:16878" placeholder="SELECT * FRO..room_state..." />
-                <marker date="1455788437793" expanded="true" signature="23382:23564" placeholder="SELECT schoo..school_exit..." />
-                <marker date="1455788437793" expanded="true" signature="25903:25977" placeholder="SELECT idlwd..lwd_belongs_to_school..." />
-                <marker date="1455788437793" expanded="true" signature="29801:29862" placeholder="SELECT * FRO..snt..." />
-                <marker date="1455788437793" expanded="true" signature="38229:38374" placeholder="SELECT * FRO..lwd..." />
-                <marker date="1455788437793" expanded="true" signature="42895:43225" placeholder="INSERT INTO lwd_belongs_to_school..." />
-                <marker date="1455788437793" expanded="true" signature="45170:45194" placeholder="SELECT * FRO..disability..." />
-                <marker date="1455788437793" expanded="true" signature="45400:45448" placeholder="SELECT * FRO..lwd_has_disability..." />
-                <marker date="1455788437793" expanded="true" signature="45688:45807" placeholder="SELECT idlev..disability_has_level..." />
-                <marker date="1455788437793" expanded="true" signature="45862:46031" placeholder="SELECT idnee..disability_has_need..." />
-                <marker date="1455788437793" expanded="true" signature="46091:46199" placeholder="SELECT idnee..lwd_has_disability_has_need..." />
-                <marker date="1455788437793" expanded="true" signature="49019:49086" placeholder="DELETE FROM ..." />
-                <marker date="1455788437793" expanded="true" signature="49264:49365" placeholder="DELETE FROM ..." />
-                <marker date="1455788437793" expanded="true" signature="49782:49888" placeholder="UPDATE lwd_h..." />
-                <marker date="1455788437793" expanded="true" signature="50404:50531" placeholder="DELETE FROM ..." />
-                <marker date="1455788437793" expanded="true" signature="53194:53312" placeholder="INSERT INTO lwd_has_disability..." />
-                <marker date="1455788437793" expanded="true" signature="58697:58783" placeholder="SELECT emisc..school..." />
-                <marker date="1455788437793" expanded="true" signature="59512:59634" placeholder="SELECT idlwd..lwd_belongs_to_school..." />
-                <marker date="1455788437793" expanded="true" signature="60463:60606" placeholder="SELECT idlev..disability_has_level..." />
-                <marker date="1455788437793" expanded="true" signature="61801:61896" placeholder="SELECT * FRO..performance..." />
-              </folding>
+            <state vertical-scroll-proportion="24.076923">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -532,7 +501,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="784" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22986823" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -942,19 +911,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/UserController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.7692308">
-          <caret line="149" column="0" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
-          <folding>
-            <marker date="1455775413483" expanded="true" signature="1190:1236" placeholder="SELECT iddis..district..." />
-            <marker date="1455775413483" expanded="true" signature="3598:3644" placeholder="SELECT iddis..district..." />
-            <marker date="1455775413483" expanded="true" signature="3689:3812" placeholder="SELECT ufirs..fos_user..." />
-            <marker date="1455775413483" expanded="true" signature="7262:7293" placeholder="SELECT * FRO..${$accessLevel}..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Resources/views/school/learners/edit_learner_disability.html.twig">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-8.769231">
@@ -967,14 +923,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-20.0">
           <caret line="26" column="15" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/AppBundle/Form/Type/RoomStateType.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.8867927">
-          <caret line="65" column="12" selection-start-line="65" selection-start-column="12" selection-end-line="65" selection-end-column="12" />
           <folding />
         </state>
       </provider>
@@ -995,9 +943,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Form/Type/RoomStateType.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.8867927">
+          <caret line="65" column="12" selection-start-line="65" selection-start-column="12" selection-end-line="65" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/AppBundle/Entity/ResourceRoom.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-1.9580646">
+        <state vertical-scroll-proportion="24.076923">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -1005,42 +961,55 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/SchoolController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.18612522">
-          <caret line="216" column="12" selection-start-line="216" selection-start-column="12" selection-end-line="216" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.5076142">
+          <caret line="345" column="32" selection-start-line="345" selection-start-column="32" selection-end-line="345" selection-end-column="32" />
           <folding>
             <element signature="e#133#192#0#PHP" expanded="true" />
-            <marker date="1455788437793" expanded="true" signature="1589:1743" placeholder="SELECT schoo..school..." />
-            <marker date="1455788437793" expanded="true" signature="1810:1867" placeholder="SELECT year ..." />
-            <marker date="1455788437793" expanded="true" signature="1897:2274" placeholder="SELECT count..lwd..." />
-            <marker date="1455788437793" expanded="true" signature="2149:2273" placeholder="select idlwd..school_exit..." />
-            <marker date="1455788437793" expanded="true" signature="2602:3050" placeholder="SELECT disab..lwd..." />
-            <marker date="1455788437793" expanded="true" signature="2907:3006" placeholder="select idlwd..school_exit..." />
-            <marker date="1455788437793" expanded="true" signature="4812:4906" placeholder="SELECT * FRO..need..." />
-            <marker date="1455788437793" expanded="true" signature="6414:6490" placeholder="SELECT room_..." />
-            <marker date="1455788437793" expanded="true" signature="8417:8538" placeholder="SELECT schoo..school_has_need..." />
-            <marker date="1455788437793" expanded="true" signature="9295:9329" placeholder="SELECT idnee..need..." />
-            <marker date="1455788437793" expanded="true" signature="13381:13423" placeholder="SELECT needn..need..." />
-            <marker date="1455788437793" expanded="true" signature="13907:13949" placeholder="SELECT needn..need..." />
-            <marker date="1455788437793" expanded="true" signature="16805:16878" placeholder="SELECT * FRO..room_state..." />
-            <marker date="1455788437793" expanded="true" signature="23382:23564" placeholder="SELECT schoo..school_exit..." />
-            <marker date="1455788437793" expanded="true" signature="25903:25977" placeholder="SELECT idlwd..lwd_belongs_to_school..." />
-            <marker date="1455788437793" expanded="true" signature="29801:29862" placeholder="SELECT * FRO..snt..." />
-            <marker date="1455788437793" expanded="true" signature="38229:38374" placeholder="SELECT * FRO..lwd..." />
-            <marker date="1455788437793" expanded="true" signature="42895:43225" placeholder="INSERT INTO lwd_belongs_to_school..." />
-            <marker date="1455788437793" expanded="true" signature="45170:45194" placeholder="SELECT * FRO..disability..." />
-            <marker date="1455788437793" expanded="true" signature="45400:45448" placeholder="SELECT * FRO..lwd_has_disability..." />
-            <marker date="1455788437793" expanded="true" signature="45688:45807" placeholder="SELECT idlev..disability_has_level..." />
-            <marker date="1455788437793" expanded="true" signature="45862:46031" placeholder="SELECT idnee..disability_has_need..." />
-            <marker date="1455788437793" expanded="true" signature="46091:46199" placeholder="SELECT idnee..lwd_has_disability_has_need..." />
-            <marker date="1455788437793" expanded="true" signature="49019:49086" placeholder="DELETE FROM ..." />
-            <marker date="1455788437793" expanded="true" signature="49264:49365" placeholder="DELETE FROM ..." />
-            <marker date="1455788437793" expanded="true" signature="49782:49888" placeholder="UPDATE lwd_h..." />
-            <marker date="1455788437793" expanded="true" signature="50404:50531" placeholder="DELETE FROM ..." />
-            <marker date="1455788437793" expanded="true" signature="53194:53312" placeholder="INSERT INTO lwd_has_disability..." />
-            <marker date="1455788437793" expanded="true" signature="58697:58783" placeholder="SELECT emisc..school..." />
-            <marker date="1455788437793" expanded="true" signature="59512:59634" placeholder="SELECT idlwd..lwd_belongs_to_school..." />
-            <marker date="1455788437793" expanded="true" signature="60463:60606" placeholder="SELECT idlev..disability_has_level..." />
-            <marker date="1455788437793" expanded="true" signature="61801:61896" placeholder="SELECT * FRO..performance..." />
+            <marker date="1455807195150" expanded="true" signature="1589:1743" placeholder="SELECT schoo..school..." />
+            <marker date="1455807195150" expanded="true" signature="1810:1867" placeholder="SELECT year ..." />
+            <marker date="1455807195150" expanded="true" signature="1897:2274" placeholder="SELECT count..lwd..." />
+            <marker date="1455807195150" expanded="true" signature="2149:2273" placeholder="select idlwd..school_exit..." />
+            <marker date="1455807195150" expanded="true" signature="2602:3050" placeholder="SELECT disab..lwd..." />
+            <marker date="1455807195150" expanded="true" signature="2907:3006" placeholder="select idlwd..school_exit..." />
+            <marker date="1455807195150" expanded="true" signature="4812:4906" placeholder="SELECT * FRO..need..." />
+            <marker date="1455807195150" expanded="true" signature="6414:6490" placeholder="SELECT room_..." />
+            <marker date="1455807195150" expanded="true" signature="8417:8538" placeholder="SELECT schoo..school_has_need..." />
+            <marker date="1455807195150" expanded="true" signature="9295:9329" placeholder="SELECT idnee..need..." />
+            <marker date="1455807195150" expanded="true" signature="13288:13330" placeholder="SELECT needn..need..." />
+            <marker date="1455807195150" expanded="true" signature="13814:13856" placeholder="SELECT needn..need..." />
+            <marker date="1455807195150" expanded="true" signature="16714:16787" placeholder="SELECT * FRO..room_state..." />
+            <marker date="1455807195150" expanded="true" signature="23351:23533" placeholder="SELECT schoo..school_exit..." />
+            <marker date="1455807195150" expanded="true" signature="25872:25946" placeholder="SELECT idlwd..lwd_belongs_to_school..." />
+            <marker date="1455807195150" expanded="true" signature="29770:29831" placeholder="SELECT * FRO..snt..." />
+            <marker date="1455807195150" expanded="true" signature="38198:38343" placeholder="SELECT * FRO..lwd..." />
+            <marker date="1455807195150" expanded="true" signature="42864:43194" placeholder="INSERT INTO lwd_belongs_to_school..." />
+            <marker date="1455807195150" expanded="true" signature="45139:45163" placeholder="SELECT * FRO..disability..." />
+            <marker date="1455807195150" expanded="true" signature="45369:45417" placeholder="SELECT * FRO..lwd_has_disability..." />
+            <marker date="1455807195150" expanded="true" signature="45657:45776" placeholder="SELECT idlev..disability_has_level..." />
+            <marker date="1455807195150" expanded="true" signature="45831:46000" placeholder="SELECT idnee..disability_has_need..." />
+            <marker date="1455807195150" expanded="true" signature="46060:46168" placeholder="SELECT idnee..lwd_has_disability_has_need..." />
+            <marker date="1455807195150" expanded="true" signature="48988:49055" placeholder="DELETE FROM ..." />
+            <marker date="1455807195150" expanded="true" signature="49233:49334" placeholder="DELETE FROM ..." />
+            <marker date="1455807195150" expanded="true" signature="49751:49857" placeholder="UPDATE lwd_h..." />
+            <marker date="1455807195150" expanded="true" signature="50373:50500" placeholder="DELETE FROM ..." />
+            <marker date="1455807195150" expanded="true" signature="53163:53281" placeholder="INSERT INTO lwd_has_disability..." />
+            <marker date="1455807195150" expanded="true" signature="58666:58752" placeholder="SELECT emisc..school..." />
+            <marker date="1455807195150" expanded="true" signature="59481:59603" placeholder="SELECT idlwd..lwd_belongs_to_school..." />
+            <marker date="1455807195150" expanded="true" signature="60432:60575" placeholder="SELECT idlev..disability_has_level..." />
+            <marker date="1455807195150" expanded="true" signature="61770:61865" placeholder="SELECT * FRO..performance..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/AppBundle/Controller/UserController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.032258064">
+          <caret line="149" column="0" selection-start-line="149" selection-start-column="0" selection-end-line="149" selection-end-column="0" />
+          <folding>
+            <marker date="1455775413483" expanded="true" signature="1190:1236" placeholder="SELECT iddis..district..." />
+            <marker date="1455775413483" expanded="true" signature="3598:3644" placeholder="SELECT iddis..district..." />
+            <marker date="1455775413483" expanded="true" signature="3689:3812" placeholder="SELECT ufirs..fos_user..." />
+            <marker date="1455775413483" expanded="true" signature="7262:7293" placeholder="SELECT * FRO..${$accessLevel}..." />
           </folding>
         </state>
       </provider>
