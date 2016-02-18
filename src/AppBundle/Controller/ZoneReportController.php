@@ -56,6 +56,7 @@ class ZoneReportController extends Controller{
                             . 'WHERE iddistrict = iddistrict and idzone = ?', [$idzone]);
                       
                         $options['zone'] = $zone[0];
+                        $options['isSchool'] = false;
                         $options['isZone'] = true;
                         $options['isDistrict'] = false;
                         $options['isNational'] = false;
@@ -303,12 +304,12 @@ class ZoneReportController extends Controller{
                         /*Start of Teaching and learning materials*/
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                             $options['learningMaterials'] = true;
-                            //learners needs - STARTS HERE
-                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, school_has_need.* '
+                           
+                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, SUM(quantity_available) as quantity_available, '
+                                    . 'SUM(quantity_in_use) as quantity_in_use, SUM(quantity_required) as quantity_required, '
+                                    . 'SUM(case when available = "yes" then 1 else 0 end) as available '
                                     . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need '
-                                    . 'WHERE school.idzone = ? and school_has_need.year_recorded = ?', [$idzone, $lwdLatestYr['yr']]);                                                               
-                            //learners needs by resource room or not - ENDS HERE
-                            //roor state data starts here
+                                    . 'WHERE school.idzone = ? and school_has_need.year_recorded = ? GROUP BY needname', [$idzone, $lwdLatestYr['yr']]);                                                               
                             $learnersRooms = $connection->fetchAll('SELECT * FROM room_state NATURAL JOIN school where idzone = ? and year = ?', [$idzone, $lwdLatestYr['yr']]);
                             $options['teachingNeeds'] = $learnersNeeds;
                             $options['teachingRooms'] = $learnersRooms;
@@ -369,6 +370,7 @@ class ZoneReportController extends Controller{
                             . 'WHERE iddistrict = iddistrict and idzone = ?', [$idzone]);
                         $dataConverter = $this->get('data_converter');
                         $options['zone'] = $zone[0];
+                        $options['isSchool'] = false;
                         $options['isZone'] = true;
                         $options['isDistrict'] = false;
                         $options['isNational'] = false;

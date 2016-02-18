@@ -3,60 +3,39 @@
    </h4>
         <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
             <tr>
-                <td align="center" rowspan="2"><b>Item</b></td>
-                {% if isZone %}
-                         <td align="center" rowspan="2"><b>Emis Code</b></td>
-                    {% endif %}
-                    {% if isDistrict %}
-                         <td align="center" rowspan="2"><b>Zone Id</b></td>
-                    {% endif %}
-                    {% if isNational %}
-                         <td align="center" rowspan="2"><b>District Id</b></td>
-                    {% endif %}
+                <td align="center" rowspan="2"><b>Item</b></td>                
                 <td align="center" colspan="3"><b>Quantity</b></td>                
-                <td align="center" rowspan="2"><b>Available</b></td>
-                <td align="center" rowspan="2"><b>Provided By</b></td>
+                {% if isSchool %}
+                    <td align="center" rowspan="2"><b>Available</b></td>
+                    <td align="center" rowspan="2"><b>Provided By</b></td>
+                {% else %}
+                    <td align="center" rowspan="2"><b>Schools Having</b></td>
+                {% endif %}
             </tr>
             <tr>
-                
                 <td align="center"><b>Available</b></td>
                 <td align="center"><b>In use</b></td>
                 <td align="center"><b>Required</b></td>
-                
             </tr>
             
             {% for row,needs in teachingNeeds %}        
                 <tr>
                     <td align="center">{{ needs['needname'] }} </td>
-                    {% if isZone %}
-                        <td align="center">{{ needs['emiscode'] }}</td>
-                    {% endif %}
-                    {% if isDistrict %}
-                        <td align="center">{{ needs['idzone'] }}</td>
-                    {% endif %}
-                    {% if isNational %}
-                        <td align="center">{{ needs['iddistrict'] }}</td>
-                    {% endif %}
                     <td align="center">{{ needs['quantity_available'] }}</td>
                     <td align="center">{{ needs['quantity_in_use'] }}</td>
                     <td align="center">{{ needs['quantity_required'] }}</td>
                     <td align="center">{{ needs['available'] }}</td>
-                    <td align="center">{{ needs['provided_by'] }}</td>
+                    {% if isSchool %}
+                        
+                        <td align="center">{{ needs['provided_by'] }}</td>                 
+                    {% endif %}
                 </tr>
             {% endfor %}
         </table><br>
+         {% if isSchool %}
         <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}>
             <tr>
-                <td align="center"><b>Room</b></td>
-                {% if isZone %}
-                         <td align="center"><b>Emis Code</b></td>
-                    {% endif %}
-                    {% if isDistrict %}
-                         <td align="center"><b>Zone Id</b></td>
-                    {% endif %}
-                    {% if isNational %}
-                         <td align="center"><b>District Id</b></td>
-                    {% endif %}
+                <td align="center"><b>Room</b></td>                
                 <td align="center"><b>Enough Lighting</b></td>
                 <td align="center"><b>Enough Space</b></td>
                 <td align="center"><b>Adaptvie Chairs</b></td>
@@ -85,3 +64,4 @@
                 </tr>
             {% endfor %}
         </table>
+        {% endif %}

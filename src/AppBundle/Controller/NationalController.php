@@ -76,6 +76,7 @@ class NationalController extends Controller{
                     //schools in a Malawi
                     $schoolsInMalawi = $connection->fetchAll('select emiscode from school');                               
                     $options['numOfSchools'] = count($schoolsInMalawi);//get the number of schools
+                    $options['isSchool'] = false;
                     $options['isZone'] = true;
                     $options['isNational'] = true;
                     $options['isDistrict'] = true;
@@ -297,11 +298,19 @@ class NationalController extends Controller{
                         if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                             $options['learningMaterials'] = true;
                             //learners needs - STARTS HERE
-                            $learnersNeeds = $connection->fetchAll('SELECT * '
+//                            $learnersNeeds = $connection->fetchAll('SELECT * '
+//                                    . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need '
+//                                    . 'WHERE school_has_need.year_recorded = ?', [$lwdLatestYr['yr']]);                                                               
+//                            //learners needs by resource room or not - ENDS HERE
+//                            //roor state data starts here
+//                            $learnersRooms = $connection->fetchAll('SELECT * FROM room_state NATURAL JOIN school where year = ?', [$lwdLatestYr['yr']]);
+//                            $options['teachingNeeds'] = $learnersNeeds;
+//                            $options['teachingRooms'] = $learnersRooms;
+                            $learnersNeeds = $connection->fetchAll('SELECT emiscode,needname, SUM(quantity_available) as quantity_available, '
+                                    . 'SUM(quantity_in_use) as quantity_in_use, SUM(quantity_required) as quantity_required, '
+                                    . 'SUM(case when available = "yes" then 1 else 0 end) as available '
                                     . 'FROM school_has_need NATURAL JOIN school NATURAL JOIN need '
-                                    . 'WHERE school_has_need.year_recorded = ?', [$lwdLatestYr['yr']]);                                                               
-                            //learners needs by resource room or not - ENDS HERE
-                            //roor state data starts here
+                                    . 'WHERE school_has_need.year_recorded = ? GROUP BY needname', [$lwdLatestYr['yr']]);                                                               
                             $learnersRooms = $connection->fetchAll('SELECT * FROM room_state NATURAL JOIN school where year = ?', [$lwdLatestYr['yr']]);
                             $options['teachingNeeds'] = $learnersNeeds;
                             $options['teachingRooms'] = $learnersRooms;
@@ -415,7 +424,8 @@ class NationalController extends Controller{
                         $schoolsInMalawi = $connection->fetchAll('select emiscode, iddistrict from school');                               
                         $options['numOfSchools'] = count($schoolsInMalawi);
                                 //$dataConverter->countArray($schoolsInDistrict, 'iddistrict', $iddistrict);//get the number of schools                        
-			$options['isZone'] = true;
+			$options['isSchool'] = false;
+                        $options['isZone'] = true;
                         $options['isNational'] = true;
                         $options['isDistrict'] = true;
 			$learners = array();			
