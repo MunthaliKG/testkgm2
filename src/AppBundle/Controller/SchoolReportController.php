@@ -172,126 +172,155 @@ class SchoolReportController extends Controller{
                     //get students enrolled this year
                     $enrolled = $connection->fetchAll('SELECT sex, year FROM lwd NATURAL JOIN lwd_belongs_to_school
                                             WHERE emiscode = ? GROUP BY idlwd HAVING COUNT(idlwd) = 1 AND `year` = ?',
-                        [$emisCode, $yearQuery['maxYear']]);
-                    $options['enrolledTotal'] = count($enrolled);
-                    $options['enrolledBoys'] = $dataConverter->countArray($enrolled, 'sex', 'M');
-                    $options['enrolledGirls'] = $options['enrolledTotal'] - $options['enrolledBoys'];
+                                            [$emisCode, $yearQuery['maxYear']]);
+                                    $options['enrolledTotal'] = count($enrolled);
+                                    $options['enrolledBoys'] = $dataConverter->countArray($enrolled, 'sex', 'M');
+                                    $options['enrolledGirls'] = $options['enrolledTotal'] - $options['enrolledBoys'];
 
-                    //get students who exited the school
-                    $exited = $connection->fetchAll('SELECT sex, reason, lwd_has_disability.*, disability.disability_name,disability_category.* '
-                        . 'FROM lwd NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
-                        . 'WHERE emiscode = ? AND `year` = ?', [$emisCode, $yearQuery['maxYear']]);
+                                    //get students who exited the school
+                                    $exited = $connection->fetchAll('SELECT sex, reason, lwd_has_disability.*, disability.disability_name,disability_category.* '
+                                            . 'FROM lwd NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
+                                            . 'WHERE emiscode = ? AND `year` = ?', [$emisCode, $yearQuery['maxYear']]);
 
-                    $exitedGrouped = $connection->fetchAll('SELECT COUNT(idlwd), disability_category.* '
-                        . 'FROM lwd NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
-                        . 'WHERE emiscode = ? AND `year` = ? GROUP BY category_name', [$emisCode, $yearQuery['maxYear']]);
-                    //get disability category total from exitedGrouped above
+                                    $exitedGrouped = $connection->fetchAll('SELECT COUNT(idlwd), disability_category.* '
+                                            . 'FROM lwd NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
+                                            . 'WHERE emiscode = ? AND `year` = ? GROUP BY category_name', [$emisCode, $yearQuery['maxYear']]);
+                                    //get disability category total from exitedGrouped above
 
-                    //get SNE students by category of impairment and gender
-                    $disabilitiesDB = $connection->fetchAll('select iddisability, disability_name from disability');
-                    $gender = array('M'=>'M','F'=>'F');
-                    $disabilities = array();
-                    foreach ($disabilitiesDB as $key => $row) {
-                        $disabilities[$row['iddisability']] = $row['disability_name'];
-                    }
-                    //get dropouts and completed counts
-                    $dropoutReason = ' != "completed"';
-                    $completedReason = ' = "completed"';
-                    $dCategoryCount = array();//dropouts count
-                    $cCategoryCount = array();//completed count
-                    $categoryCount = array(); //this is counting disabilities not categories of disbailities anymore
-                    $dOrC = array('Dropouts'=>' != "completed"','Completed STD 8'=>' = "completed"');
-                    foreach ($disabilities as $catKey => $category) {
-                        foreach ($dOrC as $dcKey => $dc) {
-                            $dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', $dc);
-                            foreach ($gender as $genKey => $gen){
+                                    //get SNE students by category of impairment and gender
+                                    $disabilitiesDB = $connection->fetchAll('select iddisability, disability_name from disability');
+                                    $gender = array('M'=>'M','F'=>'F');
+                                    $disabilities = array();
+                                    foreach ($disabilitiesDB as $key => $row) {
+                                        $disabilities[$row['iddisability']] = $row['disability_name'];
+                                    }
+                                    //get dropouts and completed counts
+                                    $dropoutReason = ' != "completed"';
+                                    $completedReason = ' = "completed"';
+                                    $dCategoryCount = array();//dropouts count
+                                    $cCategoryCount = array();//completed count
+                                    $categoryCount = array(); //this is counting disabilities not categories of disbailities anymore
+                                    $dOrC = array('Dropouts'=>' != "completed"','Completed STD 8'=>' = "completed"');
+                                    foreach ($disabilities as $catKey => $category) {
+                                        $dropoutCategories = $dataConverter->selectFromArrayBool($exited, 'disability_name', '= '.$category);
+                                        foreach ($dOrC as $dcKey => $dc) {
+                                            $dropouts = $dataConverter->selectFromArrayBool($dropoutCategories, 'reason', $dc);
+                                            foreach ($gender as $genKey => $gen){
+                                                $categoryCount[$category][$dcKey][$gen] = $dataConverter->countArray($dropouts, 'sex', $gen);
+                                            }
+                                        }
+                                    }
+                                    $options['dOrCsKey'] = $disabilities[1];
+                                    $options['categoryCounts'] = $categoryCount;
+                                    //$options['cCategoryCounts'] = $cCategoryCount;
 
-                                $dropoutCategories = $dataConverter->selectFromArrayBool($exited, 'disability_name', '= '.$category);
-                                $categoryCount[$category][$dcKey][$gen] = $dataConverter->countArray($dropoutCategories, 'sex', $gen);
-                            }
-                        }
-                    }
-                    $options['dOrCsKey'] = $disabilities[1];
-                    $options['categoryCounts'] = $categoryCount;
-                    //$options['cCategoryCounts'] = $cCategoryCount;
+                                    //get total number of dropouts
+                                    $dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', $dropoutReason);
+                                    $options['dropoutTotal'] = count($dropouts);
+                                    $options['dropoutBoys'] = $dataConverter->countArray($dropouts, 'sex', 'M');
+                                    $options['dropoutGirls'] = $options['dropoutTotal'] - $options['dropoutBoys'];
 
-                    //get total number of dropouts
-                    $dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', $dropoutReason);
-                    $options['dropoutTotal'] = count($dropouts);
-                    $options['dropoutBoys'] = $dataConverter->countArray($dropouts, 'sex', 'M');
-                    $options['dropoutGirls'] = $options['dropoutTotal'] - $options['dropoutBoys'];
+                                    //transfers out
+                                    $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
+                                    $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
+                                    $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
 
-                    //transfers out
-                    $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
-                    $options['numGirlsTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'F');
-                    $options['totalTransferOut'] =  $options['numBoysTRout'] + $options['numGirlsTRout'];
+                                    //transfer in
+                                    $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
+                                    $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
+                                    $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
 
-                    //transfer in
-                    $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
-                    $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
-                    $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
+                                    //get learners completed std 8
+                                    $completed = $dataConverter->selectFromArrayBool($exited, 'reason', $completedReason);
+                                    $options['completedTotal'] = count($completed);
+                                    $options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');
+                                    $options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
 
-                    //get learners completed std 8
-                    $completed = $dataConverter->selectFromArrayBool($exited, 'reason', $completedReason);
-                    $options['completedTotal'] = count($completed);
-                    $options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');
-                    $options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
+                                    //
 
-                    //
+                                    //lwds by class, age and sex
+                                    $learnersBySexAgeStd = array();
+                                    $learnersBy = array();
+                                    $totalStdSexAge = array();
 
-                    //lwds by class, age and sex
-                    $learnersBySexAgeStd = array();
-                    $learnersBy = array();
-                    $totalStdSexAge = array();
+                                    $ages = array('<6'=>5, '6'=>6, '7'=>7,
+                                        '8'=>8, '9'=>9, '10'=>10,'11'=>11,'12'=>12,
+                                        '13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'>17'=>18);
+                                    $stds = array('1'=>1, '2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8);
+                                                        $counterStdSex = array();
+                                    $counterStdBySex = array();
 
-                    $ages = array('<6'=>5, '6'=>6, '7'=>7,
-                        '8'=>8, '9'=>9, '10'=>10,'11'=>11,'12'=>12,
-                        '13'=>13,'14'=>14,'15'=>15,'16'=>16,'17'=>17,'>17'=>18);
-                    $stds = array('1'=>1, '2'=>2,'3'=>3,'4'=>4,'5'=>5,'6'=>6,'7'=>7,'8'=>8);
-                    $counterStdSex = array();
-                    $counterStdBySex = array();
+                                    //obtain the counter and sums for age by sex
+                                    foreach ($ages as $key => $age) {
+                                        $counterAgeBySex[$key]['M'] = 0;
+                                        $counterAgeBySex[$key]['F'] = 0;
+                                        foreach ($stds as $std) {
+                                            foreach ($gender as $sex) {
+                                                if ($key == '<6'){
+                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
+                                                }elseif($key == '>17'){
+                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
+                                                }else{
+                                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultiple($learners, ['age'=>$age, 'std'=>$std, 'sex'=>$sex]);
+                                                }
+                                                //get totals for across age and standards by sex
+                                                if ($sex == 'M'){
+                                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
+                                                }else {
+                                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
+                                                }
+                                            }
+                                        }
+                                    }
+                                    //flip the array to sum downwards for std by sex
+                                    foreach ($stds as $std) {
+                                        $counterStdBySex[$std]['M'] = 0;
+                                        $counterStdBySex[$std]['F'] = 0;
+                                        foreach ($ages as $key => $age) {
+                                            foreach ($gender as $sex) {
+                                                //get totals for across age and standards by sex
+                                                if ($sex == 'M'){
+                                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
+                                                }else {
+                                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
+                                                }
+                                            }
+                                        }
+                                    }
+                                    $options['stdBySex'] = $counterStdBySex;
+                                    $options['ageBySex'] = $counterAgeBySex;
+                                    $options['learnersBy'] = $learnersBy;
+                                    /* end of lwds by age, sex and std*/
 
-                    //obtain the counter and sums for age by sex
-                    foreach ($ages as $key => $age) {
-                        $counterAgeBySex[$key]['M'] = 0;
-                        $counterAgeBySex[$key]['F'] = 0;
-                        foreach ($stds as $std) {
-                            foreach ($gender as $sex) {
-                                if ($key == '<6'){
-                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
-                                }elseif($key == '>17'){
-                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultipleBool($learners, ['age'=>$key, 'std'=>' == '.$std, 'sex'=>' == \''.$sex.'\'']);
-                                }else{
-                                    $learnersBy[$key][$std][$sex] = $dataConverter->countArrayMultiple($learners, ['age'=>$age, 'std'=>$std, 'sex'=>$sex]);
-                                }
-                                //get totals for across age and standards by sex
-                                if ($sex == 'M'){
-                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
-                                }else {
-                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
-                                }
-                            }
-                        }
-                    }
-                    //flip the array to sum downwards for std by sex
-                    foreach ($stds as $std) {
-                        $counterStdBySex[$std]['M'] = 0;
-                        $counterStdBySex[$std]['F'] = 0;
-                        foreach ($ages as $key => $age) {
-                            foreach ($gender as $sex) {
-                                //get totals for across age and standards by sex
-                                if ($sex == 'M'){
-                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
-                                }else {
-                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
-                                }
-                            }
-                        }
-                    }
-                    $options['stdBySex'] = $counterStdBySex;
-                    $options['ageBySex'] = $counterAgeBySex;
-                    $options['learnersBy'] = $learnersBy;
-                    /* end of lwds by age, sex and std*/
+//                                }
+//                                //get totals for across age and standards by sex
+//                                if ($sex == 'M'){
+//                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
+//                                }else {
+//                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
+//                                }
+//                            }
+//                        }
+//                    }
+//                    //flip the array to sum downwards for std by sex
+//                    foreach ($stds as $std) {
+//                        $counterStdBySex[$std]['M'] = 0;
+//                        $counterStdBySex[$std]['F'] = 0;
+//                        foreach ($ages as $key => $age) {
+//                            foreach ($gender as $sex) {
+//                                //get totals for across age and standards by sex
+//                                if ($sex == 'M'){
+//                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
+//                                }else {
+//                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
+//                                }
+//                            }
+//                        }
+//                    }
+//                    $options['stdBySex'] = $counterStdBySex;
+//                    $options['ageBySex'] = $counterAgeBySex;
+//                    $options['learnersBy'] = $learnersBy;
+//                    /* end of lwds by age, sex and std*/
 
                 }
             }
