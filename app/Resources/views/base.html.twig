@@ -47,7 +47,7 @@
                                     </a><br>
                                     <a href="{{ path('fos_user_profile_show')}}">Profile</a>
                                     {% if is_granted("ROLE_ADMIN") %}
-                                         | <a href="{{ path('admin_main')}}">Admin</a>
+                                         | <a href="{{ path('admin_users_main')}}">Admin</a>
                                     {% endif %}
                                 {% else %}
                                     <a href="{{ path('fos_user_security_login') }}">{{ 'Login'|trans({}, 'FOSUserBundle') }}</a>
