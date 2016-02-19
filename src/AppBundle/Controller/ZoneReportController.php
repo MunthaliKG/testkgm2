@@ -52,8 +52,8 @@ class ZoneReportController extends Controller{
 			$formData = $form->getData();
 			$options = array(); //list of options to pass to the template
                         
-                        $zone =  $connection->fetchAll('SELECT idzone, zone_name, iddistrict, district_name FROM zone, district '
-                            . 'WHERE iddistrict = iddistrict and idzone = ?', [$idzone]);
+                        $zone =  $connection->fetchAll("SELECT idzone, zone_name, iddistrict, district_name FROM zone
+                                  NATURAL JOIN district WHERE idzone = ?", [$idzone]);
                       
                         $options['zone'] = $zone[0];
                         $options['isSchool'] = false;
@@ -64,12 +64,12 @@ class ZoneReportController extends Controller{
 			//$options['school'] = $school;
                         $dataConverter = $this->get('data_converter');
                         $session = $request->getSession();
-                        $year;
+                        $year = '';
                         //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
                         if ($session->has('school_year')){
                             $year = $session->get('school_year');
                         } else {
-                            return $this->redirectToRoute('zone_snl',['emisCode'=>$emisCode], 301);
+                            return $this->redirectToRoute('zone_snl',['emisCode'=>$idzone], 301);
                         }
                         $sntLatestYr['yr'] = $year;
                         //$sntLatestYr = $connection->fetchAssoc('SELECT MAX(year) AS yr '
@@ -319,22 +319,47 @@ class ZoneReportController extends Controller{
 			$productionDate = new \DateTime(date('Y-m-d H:i:s'));
 			$options['date'] = $productionDate;
 			if($formData['format'] == 'html' || $formData['format'] == 'pdf'){
-                            $isHtml = ($formData['format'] == 'html')? true: false;
-                            $options['isHtml'] = $isHtml;
-                            $html = $this->renderView('zone/reports/aggregate_zone_report.html.twig', $options);
-                            if($isHtml){
-                                    return new Response($html);
-                            }else{
-                                $mpdfService = $this->get('tfox.mpdfport');
-                                $arguments = ['outputFileName'=>$zone[0]['zone_name'].'_zone_report.pdf', 'outputDest'=>"I"];
-                                $response = $mpdfService->generatePdfResponse($html, $arguments);
-                                $response->headers->set('Content-Disposition','inline; filename = '.$arguments['outputFileName']);
-                                $response->headers->set('Content-Transfer-Encoding','binary');
-                                $response->headers->set('Accept-Ranges','bytes');
-                                return $response;
-                                exit;
-                            }
-			}                        			
+                $isHtml = ($formData['format'] == 'html')? true: false;
+                $options['isHtml'] = $isHtml;
+                $html = $this->renderView('zone/reports/aggregate_zone_report.html.twig', $options);
+                if($isHtml){
+                        return new Response($html);
+                }
+                else{
+                    $mpdfService = $this->get('tfox.mpdfport');
+                    $arguments = ['outputFileName'=>'IED-'.$zone[0]['zone_name'].'_zone_basic-report-'
+                        .date('d-m-Y').'.pdf', 'outputDest'=>"I"];
+                    $response = $mpdfService->generatePdfResponse($html, $arguments);
+                    $response->headers->set('Content-Disposition','inline; filename = '.$arguments['outputFileName']);
+                    $response->headers->set('Content-Transfer-Encoding','binary');
+                    $response->headers->set('Accept-Ranges','bytes');
+                    return $response;
+                    exit;
+                }
+			}else{
+                $xml = $this->renderView('zone/reports/aggregate_zone_report.xml.twig', $options);
+                $temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
+                file_put_contents($temporary_file_name, $xml);
+
+                ob_clean();
+                $reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
+                $excelSheet = $reader->load($temporary_file_name);
+                $writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
+
+                // create the response
+                $response = $this->get('phpexcel')->createStreamedResponse($writer);
+                // adding headers
+                $dispositionHeader = $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    'IED-'.$zone[0]['zone_name'].'_zone_basic-report-'.date('d-m-Y').'.xlsx'
+                );
+                $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+                $response->headers->set('Pragma', 'public');
+                $response->headers->set('Cache-Control', 'maxage=1');
+                $response->headers->set('Content-Disposition', $dispositionHeader);
+
+                return $response;
+            }
 		}
 
 		return $this->render('zone/reports/zone_reports_basic.html.twig', array('form' => $form->createView()));
@@ -349,7 +374,7 @@ class ZoneReportController extends Controller{
                 $form = $this->createForm(new CustomReportType());
 		$form->handleRequest($request);  
                 $session = $request->getSession();
-                $year;
+                $year = '';
                 //keep the emiscode of the selected zone in the session so we can always redirect to it until the next school is chosen
                 if ($session->has('school_year')){
                     $year = $session->get('school_year');
@@ -385,8 +410,8 @@ class ZoneReportController extends Controller{
                                     $options['snLearners'] = true;
                                     //get students enrolled this year
                                     $enrolled = $connection->fetchAll('SELECT first_name, last_name, home_address, sex, dob, 
-                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, lwd_belongs_to_school.emiscode as emiscode, household_type 
-                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
+                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, lwd_belongs_to_school.emiscode as emiscode, guardian_relationship,
+                                        household_type FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school NATURAL JOIN school
                                         WHERE idzone = ? AND `year` = ?', 
                                             [$idzone, $yearQuery['maxYear']]);				
                                     $options['snLearners'] = $enrolled;    
@@ -409,7 +434,7 @@ class ZoneReportController extends Controller{
                                         WHERE idzone = ?', [$idzone]);
                         $gender = array('M'=>'M','F'=>'F');
                         $learnersBySex = array();
-                        $total;
+                        $total =0;
                         /*SN learners' details section*/
                         if(in_array(0, $formData['enrollments'])){//if by class and sex option was checked
                             $options['lwdBCG'] = true;
@@ -563,7 +588,8 @@ class ZoneReportController extends Controller{
                                 return new Response($html);
                             }else{
                                 $mpdfService = $this->get('tfox.mpdfport');
-                                $arguments = ['outputFileName'=>'report.pdf', 'outputDest'=>"I"];
+                                $arguments = ['outputFileName'=>'IED-'.$zone[0]['zone_name'].'_zone_custom-report-'
+                                    .date('d-m-Y').'.pdf', 'outputDest'=>"I"];
                                 $response = $mpdfService->generatePdfResponse($html, $arguments);
                                 $response->headers->set('Content-Disposition','inline; filename = '.$arguments['outputFileName']);
                                 $response->headers->set('Content-Transfer-Encoding','binary');
@@ -572,13 +598,7 @@ class ZoneReportController extends Controller{
                                 exit;
                             }
 			}else{
-//                            $dataConverter = $this->get('data_converter');
-//                            $enrolled = $connection->fetchAll('SELECT first_name, last_name, initials, home_address, sex, dob,
-//                                        distance_to_school, gfirst_name, glast_name, gsex, occupation, income_level
-//                                        FROM lwd NATURAL JOIN guardian NATURAL JOIN lwd_belongs_to_school
-//                                        WHERE idzone = ? AND `year` = ?',
-//                                            [$idzone, $yearQuery['maxYear']]);
-//              ob_clean();
+                ob_clean();
                 $phpExcelObject = $this->get('phpexcel')->createPHPExcelObject();
                 $phpExcelObject->getProperties()->setCreator("Inclusive Education Database")
                     ->setLastModifiedBy("IED")
@@ -666,7 +686,7 @@ class ZoneReportController extends Controller{
                     $phpExcelObject->getActiveSheet()->fromArray(
                         array('First Name(s)', 'Last Name', 'Present Address', 'Sex', 'Date of Birth', 'Distance to School',
                             'Guardian First Name(s)','Guardian Last Name', 'Guardian Sex', 'Guardian Occupation',
-                            'Household Type'), null, 'A1', true
+                            'School Emis Code', 'Relationship with Guardian', 'Household Type'), null, 'A1', true
                     );
                     $phpExcelObject->getActiveSheet()->fromArray($options['snLearners'], null, 'A2', true);
                     $phpExcelObject->getActiveSheet()->setTitle("List of Learners");
@@ -682,11 +702,11 @@ class ZoneReportController extends Controller{
                     $phpExcelObject->setActiveSheetIndex($activeSheetIndex);
                     $phpExcelObject->getActiveSheet()->fromArray(
                         array('First Name(s)', 'Last Name', 'Emp. Number', 'Sex', 'Qualification', 'Speciality',
-                            'Yr. Started Teaching',
+                            'Yr. Started Teaching', 'School Emis Code',
                             'Teacher Type'), null, 'A1', true
                     );
                     $phpExcelObject->getActiveSheet()->fromArray($options['snTeachers'], null, 'A2', true);
-                    $phpExcelObject->getActiveSheet()->setTitle("List of Learners");
+                    $phpExcelObject->getActiveSheet()->setTitle("List of Teachers");
                     $maxCell = $phpExcelObject->getActiveSheet()->getHighestRowAndColumn();
                     $phpExcelObject->getActiveSheet()
                         ->getStyle('A1:'. $maxCell['column'] . $maxCell['row'])->applyFromArray($styleArray);
@@ -704,7 +724,7 @@ class ZoneReportController extends Controller{
                 // adding headers
                 $dispositionHeader = $response->headers->makeDisposition(
                     ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    'IED-Report-Custom-'.date('d-m-Y').'.xlsx'
+                    'IED-'.$zone[0]['zone_name'].'_zone_custom-report-'.date('d-m-Y').'.xlsx'
                 );
                 $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
                 $response->headers->set('Pragma', 'public');

@@ -13,6 +13,10 @@
             <Cell><Data ss:Type="String">Enough Ventilation</Data></Cell>
             <Cell><Data ss:Type="String">Noise Free</Data></Cell>
             <Cell><Data ss:Type="String">Room Type</Data></Cell>
+            {% if isDistrict %}
+                <Cell><Data ss:Type="String">School Code</Data></Cell>
+                <Cell><Data ss:Type="String">School Name</Data></Cell>
+            {% endif %}
         </Row>
 
         {% for room in teachingRooms %}
@@ -25,6 +29,10 @@
                 <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.enough_ventilation }}</Data></Cell>
                 <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.noise_free }}</Data></Cell>
                 <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.room_type }}</Data></Cell>
+                {% if isDistrict %}
+                    <Cell ss:StyleID="s16"><Data ss:Type="Number">{{ room.emiscode }}</Data></Cell>
+                    <Cell ss:StyleID="s16"><Data ss:Type="String">{{ room.school_name }}</Data></Cell>
+                {% endif %}
             </Row>
         {% endfor %}
     </Table>
