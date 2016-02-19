@@ -6,7 +6,7 @@ xmlns:x="urn:schemas-microsoft-com:office:excel"
 xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
 xmlns:html="http://www.w3.org/TR/REC-html40">
 <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-  <Author>SNEMIS</Author>
+  <Author>IED</Author>
   <LastAuthor></LastAuthor>
   <Created>{{ date|date('Y-m-d')}}T{{ date|date('H:i:s') }}Z</Created>
   <Company>Ministry of Education - Malawi</Company>
@@ -50,7 +50,7 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
   <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
   <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
   <Row>
-    <Cell ss:MergeDown="1" ss:Index="3" ss:StyleID="s2"><Data ss:Type="String">Special Needs Management Information System \n Basic Report</Data></Cell>
+    <Cell ss:MergeDown="1" ss:Index="3" ss:StyleID="s2"><Data ss:Type="String">Inclusive Education Database Basic Report</Data></Cell>
   </Row>
   <Row ss:Index="4">
     <Cell ss:MergeDown="2" ss:StyleID="s1"><Data ss:Type="String">Zone Id Label</Data></Cell>  
@@ -87,7 +87,13 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
     <ProtectScenarios>False</ProtectScenarios>
   </WorksheetOptions>
 </Worksheet>
-{#{% if preliminary is defined %}
-  {% include 'zone/reports/zone_preliminary.xml.twig' %}
-{% endif %}#}
+    {% if preliminary is defined %}
+        {% include 'school/reports/preliminary.xml.twig' %}
+    {% endif %}
+    {% if specialNeeds is defined %}
+        {% include 'school/reports/special_needs.xml.twig' %}
+    {% endif %}
+    {% if learningMaterials %}
+        {% include 'school/reports/materials.xml.twig' %}
+    {% endif %}
 </Workbook>

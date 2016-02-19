@@ -60,7 +60,7 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
   <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
   <ss:Column ss:AutoFitWidth="1" ss:Width="80"/>
   <Row>
-    <Cell ss:MergeDown="1" ss:Index="3" ss:StyleID="s2"><Data ss:Type="String">Special Needs Management Information System \n Basic Report</Data></Cell>
+    <Cell ss:MergeDown="1" ss:Index="3" ss:StyleID="s2"><Data ss:Type="String">Inclusive Education Database Basic Report</Data></Cell>
   </Row>
   <Row ss:Index="4">
     <Cell ss:MergeDown="2" ss:StyleID="s1"><Data ss:Type="String">School Id Label</Data></Cell>  

@@ -322,7 +322,8 @@ class DistrictReportController extends Controller{
                                     return new Response($html);
                             }else{
                                 $mpdfService = $this->get('tfox.mpdfport');
-                                $arguments = ['outputFileName'=>$district[0]['district_name'].'_district_report.pdf', 'outputDest'=>"I"];
+                                $arguments = ['outputFileName'=>'IED-'.$district[0]['district_name'].'_district_basic-report-'
+                                    .date('d-m-Y').'.pdf', 'outputDest'=>"I"];
                                 $response = $mpdfService->generatePdfResponse($html, $arguments);
                                 $response->headers->set('Content-Disposition','inline; filename = '.$arguments['outputFileName']);
                                 $response->headers->set('Content-Transfer-Encoding','binary');
@@ -330,7 +331,31 @@ class DistrictReportController extends Controller{
                                 return $response;
                                 exit;
                             }
-			}                       			
+			}
+            else{
+                $xml = $this->renderView('district/reports/aggregate_district_report.xml.twig', $options);
+                $temporary_file_name = $this->getParameter('kernel.cache_dir').'/excel.xml'; //temporary file for storing the xml
+                file_put_contents($temporary_file_name, $xml);
+
+                ob_clean();
+                $reader = \PHPExcel_IOFactory::createReader('Excel2003XML');
+                $excelSheet = $reader->load($temporary_file_name);
+                $writer = $this->get('phpexcel')->createWriter($excelSheet, 'Excel2007');
+
+                // create the response
+                $response = $this->get('phpexcel')->createStreamedResponse($writer);
+                // adding headers
+                $dispositionHeader = $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    'IED-'.$district[0]['district_name'].'_district_basic-report-'.date('d-m-Y').'.xlsx'
+                );
+                $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
+                $response->headers->set('Pragma', 'public');
+                $response->headers->set('Cache-Control', 'maxage=1');
+                $response->headers->set('Content-Disposition', $dispositionHeader);
+
+                return $response;
+            }
 		}
 
 		return $this->render('district/reports/district_reports_basic.html.twig', array('form' => $form->createView()));
@@ -615,7 +640,8 @@ class DistrictReportController extends Controller{
                                 return new Response($html);
                             }else{
                                 $mpdfService = $this->get('tfox.mpdfport');
-                                $arguments = ['outputFileName'=>'report.pdf', 'outputDest'=>"I"];
+                                $arguments = ['outputFileName'=>'IED-'.$district[0]['district_name'].'_district_custom-report-'
+                                    .date('d-m-Y'),'.pdf', 'outputDest'=>"I"];
                                 $response = $mpdfService->generatePdfResponse($html, $arguments);
                                 $response->headers->set('Content-Disposition','inline; filename = '.$arguments['outputFileName']);
                                 $response->headers->set('Content-Transfer-Encoding','binary');
@@ -715,10 +741,23 @@ class DistrictReportController extends Controller{
                 if(isset($options['snLearners'])){
                     $phpExcelObject->createSheet();
                     $phpExcelObject->setActiveSheetIndex($activeSheetIndex);
+                    foreach($options['snLearners'] as &$learner){
+                        unset($learner['emiscode']);
+                        unset($learner['idguardian']);
+                        unset($learner['iddistrict']);
+                        unset($learner['year']);
+                        unset($learner['gaddress']);
+                        unset($learner['idzone']);
+                        unset($learner['address']);
+                    }
+
                     $phpExcelObject->getActiveSheet()->fromArray(
-                        array('First Name(s)', 'Last Name', 'Present Address', 'Sex', 'Date of Birth', 'Distance to School',
+                        array('LIN', 'First Name(s)', 'Last Name', 'Present Address',
+                            'Sex', 'Date of Birth', 'Guardian relationship', 'Non-Relative', 'Status of parent',
                             'Guardian First Name(s)','Guardian Last Name', 'Guardian Sex', 'Guardian Occupation',
-                            'Household Type'), null, 'A1', true
+                            'Guardian district', 'Household Type', 'Learner Class(std)', 'Distance to School',
+                            'Means of travel to school', 'Other means of travel','School Name', ),
+                        null, 'A1', true
                     );
                     $phpExcelObject->getActiveSheet()->fromArray($options['snLearners'], null, 'A2', true);
                     $phpExcelObject->getActiveSheet()->setTitle("List of Learners");
@@ -733,12 +772,20 @@ class DistrictReportController extends Controller{
                     $phpExcelObject->createSheet();
                     $phpExcelObject->setActiveSheetIndex($activeSheetIndex);
                     $phpExcelObject->getActiveSheet()->fromArray(
-                        array('First Name(s)', 'Last Name', 'Emp. Number', 'Sex', 'Qualification', 'Speciality',
-                            'Yr. Started Teaching',
-                            'Teacher Type'), null, 'A1', true
+                        array('School Code', 'First Name(s)', 'Last Name', 'Sex', 'Qualification', 'Speciality',
+                            'Yr. Started Teaching','Emp. Number', 'Teacher Type', 'CPD in inclusive education',
+                            'Snt type', 'No. of visits to school', 'School Name'),
+                        null, 'A1', true
                     );
+                    foreach($options['snTeachers'] as &$teacher){
+                        unset($teacher['idzone']);
+                        unset($teacher['address']);
+                        unset($teacher['idsnt']);
+                        unset($teacher['year']);
+                        unset($teacher['iddistrict']);
+                    }
                     $phpExcelObject->getActiveSheet()->fromArray($options['snTeachers'], null, 'A2', true);
-                    $phpExcelObject->getActiveSheet()->setTitle("List of Learners");
+                    $phpExcelObject->getActiveSheet()->setTitle("List of Teachers");
                     $maxCell = $phpExcelObject->getActiveSheet()->getHighestRowAndColumn();
                     $phpExcelObject->getActiveSheet()
                         ->getStyle('A1:'. $maxCell['column'] . $maxCell['row'])->applyFromArray($styleArray);
@@ -756,7 +803,8 @@ class DistrictReportController extends Controller{
                 // adding headers
                 $dispositionHeader = $response->headers->makeDisposition(
                     ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    'IED-Report-Custom-'.date('d-m-Y').'.xlsx'
+                    'IED-'.$district[0]['district_name'].'_district_custom-report-'
+                    .date('d-m-Y').'.xlsx'
                 );
                 $response->headers->set('Content-Type', 'text/vnd.ms-excel; charset=utf-8');
                 $response->headers->set('Pragma', 'public');
