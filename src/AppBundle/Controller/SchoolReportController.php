@@ -291,35 +291,36 @@ class SchoolReportController extends Controller{
                                     $options['ageBySex'] = $counterAgeBySex;
                                     $options['learnersBy'] = $learnersBy;
                                     /* end of lwds by age, sex and std*/
-                                }
-                                //get totals for across age and standards by sex
-                                if ($sex == 'M'){
-                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
-                                }else {
-                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
-                                }
-                            }
-                        }
-                    }
-                    //flip the array to sum downwards for std by sex
-                    foreach ($stds as $std) {
-                        $counterStdBySex[$std]['M'] = 0;
-                        $counterStdBySex[$std]['F'] = 0;
-                        foreach ($ages as $key => $age) {
-                            foreach ($gender as $sex) {
-                                //get totals for across age and standards by sex
-                                if ($sex == 'M'){
-                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
-                                }else {
-                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
-                                }
-                            }
-                        }
-                    }
-                    $options['stdBySex'] = $counterStdBySex;
-                    $options['ageBySex'] = $counterAgeBySex;
-                    $options['learnersBy'] = $learnersBy;
-                    /* end of lwds by age, sex and std*/
+
+//                                }
+//                                //get totals for across age and standards by sex
+//                                if ($sex == 'M'){
+//                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
+//                                }else {
+//                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
+//                                }
+//                            }
+//                        }
+//                    }
+//                    //flip the array to sum downwards for std by sex
+//                    foreach ($stds as $std) {
+//                        $counterStdBySex[$std]['M'] = 0;
+//                        $counterStdBySex[$std]['F'] = 0;
+//                        foreach ($ages as $key => $age) {
+//                            foreach ($gender as $sex) {
+//                                //get totals for across age and standards by sex
+//                                if ($sex == 'M'){
+//                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
+//                                }else {
+//                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
+//                                }
+//                            }
+//                        }
+//                    }
+//                    $options['stdBySex'] = $counterStdBySex;
+//                    $options['ageBySex'] = $counterAgeBySex;
+//                    $options['learnersBy'] = $learnersBy;
+//                    /* end of lwds by age, sex and std*/
 
                 }
             }
