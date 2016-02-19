@@ -169,19 +169,21 @@ class SchoolReportController extends Controller{
                                                      WHERE
                                                         year = ?
                                                         AND emiscode != ?)", [$lwdLatestYr['yr'], $emisCode, $lwdLastYr, $emisCode]);
-                    //get students enrolled this year
-                    $enrolled = $connection->fetchAll('SELECT sex, year FROM lwd NATURAL JOIN lwd_belongs_to_school
-                                            WHERE emiscode = ? GROUP BY idlwd HAVING COUNT(idlwd) = 1 AND `year` = ?',
+                            //get students enrolled this year
+                            $enrolled = $connection->fetchAll('SELECT sex, COUNT(idlwd) as total '
+                                    . 'FROM lwd NATURAL JOIN lwd_belongs_to_school '
+                                    . 'WHERE emiscode = ? AND `year` = ? GROUP BY sex',
                                             [$emisCode, $yearQuery['maxYear']]);
-                                    $options['enrolledTotal'] = count($enrolled);
-                                    $options['enrolledBoys'] = $dataConverter->countArray($enrolled, 'sex', 'M');
-                                    $options['enrolledGirls'] = $options['enrolledTotal'] - $options['enrolledBoys'];
-
-                                    //get students who exited the school
-                                    $exited = $connection->fetchAll('SELECT sex, reason, lwd_has_disability.*, disability.disability_name,disability_category.* '
-                                            . 'FROM lwd NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
-                                            . 'WHERE emiscode = ? AND `year` = ?', [$emisCode, $yearQuery['maxYear']]);
-
+                            $options['enrolledGirls'] = 0;
+                            $options['enrolledBoys'] = 0;
+                                    foreach ($enrolled as $en){
+                                        if ($en['sex'] == 'M'){
+                                            $options['enrolledBoys'] = $en['total'];
+                                        }else {
+                                            $options['enrolledGirls'] = $en['total'];
+                                        }
+                                    }
+                                    $options['enrolledTotal'] = $options['enrolledBoys'] + $options['enrolledGirls'];
                                     $exitedGrouped = $connection->fetchAll('SELECT COUNT(idlwd), disability_category.* '
                                             . 'FROM lwd NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability NATURAL JOIN disability NATURAL JOIN disability_category '
                                             . 'WHERE emiscode = ? AND `year` = ? GROUP BY category_name', [$emisCode, $yearQuery['maxYear']]);
@@ -194,31 +196,58 @@ class SchoolReportController extends Controller{
                                     foreach ($disabilitiesDB as $key => $row) {
                                         $disabilities[$row['iddisability']] = $row['disability_name'];
                                     }
+                                     $exited = $connection->fetchAll('SELECT disability.disability_name, sex, reason, count(idlwd) as dropouts '
+                                            . 'FROM lwd NATURAL JOIN school_exit NATURAL JOIN lwd_has_disability '
+                                            . 'NATURAL JOIN disability NATURAL JOIN school '
+                                            . 'WHERE emiscode = ? and `year` = ? GROUP BY disability.disability_name, sex, reason'
+                                            , [$emisCode, $yearQuery['maxYear']]);
                                     //get dropouts and completed counts
-                                    $dropoutReason = ' != "completed"';
-                                    $completedReason = ' = "completed"';
+                                    
                                     $dCategoryCount = array();//dropouts count
                                     $cCategoryCount = array();//completed count
                                     $categoryCount = array(); //this is counting disabilities not categories of disbailities anymore
-                                    $dOrC = array('Dropouts'=>' != "completed"','Completed STD 8'=>' = "completed"');
+                                    $dOrC = array('Dropouts'=>'!= "completed"','Completed STD 8'=>'== "completed"');
+
+                                    //initialise array
                                     foreach ($disabilities as $catKey => $category) {
-                                        $dropoutCategories = $dataConverter->selectFromArrayBool($exited, 'disability_name', '= '.$category);
+                                        //$dropoutCategories = $dataConverter->selectFromArrayBool($exited, 'disability_name', '== '.$category);
                                         foreach ($dOrC as $dcKey => $dc) {
-                                            $dropouts = $dataConverter->selectFromArrayBool($dropoutCategories, 'reason', $dc);
-                                            foreach ($gender as $genKey => $gen){
-                                                $categoryCount[$category][$dcKey][$gen] = $dataConverter->countArray($dropouts, 'sex', $gen);
+                                                foreach ($gender as $genKey => $gen){
+                                                $categoryCount[$category][$dcKey][$gen] = 0;
                                             }
                                         }
+                                    }
+                                    
+                                    foreach ($exited as $ex){//                                        
+                                        if ($ex['reason'] != 'completed') {
+                                            $ex['reason'] = 'Dropouts';
+                                        }else {
+                                            $ex['reason'] = 'Completed STD 8';
+                                        }
+                                            $categoryCount[$ex['disability_name']][$ex['reason']][$ex['sex']] = +$ex['dropouts'];                                                  
+                                              
                                     }
                                     $options['dOrCsKey'] = $disabilities[1];
                                     $options['categoryCounts'] = $categoryCount;
                                     //$options['cCategoryCounts'] = $cCategoryCount;
 
                                     //get total number of dropouts
-                                    $dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', $dropoutReason);
+                                    $exitedT = $connection->fetchAll('SELECT * FROM `school_exit` NATURAL JOIN school NATURAL JOIN lwd '
+                                            . 'WHERE school_exit.emiscode = ? and `year` = ?'
+                                            , [$emisCode, $yearQuery['maxYear']]);
+                                    $dropoutReason = '!= "completed"';
+                                    $completedReason = '== "completed"';
+                                    $dropouts = $dataConverter->selectFromArrayBool($exitedT, 'reason', $dropoutReason, TRUE);
+//                                    echo print_r($exitedT); exit;
                                     $options['dropoutTotal'] = count($dropouts);
                                     $options['dropoutBoys'] = $dataConverter->countArray($dropouts, 'sex', 'M');
                                     $options['dropoutGirls'] = $options['dropoutTotal'] - $options['dropoutBoys'];
+//                                    echo $options['dropoutTotal']; exit;
+                                     //get learners completed std 8
+                                    $completed = $dataConverter->selectFromArrayBool($exitedT, 'reason', $completedReason, TRUE);
+                                    $options['completedTotal'] = count($completed);
+                                    $options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');
+                                    $options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
 
                                     //transfers out
                                     $options['numBoysTRout'] = $dataConverter->countArray($learnersTransOut, 'sex', 'M');
@@ -228,13 +257,7 @@ class SchoolReportController extends Controller{
                                     //transfer in
                                     $options['numBoysTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'M');
                                     $options['numGirlsTRin'] = $dataConverter->countArray($learnersTransIn, 'sex', 'F');
-                                    $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];
-
-                                    //get learners completed std 8
-                                    $completed = $dataConverter->selectFromArrayBool($exited, 'reason', $completedReason);
-                                    $options['completedTotal'] = count($completed);
-                                    $options['completedBoys'] = $dataConverter->countArray($completed, 'sex', 'M');
-                                    $options['completedGirls'] = $options['completedTotal'] - $options['completedBoys'];
+                                    $options['totalTransferIn'] =  $options['numBoysTRin'] + $options['numGirlsTRin'];                                   
 
                                     //
 
@@ -291,39 +314,10 @@ class SchoolReportController extends Controller{
                                     $options['ageBySex'] = $counterAgeBySex;
                                     $options['learnersBy'] = $learnersBy;
                                     /* end of lwds by age, sex and std*/
-
-//                                }
-//                                //get totals for across age and standards by sex
-//                                if ($sex == 'M'){
-//                                    $counterAgeBySex[$key]['M'] = $counterAgeBySex[$key]['M'] + $learnersBy[$key][$std][$sex];
-//                                }else {
-//                                    $counterAgeBySex[$key]['F'] = $counterAgeBySex[$key]['F'] + $learnersBy[$key][$std][$sex];
-//                                }
-//                            }
-//                        }
-//                    }
-//                    //flip the array to sum downwards for std by sex
-//                    foreach ($stds as $std) {
-//                        $counterStdBySex[$std]['M'] = 0;
-//                        $counterStdBySex[$std]['F'] = 0;
-//                        foreach ($ages as $key => $age) {
-//                            foreach ($gender as $sex) {
-//                                //get totals for across age and standards by sex
-//                                if ($sex == 'M'){
-//                                    $counterStdBySex[$std]['M'] =  $counterStdBySex[$std]['M'] + $learnersBy[$key][$std][$sex];
-//                                }else {
-//                                    $counterStdBySex[$std]['F'] =  $counterStdBySex[$std]['F'] + $learnersBy[$key][$std][$sex];
-//                                }
-//                            }
-//                        }
-//                    }
-//                    $options['stdBySex'] = $counterStdBySex;
-//                    $options['ageBySex'] = $counterAgeBySex;
-//                    $options['learnersBy'] = $learnersBy;
-//                    /* end of lwds by age, sex and std*/
-
                 }
             }
+            /*End of Summary of learners with special needs section*/
+            
             /*Start of Teaching and learning materials*/
             if(in_array(2, $formData['reports'])){ //if the Teaching and learning materials option was checked
                 $options['learningMaterials'] = true;

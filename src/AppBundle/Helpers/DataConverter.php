@@ -140,17 +140,18 @@ class DataConverter{
 		}
 		return $resultArray;
 	}
-	function selectFromArrayBool($array, $key, $condition){
-		$array = array();
+	function selectFromArrayBool($array, $key, $condition, $keyIsString = false){
+                $quote = ($keyIsString)? "'" : '';
+		$resultArray = array();
 		foreach($array as $element){
-			echo 'Method found';
+			//echo 'Method found';
 			if(is_array($element)){
-				if(eval("return ".$element[$key].$condition.";")){
-					$array[] = $element;
+				if(eval("return ".$quote.$element[$key].$quote.$condition.";")){
+					$resultArray[] = $element;
 				}
 			}
 		}
-		return $array;
+		return $resultArray;
 	}
 	function findArrayMax($array, $key){
 		$max = 0;
