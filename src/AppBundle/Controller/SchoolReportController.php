@@ -202,12 +202,11 @@ class SchoolReportController extends Controller{
                                     $categoryCount = array(); //this is counting disabilities not categories of disbailities anymore
                                     $dOrC = array('Dropouts'=>' != "completed"','Completed STD 8'=>' = "completed"');
                                     foreach ($disabilities as $catKey => $category) {
+                                        $dropoutCategories = $dataConverter->selectFromArrayBool($exited, 'disability_name', '= '.$category);
                                         foreach ($dOrC as $dcKey => $dc) {
-                                            $dropouts = $dataConverter->selectFromArrayBool($exited, 'reason', $dc);
+                                            $dropouts = $dataConverter->selectFromArrayBool($dropoutCategories, 'reason', $dc);
                                             foreach ($gender as $genKey => $gen){
-
-                                                $dropoutCategories = $dataConverter->selectFromArrayBool($exited, 'disability_name', '= '.$category);
-                                                $categoryCount[$category][$dcKey][$gen] = $dataConverter->countArray($dropoutCategories, 'sex', $gen);
+                                                $categoryCount[$category][$dcKey][$gen] = $dataConverter->countArray($dropouts, 'sex', $gen);
                                             }
                                         }
                                     }
