@@ -1,6 +1,7 @@
 <p>SPECIAL NEEDS LEARNERS ({{ chaka }})</p>
 <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
     <tr>
+        <td align="center"><b>Learner ID</b></td>
         <td align="center"><b>Learner Name</b></td>
         {% if isZone %}
             <td align="center"><b>Emis code</b></td>
@@ -23,6 +24,7 @@
     
     {% for learner, learners in snLearners %}        
     <tr>
+        <td align="center">{{ learners.idlwd}}</td>
         <td align="center">{{ learners.first_name}} {{ learners.last_name}}</td>
         {% if isZone %}
             <td align="center">{{ learners.emiscode}}</td>

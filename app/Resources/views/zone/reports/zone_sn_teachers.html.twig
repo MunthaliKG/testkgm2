@@ -1,6 +1,7 @@
 <p>SPECIAL NEEDS TEACHERS ({{ chaka }})</p>
 <table class="table table-condensed" {% if not isHtml %} border="1" {% endif %}> 
     <tr>
+        <td align="center"><b>Employment No</b></td>
         <td align="center"><b>Teacher Name</b></td>
         {% if isZone %}
             <td align="center"><b>Emis code</b></td>
@@ -20,6 +21,7 @@
     
     {% for teacher, teachers in snTeachers %}        
     <tr>
+        <td align="center">{{ teachers.employment_number }}</td>
         <td align="center">{{ teachers.sfirst_name}} {{ teachers.slast_name }}</td>
         {% if isZone %}
             <td align="center">{{ teachers.emiscode }}</td>
