@@ -44,7 +44,7 @@ class RequestContext extends \Symfony\Component\Routing\RequestContext
      */
     public function getEmisCode()
     {
-        $emisCode = explode('/', $this->getPathInfo()[2]);
+        $emisCode = explode('/', $this->getPathInfo())[2];
         return $emisCode;
     }
 }
